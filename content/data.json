@@ -48,8 +48,8 @@
     }
   ],
   "about": {
-    "name": "Your Name",
-    "availableForWork": true,
+    "name": "Erick Clark",
+    "availableForWork": false,
     "bio": [
       "I'm a software engineer with X years of experience building full-stack web applications. I specialize in TypeScript, React, and Node.js — and I care deeply about performance, clean architecture, and developer experience.",
       "Previously at [Company A] and [Company B], where I worked on [brief description of impact]. I'm currently looking for new opportunities.",
@@ -60,17 +60,17 @@
       "React",
       "Next.js",
       "Node.js",
-      "Go",
       "Python",
       "PostgreSQL",
       "Redis",
       "Docker",
-      "AWS"
+      "AWS",
+      "Tailwind CSS"
     ]
   },
   "contact": {
-    "email": "you@example.com",
-    "githubUrl": "https://github.com/yourusername",
-    "linkedinUrl": "https://linkedin.com/in/yourhandle"
+    "email": "erickmclark1983@gmail.com",
+    "githubUrl": "https://github.com/erickmclark",
+    "linkedinUrl": "https://linkedin.com/in/erickmclark"
   }
 }
