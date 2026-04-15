@@ -83,6 +83,7 @@ function SortableProject({
   const [expanded, setExpanded] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const style = { transform: CSS.Transform.toString(transform), transition };
@@ -116,6 +117,7 @@ function SortableProject({
     const reader = new FileReader();
     reader.onload = async (e) => {
       const base64 = e.target?.result as string;
+      setLocalPreview(base64);
       try {
         const res = await fetch('/api/admin/image', {
           method: 'POST',
@@ -263,18 +265,30 @@ function SortableProject({
               }}
               onDragOver={(e) => e.preventDefault()}
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-border hover:border-accent rounded-lg p-6 text-center cursor-pointer transition-colors"
+              className="relative border-2 border-dashed border-border hover:border-accent rounded-lg overflow-hidden cursor-pointer transition-colors group"
             >
-              {uploading ? (
-                <p className="text-sm text-muted animate-pulse">Uploading…</p>
-              ) : project.image ? (
-                <p className="text-sm text-muted">
-                  Current: <span className="text-white">{project.image}</span>
-                  <br />
-                  <span className="text-xs">Drop a new image here or click to replace</span>
-                </p>
+              {localPreview || project.image ? (
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={localPreview ?? project.image}
+                    alt="Project preview"
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <p className="text-sm text-white font-medium">
+                      {uploading ? 'Uploading…' : 'Click or drop to replace'}
+                    </p>
+                  </div>
+                </div>
               ) : (
-                <p className="text-sm text-muted">Drop an image here or click to upload</p>
+                <div className="p-6 text-center">
+                  {uploading ? (
+                    <p className="text-sm text-muted animate-pulse">Uploading…</p>
+                  ) : (
+                    <p className="text-sm text-muted">Drop an image here or click to upload</p>
+                  )}
+                </div>
               )}
             </div>
             <input
