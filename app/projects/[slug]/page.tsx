@@ -6,17 +6,15 @@ import type { Metadata } from "next";
 import { getSiteContent } from "@/lib/content";
 import MarkdownRenderer from "@/components/markdown-renderer";
 
+export const dynamic = 'force-dynamic';
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateStaticParams() {
-  return getSiteContent().projects.map((p) => ({ slug: p.slug }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = getSiteContent().projects.find((p) => p.slug === slug);
+  const project = (await getSiteContent()).projects.find((p) => p.slug === slug);
   if (!project) return {};
   return {
     title: project.title,
@@ -31,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;
-  const project = getSiteContent().projects.find((p) => p.slug === slug);
+  const project = (await getSiteContent()).projects.find((p) => p.slug === slug);
   if (!project) return notFound();
 
   return (
@@ -70,7 +68,6 @@ export default async function ProjectPage({ params }: Props) {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Actions */}
             <div className="bg-surface border border-border rounded-2xl p-5 space-y-3">
               {project.liveUrl && (
                 <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
@@ -88,7 +85,6 @@ export default async function ProjectPage({ params }: Props) {
               )}
             </div>
 
-            {/* Tech stack */}
             {project.tech.length > 0 && (
               <div className="bg-surface border border-border rounded-2xl p-5">
                 <h3 className="text-xs font-semibold tracking-widest uppercase text-muted mb-3">

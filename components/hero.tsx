@@ -1,15 +1,14 @@
 import { getSiteContent } from '@/lib/content';
 import { ArrowRight, Mail } from 'lucide-react';
 
-export default function Hero() {
-  const { about } = getSiteContent();
+export default async function Hero() {
+  const { about } = await getSiteContent();
 
   return (
     <section
       id="hero"
       className="relative min-h-screen flex flex-col justify-center px-6 pt-[72px] overflow-hidden hero-grid"
     >
-      {/* Accent glow */}
       <div className="pointer-events-none absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-accent/5 blur-[120px]" />
 
       <div className="relative max-w-site mx-auto w-full">

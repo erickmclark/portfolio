@@ -10,36 +10,37 @@ const geist = Geist({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Your Name — Software Engineer",
-    template: "%s | Your Name",
-  },
-  description:
-    "Software engineer specializing in TypeScript, React, and Node.js. Building fast, reliable web products.",
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://yoursite.com",
-    siteName: "Your Name",
-    title: "Your Name — Software Engineer",
-    description:
-      "Software engineer specializing in TypeScript, React, and Node.js.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Your Name — Software Engineer",
-    description:
-      "Software engineer specializing in TypeScript, React, and Node.js.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { about } = await getSiteContent();
+  const title = `${about.name} — ${about.title}`;
+  const description = about.heroTagline;
+  return {
+    title: {
+      default: title,
+      template: `%s | ${about.name}`,
+    },
+    description,
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      siteName: about.name,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { about } = getSiteContent();
+  const { about } = await getSiteContent();
   return (
     <html lang="en" className={geist.variable}>
       <body className="bg-background text-foreground antialiased">

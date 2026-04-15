@@ -1,8 +1,8 @@
 import { getSiteContent } from '@/lib/content';
 import ProjectCard from './project-card';
 
-export default function Projects() {
-  const { projects } = getSiteContent();
+export default async function Projects() {
+  const { projects } = await getSiteContent();
   const sorted = [...projects].sort((a, b) => {
     if (a.featured && !b.featured) return -1;
     if (!a.featured && b.featured) return 1;

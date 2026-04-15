@@ -10,7 +10,6 @@ type Tab = 'projects' | 'about' | 'contact';
 
 export default function DashboardClient() {
   const [content, setContent] = useState<SiteContent | null>(null);
-  const [sha, setSha] = useState('');
   const [tab, setTab] = useState<Tab>('projects');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -20,9 +19,8 @@ export default function DashboardClient() {
   useEffect(() => {
     fetch('/api/admin/content')
       .then((r) => r.json())
-      .then(({ content, sha }: { content: SiteContent; sha: string }) => {
+      .then(({ content }: { content: SiteContent }) => {
         setContent(content);
-        setSha(sha);
       })
       .catch(() => setSaveError('Failed to load content.'));
   }, []);
@@ -42,11 +40,9 @@ export default function DashboardClient() {
       const res = await fetch('/api/admin/content', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content, sha }),
+        body: JSON.stringify({ content }),
       });
       if (!res.ok) throw new Error(await res.text());
-      const { sha: newSha } = await res.json() as { sha: string };
-      setSha(newSha);
       setDirty(false);
       setSaved(true);
     } catch (e) {
@@ -125,7 +121,7 @@ export default function DashboardClient() {
       <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-background/95 backdrop-blur-md p-4 z-40">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
           <div className="text-sm">
-            {saved && !dirty && <span className="text-green-400">✓ Saved — Netlify is rebuilding (~60s)</span>}
+            {saved && !dirty && <span className="text-green-400">✓ Saved — changes are live</span>}
             {dirty && !saveError && <span className="text-muted">Unsaved changes</span>}
             {saveError && <span className="text-red-400 text-xs">{saveError}</span>}
           </div>
@@ -134,7 +130,7 @@ export default function DashboardClient() {
             disabled={saving || !dirty}
             className="shrink-0 flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-hover disabled:opacity-50 text-white font-semibold rounded-lg transition-colors duration-200 text-sm"
           >
-            {saving ? 'Saving…' : `Save & Deploy${dirty ? ' ●' : ''}`}
+            {saving ? 'Saving…' : `Save${dirty ? ' ●' : ''}`}
           </button>
         </div>
       </div>

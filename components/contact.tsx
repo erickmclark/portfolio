@@ -1,8 +1,8 @@
 import { Mail, GitBranch, Globe } from 'lucide-react';
 import { getSiteContent } from '@/lib/content';
 
-export default function Contact() {
-  const { contact } = getSiteContent();
+export default async function Contact() {
+  const { contact } = await getSiteContent();
 
   return (
     <section id="contact" className="py-24 px-6">

@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { getSiteContent } from '@/lib/content';
 
-export default function About() {
-  const { about } = getSiteContent();
+export default async function About() {
+  const { about } = await getSiteContent();
 
   const initials = about.name
     .split(' ')
