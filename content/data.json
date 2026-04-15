@@ -49,7 +49,10 @@
   ],
   "about": {
     "name": "Erick Clark",
+    "title": "Software Engineer",
+    "heroTagline": "I build fast, reliable web products — from APIs to polished UIs. Currently open to full-time roles and freelance projects.",
     "availableForWork": true,
+    "photo": "",
     "bio": [
       "I'm a software engineer with X years of experience building full-stack web applications. I specialize in TypeScript, React, and Node.js — and I care deeply about performance, clean architecture, and developer experience.",
       "Previously at [Company A] and [Company B], where I worked on [brief description of impact]. I'm currently looking for new opportunities.",

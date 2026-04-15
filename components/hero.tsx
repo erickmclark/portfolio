@@ -26,14 +26,11 @@ export default function Hero() {
         <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6">
           {about.name}.
           <br />
-          <span className="text-muted">Software</span>
-          <br />
-          <span className="text-muted">Engineer.</span>
+          <span className="text-muted">{about.title}.</span>
         </h1>
 
         <p className="text-xl text-muted max-w-lg mb-10 leading-relaxed">
-          I build fast, reliable web products — from APIs to polished UIs.
-          Currently open to full-time roles and freelance projects.
+          {about.heroTagline}
         </p>
 
         <div className="flex flex-wrap items-center gap-3">

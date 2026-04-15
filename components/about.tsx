@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { getSiteContent } from '@/lib/content';
 
 export default function About() {
@@ -46,14 +47,24 @@ export default function About() {
 
           <div className="flex justify-center lg:justify-end">
             <div className="relative">
-              {/* Decorative accent ring */}
               <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-accent/20 via-transparent to-transparent blur-xl" />
-              <div className="relative w-72 h-72 rounded-3xl bg-gradient-to-br from-accent/20 via-surface to-border border border-border overflow-hidden flex items-center justify-center">
-                <span className="text-5xl font-black text-accent/60 select-none">
-                  {initials}
-                </span>
+              <div className="relative w-72 h-72 rounded-3xl border border-border overflow-hidden bg-gradient-to-br from-accent/20 via-surface to-border">
+                {about.photo ? (
+                  <Image
+                    src={about.photo}
+                    alt={about.name}
+                    fill
+                    className="object-cover"
+                    sizes="288px"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-5xl font-black text-accent/60 select-none">
+                      {initials}
+                    </span>
+                  </div>
+                )}
               </div>
-              {/* Stats */}
               <div className="absolute -bottom-5 -right-5 bg-background border border-border rounded-2xl px-4 py-3 shadow-xl">
                 <p className="text-2xl font-black text-foreground leading-none">{about.skills.length}+</p>
                 <p className="text-xs text-muted mt-0.5">Technologies</p>

@@ -13,8 +13,11 @@ export type Project = {
 
 export type AboutContent = {
   name: string;
+  title: string;           // e.g. "Software Engineer"
+  heroTagline: string;     // Subtitle paragraph shown in hero
   availableForWork: boolean;
-  bio: string[]; // Array of paragraph strings
+  photo?: string;          // Path to profile photo, e.g. /profile.png
+  bio: string[];           // Array of paragraph strings
   skills: string[];
 };
 
