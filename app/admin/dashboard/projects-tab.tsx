@@ -84,6 +84,7 @@ function SortableProject({
   const [fetching, setFetching] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [localPreview, setLocalPreview] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const style = { transform: CSS.Transform.toString(transform), transition };
@@ -301,9 +302,42 @@ function SortableProject({
                 if (file) handleImageFile(file);
               }}
             />
+            {(localPreview || project.image) && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setLightbox(true); }}
+                className="mt-2 text-xs text-muted hover:text-white transition-colors"
+              >
+                Full preview ↗
+              </button>
+            )}
           </div>
 
-          {/* Delete */}
+          {/* Lightbox */}
+          {lightbox && (
+            <div
+              className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6"
+              onClick={() => setLightbox(false)}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={localPreview ?? project.image}
+                alt="Full preview"
+                className="max-w-full max-h-full rounded-xl shadow-2xl object-contain"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <button
+                type="button"
+                onClick={() => setLightbox(false)}
+                className="absolute top-4 right-4 text-white/70 hover:text-white text-2xl leading-none"
+                aria-label="Close preview"
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          {/* Delete — kept at bottom */}
           <button
             type="button"
             onClick={() => {
