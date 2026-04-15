@@ -1,15 +1,21 @@
+import { getSiteContent } from '@/lib/content';
+
 export default function Hero() {
+  const { about } = getSiteContent();
+
   return (
     <section
       id="hero"
       className="min-h-screen flex flex-col justify-center px-6 pt-[72px]"
     >
       <div className="max-w-site mx-auto w-full">
-        <p className="text-accent text-sm font-semibold tracking-widest uppercase mb-4">
-          Available for work
-        </p>
+        {about.availableForWork && (
+          <p className="text-accent text-sm font-semibold tracking-widest uppercase mb-4">
+            Available for work
+          </p>
+        )}
         <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-none mb-6">
-          Your Name.
+          {about.name}.
           <br />
           <span className="text-muted">Software Engineer.</span>
         </h1>

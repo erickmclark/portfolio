@@ -3,7 +3,7 @@ import { ArrowLeft, GitBranch, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { projects } from "@/data/projects";
+import { getSiteContent } from "@/lib/content";
 import MarkdownRenderer from "@/components/markdown-renderer";
 
 type Props = {
@@ -11,12 +11,12 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
+  return getSiteContent().projects.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = getSiteContent().projects.find((p) => p.slug === slug);
   if (!project) return {};
   return {
     title: project.title,
@@ -31,12 +31,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = getSiteContent().projects.find((p) => p.slug === slug);
   if (!project) return notFound();
 
   return (
     <main className="pt-[72px]">
-      {/* Hero image */}
       <div className="relative w-full aspect-video max-h-[500px] bg-surface overflow-hidden">
         <Image
           src={project.image}
@@ -47,10 +46,7 @@ export default async function ProjectPage({ params }: Props) {
           sizes="100vw"
         />
       </div>
-
-      {/* Content */}
       <div className="max-w-site mx-auto px-6 py-16">
-        {/* Back link */}
         <Link
           href="/#projects"
           className="inline-flex items-center gap-2 text-sm text-muted hover:text-white transition-colors duration-200 mb-8"
@@ -58,52 +54,33 @@ export default async function ProjectPage({ params }: Props) {
           <ArrowLeft size={14} />
           Back to projects
         </Link>
-
-        {/* Title + meta */}
         <h1 className="text-4xl sm:text-5xl font-black tracking-tighter mb-4">
           {project.title}
         </h1>
         <p className="text-lg text-muted mb-6">{project.tagline}</p>
-
-        {/* Tech tags */}
         <div className="flex flex-wrap gap-2 mb-6">
           {project.tech.map((t) => (
-            <span
-              key={t}
-              className="text-xs font-medium px-3 py-1 rounded-full border border-border text-muted"
-            >
+            <span key={t} className="text-xs font-medium px-3 py-1 rounded-full border border-border text-muted">
               {t}
             </span>
           ))}
         </div>
-
-        {/* Links */}
         <div className="flex items-center gap-4 mb-12">
           {project.githubUrl && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border hover:border-accent rounded-lg text-sm font-medium transition-colors duration-200"
-            >
+            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-border hover:border-accent rounded-lg text-sm font-medium transition-colors duration-200">
               <GitBranch size={16} />
               View on GitHub
             </a>
           )}
           {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg text-sm font-medium text-white transition-colors duration-200"
-            >
+            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg text-sm font-medium text-white transition-colors duration-200">
               <ExternalLink size={16} />
               Live Demo
             </a>
           )}
         </div>
-
-        {/* Markdown description */}
         <div className="max-w-2xl">
           <MarkdownRenderer content={project.description} />
         </div>

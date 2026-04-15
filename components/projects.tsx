@@ -1,11 +1,13 @@
-import { projects } from "@/data/projects";
-import ProjectCard from "./project-card";
+import { getSiteContent } from '@/lib/content';
+import ProjectCard from './project-card';
 
 export default function Projects() {
-  const sorted = [
-    ...projects.filter((p) => p.featured),
-    ...projects.filter((p) => !p.featured),
-  ];
+  const { projects } = getSiteContent();
+  const sorted = [...projects].sort((a, b) => {
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    return a.order - b.order;
+  });
 
   return (
     <section id="projects" className="py-24 px-6">

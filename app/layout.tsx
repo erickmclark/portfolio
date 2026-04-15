@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/nav";
+import { getSiteContent } from "@/lib/content";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -38,10 +39,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { about } = getSiteContent();
   return (
     <html lang="en" className={geist.variable}>
       <body className="bg-background text-foreground antialiased">
-        <Nav />
+        <Nav name={about.name} />
         {children}
       </body>
     </html>

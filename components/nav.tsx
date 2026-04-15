@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-export default function Nav() {
+type Props = { name: string };
+
+export default function Nav({ name }: Props) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export default function Nav() {
           href="/"
           className="text-lg font-bold tracking-tight hover:text-accent transition-colors duration-200"
         >
-          Your Name
+          {name}
         </Link>
         <nav className="flex items-center gap-8">
           <a

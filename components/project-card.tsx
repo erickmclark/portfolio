@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { GitBranch, ExternalLink } from "lucide-react";
-import type { Project } from "@/data/projects";
+import type { Project } from "@/lib/types";
 
 type Props = {
   project: Project;
