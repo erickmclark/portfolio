@@ -20,8 +20,11 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {
-    const { content, sha } = await request.json() as { content: SiteContent; sha: string };
-    const newSha = await putRepoFile('content/data.json', content, sha, 'content: update via admin panel');
+    const { content } = await request.json() as { content: SiteContent; sha: string };
+    // Always fetch the current SHA from GitHub immediately before saving
+    // to prevent 409 errors when the client-cached SHA goes stale
+    const { sha: currentSha } = await getRepoFile('content/data.json');
+    const newSha = await putRepoFile('content/data.json', content, currentSha, 'content: update via admin panel');
     return NextResponse.json({ ok: true, sha: newSha });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
