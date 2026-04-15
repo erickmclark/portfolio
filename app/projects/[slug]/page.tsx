@@ -36,7 +36,7 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <main className="pt-[72px]">
-      <div className="relative w-full aspect-video max-h-[500px] bg-surface overflow-hidden">
+      <div className="relative w-full h-64 sm:h-80 bg-surface overflow-hidden">
         <Image
           src={project.image}
           alt={project.title}
