@@ -2,12 +2,17 @@
   "projects": [
     {
       "slug": "project-one",
-      "title": "Project One",
+      "title": "Prepera",
       "tagline": "A short description of what this project does.",
       "description": "## Overview\n\nProject One is a web application that solves a specific problem. Built with modern tooling and shipped to production.\n\n## Key Features\n\n- Feature A: brief explanation\n- Feature B: brief explanation\n- Feature C: brief explanation\n\n## Challenges\n\nDescribe the interesting technical challenges you solved here.",
-      "tech": ["Next.js", "TypeScript", "Postgres", "Tailwind CSS"],
-      "githubUrl": "https://github.com/yourusername/project-one",
-      "liveUrl": "https://project-one.vercel.app",
+      "tech": [
+        "Next.js",
+        "TypeScript",
+        "Postgres",
+        "Tailwind CSS"
+      ],
+      "githubUrl": "https://github.com/erickmclark/prepera",
+      "liveUrl": "https://preperahq.com/",
       "image": "/projects/project-one.png",
       "featured": true,
       "order": 0
@@ -17,7 +22,11 @@
       "title": "Project Two",
       "tagline": "Another project with a memorable one-liner.",
       "description": "## Overview\n\nProject Two is a CLI tool / API / library that does something useful.\n\n## Key Features\n\n- Feature A\n- Feature B\n\n## What I Learned\n\nReflection on what this project taught you.",
-      "tech": ["Python", "FastAPI", "Docker"],
+      "tech": [
+        "Python",
+        "FastAPI",
+        "Docker"
+      ],
       "githubUrl": "https://github.com/yourusername/project-two",
       "image": "/projects/project-two.png",
       "featured": true,
@@ -28,7 +37,10 @@
       "title": "Project Three",
       "tagline": "A utility or side project worth showing off.",
       "description": "## Overview\n\nProject Three is a smaller project or experiment.",
-      "tech": ["Go", "Redis"],
+      "tech": [
+        "Go",
+        "Redis"
+      ],
       "githubUrl": "https://github.com/yourusername/project-three",
       "image": "/projects/project-three.png",
       "featured": false,
@@ -43,7 +55,18 @@
       "Previously at [Company A] and [Company B], where I worked on [brief description of impact]. I'm currently looking for new opportunities.",
       "Outside of code: [one personal detail — hiking, music, coffee, etc.]."
     ],
-    "skills": ["TypeScript", "React", "Next.js", "Node.js", "Go", "Python", "PostgreSQL", "Redis", "Docker", "AWS"]
+    "skills": [
+      "TypeScript",
+      "React",
+      "Next.js",
+      "Node.js",
+      "Go",
+      "Python",
+      "PostgreSQL",
+      "Redis",
+      "Docker",
+      "AWS"
+    ]
   },
   "contact": {
     "email": "you@example.com",
