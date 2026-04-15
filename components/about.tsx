@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { getSiteContent } from '@/lib/content';
+import AnimateIn from './animate-in';
 
 export default async function About() {
   const { about } = await getSiteContent();
@@ -14,38 +15,48 @@ export default async function About() {
   return (
     <section id="about" className="py-24 px-6 bg-surface">
       <div className="max-w-site mx-auto">
-        <p className="text-accent text-xs font-semibold tracking-widest uppercase mb-3">
-          About
-        </p>
+        <AnimateIn direction="up">
+          <p className="text-accent text-xs font-semibold tracking-widest uppercase mb-3">
+            About
+          </p>
+        </AnimateIn>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div>
-            <h2 className="text-4xl sm:text-5xl font-black tracking-tighter mb-8">
-              Who I Am
-            </h2>
-            <div className="space-y-4 text-muted leading-relaxed">
-              {about.bio.map((para, i) => (
-                <p key={i}>{para}</p>
-              ))}
-            </div>
+            <AnimateIn direction="up" delay={60}>
+              <h2 className="text-4xl sm:text-5xl font-black tracking-tighter mb-8">
+                Who I Am
+              </h2>
+            </AnimateIn>
 
-            <div className="mt-10">
-              <h3 className="text-xs font-semibold tracking-widest uppercase text-muted mb-4">
-                Technologies
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {about.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground hover:border-accent/60 hover:text-accent hover:bg-accent/5 transition-colors duration-200 cursor-default"
-                  >
-                    {skill}
-                  </span>
+            <AnimateIn direction="left" delay={160}>
+              <div className="space-y-4 text-muted leading-relaxed">
+                {about.bio.map((para, i) => (
+                  <p key={i}>{para}</p>
                 ))}
               </div>
-            </div>
+            </AnimateIn>
+
+            <AnimateIn direction="up" delay={260}>
+              <div className="mt-10">
+                <h3 className="text-xs font-semibold tracking-widest uppercase text-muted mb-4">
+                  Technologies
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {about.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground hover:border-accent/60 hover:text-accent hover:bg-accent/5 transition-colors duration-200 cursor-default"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </AnimateIn>
           </div>
 
-          <div className="flex justify-center lg:justify-end">
+          <AnimateIn direction="right" delay={120} className="flex justify-center lg:justify-end">
             <div className="relative">
               <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-accent/20 via-transparent to-transparent blur-xl" />
               <div className="relative w-72 h-72 rounded-3xl border border-border overflow-hidden bg-gradient-to-br from-accent/20 via-surface to-border">
@@ -70,7 +81,7 @@ export default async function About() {
                 <p className="text-xs text-muted mt-0.5">Technologies</p>
               </div>
             </div>
-          </div>
+          </AnimateIn>
         </div>
       </div>
     </section>
