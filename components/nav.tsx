@@ -20,35 +20,35 @@ export default function Nav({ name }: Props) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-background/95 backdrop-blur-md border-b border-border"
+          ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-xl shadow-background/20"
           : "bg-transparent"
       }`}
     >
       <div className="max-w-site mx-auto px-6 h-[72px] flex items-center justify-between">
         <Link
           href="/"
-          className="text-lg font-bold tracking-tight hover:text-accent transition-colors duration-200"
+          className="text-sm font-bold tracking-tight hover:text-accent transition-colors duration-200"
         >
           {name}
         </Link>
-        <nav className="flex items-center gap-8">
+        <nav className="flex items-center gap-1">
           <a
             href="#projects"
-            className="text-sm text-muted hover:text-white transition-colors duration-200"
+            className="px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface rounded-lg transition-all duration-200"
           >
             Work
           </a>
           <a
             href="#about"
-            className="text-sm text-muted hover:text-white transition-colors duration-200"
+            className="px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface rounded-lg transition-all duration-200"
           >
             About
           </a>
           <a
             href="#contact"
-            className="text-sm font-medium text-accent hover:text-accent-hover transition-colors duration-200"
+            className="ml-2 px-4 py-2 text-sm font-semibold text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors duration-200"
           >
             Contact
           </a>

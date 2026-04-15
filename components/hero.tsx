@@ -1,4 +1,5 @@
 import { getSiteContent } from '@/lib/content';
+import { ArrowRight, Mail } from 'lucide-react';
 
 export default function Hero() {
   const { about } = getSiteContent();
@@ -6,34 +7,48 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="min-h-screen flex flex-col justify-center px-6 pt-[72px]"
+      className="relative min-h-screen flex flex-col justify-center px-6 pt-[72px] overflow-hidden hero-grid"
     >
-      <div className="max-w-site mx-auto w-full">
+      {/* Accent glow */}
+      <div className="pointer-events-none absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-accent/5 blur-[120px]" />
+
+      <div className="relative max-w-site mx-auto w-full">
         {about.availableForWork && (
-          <p className="text-accent text-sm font-semibold tracking-widest uppercase mb-4">
+          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-accent/30 bg-accent/10 text-accent text-sm font-medium">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
+            </span>
             Available for work
-          </p>
+          </div>
         )}
-        <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-none mb-6">
+
+        <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6">
           {about.name}.
           <br />
-          <span className="text-muted">Software Engineer.</span>
+          <span className="text-muted">Software</span>
+          <br />
+          <span className="text-muted">Engineer.</span>
         </h1>
-        <p className="text-xl text-muted max-w-xl mb-10 leading-relaxed">
+
+        <p className="text-xl text-muted max-w-lg mb-10 leading-relaxed">
           I build fast, reliable web products — from APIs to polished UIs.
           Currently open to full-time roles and freelance projects.
         </p>
-        <div className="flex items-center gap-4">
+
+        <div className="flex flex-wrap items-center gap-3">
           <a
             href="#projects"
-            className="inline-flex items-center px-6 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors duration-200"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-accent/20 hover:shadow-accent/30 hover:-translate-y-0.5"
           >
             View My Work
+            <ArrowRight size={16} />
           </a>
           <a
             href="#contact"
-            className="inline-flex items-center px-6 py-3 border border-border hover:border-accent text-white font-semibold rounded-lg transition-colors duration-200"
+            className="inline-flex items-center gap-2 px-6 py-3 border border-border hover:border-accent/60 hover:bg-accent/5 text-white font-semibold rounded-lg transition-all duration-200"
           >
+            <Mail size={16} className="text-muted" />
             Contact Me
           </a>
         </div>

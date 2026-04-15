@@ -3,15 +3,22 @@ import { getSiteContent } from '@/lib/content';
 export default function About() {
   const { about } = getSiteContent();
 
+  const initials = about.name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
   return (
     <section id="about" className="py-24 px-6 bg-surface">
       <div className="max-w-site mx-auto">
-        <p className="text-accent text-sm font-semibold tracking-widest uppercase mb-4">
+        <p className="text-accent text-xs font-semibold tracking-widest uppercase mb-3">
           About
         </p>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div>
-            <h2 className="text-4xl sm:text-5xl font-black tracking-tighter mb-6">
+            <h2 className="text-4xl sm:text-5xl font-black tracking-tighter mb-8">
               Who I Am
             </h2>
             <div className="space-y-4 text-muted leading-relaxed">
@@ -19,15 +26,16 @@ export default function About() {
                 <p key={i}>{para}</p>
               ))}
             </div>
-            <div className="mt-8">
-              <h3 className="text-sm font-semibold tracking-widest uppercase text-muted mb-4">
+
+            <div className="mt-10">
+              <h3 className="text-xs font-semibold tracking-widest uppercase text-muted mb-4">
                 Technologies
               </h3>
               <div className="flex flex-wrap gap-2">
                 {about.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="text-sm px-3 py-1.5 rounded-full border border-border text-white hover:border-accent transition-colors duration-200"
+                    className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground hover:border-accent/60 hover:text-accent hover:bg-accent/5 transition-colors duration-200 cursor-default"
                   >
                     {skill}
                   </span>
@@ -35,9 +43,21 @@ export default function About() {
               </div>
             </div>
           </div>
+
           <div className="flex justify-center lg:justify-end">
-            <div className="w-64 h-64 rounded-2xl bg-border border border-border flex items-center justify-center text-muted text-sm">
-              Your Photo
+            <div className="relative">
+              {/* Decorative accent ring */}
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-accent/20 via-transparent to-transparent blur-xl" />
+              <div className="relative w-72 h-72 rounded-3xl bg-gradient-to-br from-accent/20 via-surface to-border border border-border overflow-hidden flex items-center justify-center">
+                <span className="text-5xl font-black text-accent/60 select-none">
+                  {initials}
+                </span>
+              </div>
+              {/* Stats */}
+              <div className="absolute -bottom-5 -right-5 bg-background border border-border rounded-2xl px-4 py-3 shadow-xl">
+                <p className="text-2xl font-black text-foreground leading-none">{about.skills.length}+</p>
+                <p className="text-xs text-muted mt-0.5">Technologies</p>
+              </div>
             </div>
           </div>
         </div>

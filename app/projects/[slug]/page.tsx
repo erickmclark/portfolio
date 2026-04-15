@@ -36,6 +36,7 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <main className="pt-[72px]">
+      {/* Hero image */}
       <div className="relative w-full h-64 sm:h-80 bg-surface overflow-hidden">
         <Image
           src={project.image}
@@ -45,44 +46,64 @@ export default async function ProjectPage({ params }: Props) {
           priority
           sizes="100vw"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
       </div>
-      <div className="max-w-site mx-auto px-6 py-16">
+
+      <div className="max-w-site mx-auto px-6 py-12">
         <Link
           href="/#projects"
-          className="inline-flex items-center gap-2 text-sm text-muted hover:text-white transition-colors duration-200 mb-8"
+          className="inline-flex items-center gap-2 text-sm text-muted hover:text-white transition-colors duration-200 mb-10"
         >
           <ArrowLeft size={14} />
           Back to projects
         </Link>
-        <h1 className="text-4xl sm:text-5xl font-black tracking-tighter mb-4">
-          {project.title}
-        </h1>
-        <p className="text-lg text-muted mb-6">{project.tagline}</p>
-        <div className="flex flex-wrap gap-2 mb-6">
-          {project.tech.map((t) => (
-            <span key={t} className="text-xs font-medium px-3 py-1 rounded-full border border-border text-muted">
-              {t}
-            </span>
-          ))}
-        </div>
-        <div className="flex items-center gap-4 mb-12">
-          {project.githubUrl && (
-            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border hover:border-accent rounded-lg text-sm font-medium transition-colors duration-200">
-              <GitBranch size={16} />
-              View on GitHub
-            </a>
-          )}
-          {project.liveUrl && (
-            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg text-sm font-medium text-white transition-colors duration-200">
-              <ExternalLink size={16} />
-              Live Demo
-            </a>
-          )}
-        </div>
-        <div className="max-w-2xl">
-          <MarkdownRenderer content={project.description} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Main content */}
+          <div className="lg:col-span-2">
+            <h1 className="text-4xl sm:text-5xl font-black tracking-tighter mb-3">
+              {project.title}
+            </h1>
+            <p className="text-lg text-muted mb-8 leading-relaxed">{project.tagline}</p>
+            <MarkdownRenderer content={project.description} />
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Actions */}
+            <div className="bg-surface border border-border rounded-2xl p-5 space-y-3">
+              {project.liveUrl && (
+                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-accent hover:bg-accent-hover rounded-xl text-sm font-semibold text-white transition-colors duration-200">
+                  <ExternalLink size={15} />
+                  Live Demo
+                </a>
+              )}
+              {project.githubUrl && (
+                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-border hover:border-accent/60 rounded-xl text-sm font-medium transition-colors duration-200">
+                  <GitBranch size={15} />
+                  View Source
+                </a>
+              )}
+            </div>
+
+            {/* Tech stack */}
+            {project.tech.length > 0 && (
+              <div className="bg-surface border border-border rounded-2xl p-5">
+                <h3 className="text-xs font-semibold tracking-widest uppercase text-muted mb-3">
+                  Tech Stack
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.tech.map((t) => (
+                    <span key={t} className="text-xs px-2.5 py-1 rounded-lg border border-border text-muted bg-background">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </main>
