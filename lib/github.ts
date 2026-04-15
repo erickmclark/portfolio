@@ -26,7 +26,7 @@ export async function putRepoFile(
   content: SiteContent,
   sha: string,
   message: string
-): Promise<void> {
+): Promise<string> {
   const encoded = Buffer.from(JSON.stringify(content, null, 2)).toString('base64');
   const res = await fetch(
     `${BASE}/repos/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}/contents/${path}`,
@@ -40,6 +40,8 @@ export async function putRepoFile(
     const err = await res.text();
     throw new Error(`GitHub PUT failed: ${res.status} — ${err}`);
   }
+  const data = await res.json() as { content: { sha: string } };
+  return data.content.sha;
 }
 
 export async function putRepoImage(slug: string, imageBase64: string, sha?: string): Promise<string> {

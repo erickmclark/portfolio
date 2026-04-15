@@ -21,8 +21,8 @@ export async function PUT(request: NextRequest) {
   }
   try {
     const { content, sha } = await request.json() as { content: SiteContent; sha: string };
-    await putRepoFile('content/data.json', content, sha, 'content: update via admin panel');
-    return NextResponse.json({ ok: true });
+    const newSha = await putRepoFile('content/data.json', content, sha, 'content: update via admin panel');
+    return NextResponse.json({ ok: true, sha: newSha });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
   }

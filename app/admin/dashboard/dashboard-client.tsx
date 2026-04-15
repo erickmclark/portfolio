@@ -45,6 +45,8 @@ export default function DashboardClient() {
         body: JSON.stringify({ content, sha }),
       });
       if (!res.ok) throw new Error(await res.text());
+      const { sha: newSha } = await res.json() as { sha: string };
+      setSha(newSha);
       setDirty(false);
       setSaved(true);
     } catch (e) {
