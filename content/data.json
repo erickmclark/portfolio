@@ -65,7 +65,9 @@
       "PostgreSQL",
       "Redis",
       "Docker",
-      "AWS"
+      "AWS",
+      "Claude Code",
+      "Artificial Intelligence"
     ]
   },
   "contact": {
