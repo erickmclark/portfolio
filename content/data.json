@@ -3,7 +3,7 @@
     {
       "slug": "project-one",
       "title": "Prepera",
-      "tagline": "The ultimate prep platform for job seekers",
+      "tagline": "A short description of what this project does.",
       "description": "## Overview\n\nProject One is a web application that solves a specific problem. Built with modern tooling and shipped to production.\n\n## Key Features\n\n- Feature A: brief explanation\n- Feature B: brief explanation\n- Feature C: brief explanation\n\n## Challenges\n\nDescribe the interesting technical challenges you solved here.",
       "tech": [
         "Next.js",
@@ -48,8 +48,8 @@
     }
   ],
   "about": {
-    "name": "Erick Clark",
-    "availableForWork": false,
+    "name": "Your Name",
+    "availableForWork": true,
     "bio": [
       "I'm a software engineer with X years of experience building full-stack web applications. I specialize in TypeScript, React, and Node.js — and I care deeply about performance, clean architecture, and developer experience.",
       "Previously at [Company A] and [Company B], where I worked on [brief description of impact]. I'm currently looking for new opportunities.",
@@ -60,17 +60,17 @@
       "React",
       "Next.js",
       "Node.js",
+      "Go",
       "Python",
       "PostgreSQL",
       "Redis",
       "Docker",
-      "AWS",
-      "Tailwind CSS"
+      "AWS"
     ]
   },
   "contact": {
-    "email": "erickmclark1983@gmail.com",
-    "githubUrl": "https://github.com/erickmclark",
-    "linkedinUrl": "https://linkedin.com/in/erickmclark1983"
+    "email": "erickmclark@hotmail.com",
+    "githubUrl": "https://github.com/yourusername",
+    "linkedinUrl": "https://linkedin.com/in/yourhandle"
   }
 }
