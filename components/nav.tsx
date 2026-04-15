@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 type Props = { name: string };
 
 export default function Nav({ name }: Props) {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+
+  if (pathname.startsWith('/admin')) return null;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
