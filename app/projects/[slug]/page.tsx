@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { ArrowLeft, GitBranch, ExternalLink } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getSiteContent } from "@/lib/content";
 import MarkdownRenderer from "@/components/markdown-renderer";
+import ProjectImage from "@/components/project-image";
 
 export const dynamic = 'force-dynamic';
 
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: project.title,
       description: project.tagline,
-      images: [{ url: project.image }],
+      images: project.image ? [{ url: project.image }] : undefined,
     },
   };
 }
@@ -36,10 +36,9 @@ export default async function ProjectPage({ params }: Props) {
     <main className="pt-[72px]">
       {/* Hero image */}
       <div className="relative w-full h-64 sm:h-80 bg-surface overflow-hidden">
-        <Image
+        <ProjectImage
           src={project.image}
           alt={project.title}
-          fill
           className="object-cover"
           priority
           sizes="100vw"

@@ -76,7 +76,7 @@ export function validateSiteContent(input: unknown): ValidationResult {
       if (typeof p.tagline !== 'string') errors.push(`${where}.tagline must be a string.`);
       if (typeof p.description !== 'string') errors.push(`${where}.description must be a string.`);
       if (!isStringArray(p.tech)) errors.push(`${where}.tech must be an array of strings.`);
-      if (typeof p.image !== 'string') errors.push(`${where}.image must be a string.`);
+      if (p.image !== undefined && typeof p.image !== 'string') errors.push(`${where}.image must be a string when present.`);
       if (typeof p.featured !== 'boolean') errors.push(`${where}.featured must be a boolean.`);
       if (typeof p.order !== 'number') errors.push(`${where}.order must be a number.`);
       if (p.githubUrl !== undefined && typeof p.githubUrl !== 'string') errors.push(`${where}.githubUrl must be a string when present.`);

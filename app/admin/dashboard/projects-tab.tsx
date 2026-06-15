@@ -442,7 +442,6 @@ export default function ProjectsTab({
       tagline: '',
       description: '',
       tech: [],
-      image: `/projects/${slug}.png`,
       featured: false,
       order: projects.length,
     };

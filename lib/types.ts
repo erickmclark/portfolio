@@ -7,7 +7,7 @@ export type Project = {
   tech: string[];
   githubUrl?: string;
   liveUrl?: string;
-  image: string;
+  image?: string;          // Optional — falls back to a placeholder when absent
   featured: boolean;
   order: number;
 };

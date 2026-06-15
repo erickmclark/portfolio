@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { GitBranch, ExternalLink, ArrowUpRight } from "lucide-react";
 import type { Project } from "@/lib/types";
+import ProjectImage from "@/components/project-image";
 
 type Props = {
   project: Project;
@@ -13,10 +13,9 @@ export default function ProjectCard({ project }: Props) {
       {/* Image */}
       <Link href={`/projects/${project.slug}`} className="block">
         <div className="relative w-full aspect-video bg-border overflow-hidden">
-          <Image
+          <ProjectImage
             src={project.image}
             alt={project.title}
-            fill
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />

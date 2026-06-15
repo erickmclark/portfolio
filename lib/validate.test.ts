@@ -103,7 +103,15 @@ describe("validateSiteContent", () => {
 
   it("rejects a project missing a required field", () => {
     const c = validContent();
-    delete (c.projects[0] as unknown as Record<string, unknown>).image;
+    delete (c.projects[0] as unknown as Record<string, unknown>).tagline;
+    const result = validateSiteContent(c);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toMatch(/tagline/i);
+  });
+
+  it("rejects a project whose image is present but not a string", () => {
+    const c = validContent();
+    (c.projects[0] as unknown as Record<string, unknown>).image = 5;
     const result = validateSiteContent(c);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.errors.join(" ")).toMatch(/image/i);
@@ -121,6 +129,7 @@ describe("validateSiteContent", () => {
     const c = validContent();
     delete c.projects[0].githubUrl;
     delete c.projects[0].liveUrl;
+    delete c.projects[0].image;
     delete c.about.photo;
     const result = validateSiteContent(c);
     expect(result.ok).toBe(true);
