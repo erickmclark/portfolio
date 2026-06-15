@@ -1,6 +1,7 @@
 {
   "projects": [
     {
+      "id": "prj-prepera",
       "slug": "project-one",
       "title": "Prepera",
       "tagline": "A short description of what this project does.",
@@ -16,35 +17,6 @@
       "image": "/projects/project-one.png",
       "featured": true,
       "order": 0
-    },
-    {
-      "slug": "project-two",
-      "title": "Project Two",
-      "tagline": "Another project with a memorable one-liner.",
-      "description": "## Overview\n\nProject Two is a CLI tool / API / library that does something useful.\n\n## Key Features\n\n- Feature A\n- Feature B\n\n## What I Learned\n\nReflection on what this project taught you.",
-      "tech": [
-        "Python",
-        "FastAPI",
-        "Docker"
-      ],
-      "githubUrl": "https://github.com/yourusername/project-two",
-      "image": "/projects/project-two.png",
-      "featured": true,
-      "order": 1
-    },
-    {
-      "slug": "project-three",
-      "title": "Project Three",
-      "tagline": "A utility or side project worth showing off.",
-      "description": "## Overview\n\nProject Three is a smaller project or experiment.",
-      "tech": [
-        "Go",
-        "Redis"
-      ],
-      "githubUrl": "https://github.com/yourusername/project-three",
-      "image": "/projects/project-three.png",
-      "featured": false,
-      "order": 2
     }
   ],
   "about": {
@@ -75,7 +47,7 @@
   },
   "contact": {
     "email": "erickmclark@hotmail.com",
-    "githubUrl": "https://github.com/yourusername",
-    "linkedinUrl": "https://linkedin.com/in/yourhandle"
+    "githubUrl": "https://github.com/erickmclark",
+    "linkedinUrl": "https://linkedin.com/in/erickmclark"
   }
 }

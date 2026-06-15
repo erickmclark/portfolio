@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import type { SiteContent } from '@/lib/types';
+import { validateSiteContent } from '@/lib/validate';
 import AboutTab from './about-tab';
 import ContactTab from './contact-tab';
 import ProjectsTab from './projects-tab';
@@ -20,7 +22,13 @@ export default function DashboardClient() {
     fetch('/api/admin/content')
       .then((r) => r.json())
       .then(({ content }: { content: SiteContent }) => {
-        setContent(content);
+        // Backfill stable ids for any legacy project saved before the id field existed.
+        setContent({
+          ...content,
+          projects: content.projects.map((p) =>
+            p.id ? p : { ...p, id: crypto.randomUUID() }
+          ),
+        });
       })
       .catch(() => setSaveError('Failed to load content.'));
   }, []);
@@ -34,6 +42,11 @@ export default function DashboardClient() {
 
   async function save() {
     if (!content) return;
+    const check = validateSiteContent(content);
+    if (!check.ok) {
+      setSaveError(check.errors[0]);
+      return;
+    }
     setSaving(true);
     setSaveError('');
     try {
@@ -89,9 +102,9 @@ export default function DashboardClient() {
               </button>
             ))}
           </div>
-          <a href="/" className="ml-auto text-xs text-muted hover:text-white transition-colors">
+          <Link href="/" className="ml-auto text-xs text-muted hover:text-white transition-colors">
             ← View site
-          </a>
+          </Link>
         </div>
       </div>
 

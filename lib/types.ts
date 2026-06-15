@@ -1,4 +1,5 @@
 export type Project = {
+  id: string;          // Stable identity — never changes, unlike slug
   slug: string;
   title: string;
   tagline: string;

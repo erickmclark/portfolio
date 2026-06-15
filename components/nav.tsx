@@ -10,13 +10,13 @@ export default function Nav({ name }: Props) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
-  if (pathname.startsWith('/admin')) return null;
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  if (pathname.startsWith('/admin')) return null;
 
   return (
     <header

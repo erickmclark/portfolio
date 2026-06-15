@@ -22,6 +22,10 @@ export default function AnimateIn({
     const el = ref.current;
     if (!el) return;
 
+    // Users with prefers-reduced-motion: the global CSS rule in globals.css
+    // collapses the transition to ~0ms, so content appears instantly (no slide)
+    // once it scrolls into view.
+
     // Fire immediately if already in viewport (e.g. hero on page load)
     const obs = new IntersectionObserver(
       ([entry]) => {

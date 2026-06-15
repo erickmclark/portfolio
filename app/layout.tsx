@@ -15,6 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = `${about.name} — ${about.title}`;
   const description = about.heroTagline;
   return {
+    metadataBase: new URL("https://clarkport.netlify.app"),
     title: {
       default: title,
       template: `%s | ${about.name}`,
@@ -40,10 +41,25 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { about } = await getSiteContent();
+  const { about, contact } = await getSiteContent();
+
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: about.name,
+    jobTitle: about.title,
+    description: about.heroTagline,
+    url: "https://clarkport.netlify.app",
+    sameAs: [contact.githubUrl, contact.linkedinUrl].filter(Boolean),
+  };
+
   return (
     <html lang="en" className={geist.variable}>
       <body className="bg-background text-foreground antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
         <Nav name={about.name} />
         {children}
       </body>

@@ -72,20 +72,24 @@ function SortableProject({
   project,
   onUpdate,
   onDelete,
+  slugError,
 }: {
   project: Project;
   onUpdate: (updated: Project) => void;
   onDelete: () => void;
+  slugError?: string;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
-    id: project.slug,
+    id: project.id,
   });
   const [expanded, setExpanded] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [localPreview, setLocalPreview] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState(false);
+  const [movingImage, setMovingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const slugAtFocus = useRef<string | null>(null);
 
   const style = { transform: CSS.Transform.toString(transform), transition };
 
@@ -136,6 +140,31 @@ function SortableProject({
     reader.readAsDataURL(file);
   }
 
+  // When the slug changes, move the project image so its repo filename keeps
+  // following the slug — otherwise the old file is orphaned and re-uploads pile up.
+  async function handleSlugBlur() {
+    const from = slugAtFocus.current;
+    const to = project.slug.trim();
+    slugAtFocus.current = null;
+    if (!from || !to || from === to) return;
+    // Only move images we own by convention (named after the previous slug).
+    if (project.image !== `/projects/${from}.png`) return;
+    setMovingImage(true);
+    try {
+      const res = await fetch('/api/admin/image', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fromSlug: from, toSlug: to }),
+      });
+      if (res.ok) {
+        const { imagePath } = (await res.json()) as { imagePath: string };
+        set('image', imagePath);
+      }
+    } finally {
+      setMovingImage(false);
+    }
+  }
+
   return (
     <div ref={setNodeRef} style={style} className="bg-surface border border-border rounded-xl overflow-hidden">
       {/* Row header */}
@@ -152,6 +181,11 @@ function SortableProject({
         <p className="flex-1 font-medium truncate min-w-0">
           {project.title || <span className="text-muted italic">Untitled Project</span>}
         </p>
+        {slugError && (
+          <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-red-400/20 text-red-400 border border-red-400/30">
+            Slug issue
+          </span>
+        )}
         {project.featured && (
           <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/30">
             Featured
@@ -205,9 +239,15 @@ function SortableProject({
               <label className="text-xs text-muted uppercase tracking-widest mb-1 block">Slug (URL path)</label>
               <input
                 value={project.slug}
+                onFocus={() => { slugAtFocus.current = project.slug; }}
+                onBlur={handleSlugBlur}
                 onChange={(e) => set('slug', e.target.value.toLowerCase().replace(/\s+/g, '-'))}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors font-mono"
+                className={`w-full px-3 py-2 bg-background border rounded-lg text-sm focus:outline-none transition-colors font-mono ${
+                  slugError ? 'border-red-400 focus:border-red-400' : 'border-border focus:border-accent'
+                }`}
               />
+              {slugError && <p className="text-xs text-red-400 mt-1">{slugError}</p>}
+              {movingImage && <p className="text-xs text-muted mt-1 animate-pulse">Moving image to match new slug…</p>}
             </div>
           </div>
 
@@ -370,17 +410,33 @@ export default function ProjectsTab({
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const oldIndex = projects.findIndex((p) => p.slug === active.id);
-      const newIndex = projects.findIndex((p) => p.slug === over.id);
+      const oldIndex = projects.findIndex((p) => p.id === active.id);
+      const newIndex = projects.findIndex((p) => p.id === over.id);
       onChange(
         arrayMove(projects, oldIndex, newIndex).map((p, i) => ({ ...p, order: i }))
       );
     }
   }
 
+  // ── Slug validation: flag empty slugs and any slug used more than once ──────
+  const slugCounts = projects.reduce<Record<string, number>>((acc, p) => {
+    const key = p.slug.trim();
+    acc[key] = (acc[key] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  function slugErrorFor(project: Project): string | undefined {
+    if (project.slug.trim() === '') return 'Slug is required.';
+    if (slugCounts[project.slug.trim()] > 1) return 'Duplicate slug — each project needs a unique URL path.';
+    return undefined;
+  }
+
+  const hasSlugErrors = projects.some((p) => slugErrorFor(p));
+
   function addProject() {
     const slug = `project-${Date.now()}`;
     const newProject: Project = {
+      id: crypto.randomUUID(),
       slug,
       title: '',
       tagline: '',
@@ -402,24 +458,31 @@ export default function ProjectsTab({
         </p>
       </div>
 
+      {hasSlugErrors && (
+        <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-400">
+          Some projects have a missing or duplicate slug. Saving is blocked until each project has a unique URL path.
+        </div>
+      )}
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={projects.map((p) => p.slug)}
+          items={projects.map((p) => p.id)}
           strategy={verticalListSortingStrategy}
         >
           <div className="space-y-3">
             {projects.map((project) => (
               <SortableProject
-                key={project.slug}
+                key={project.id}
                 project={project}
+                slugError={slugErrorFor(project)}
                 onUpdate={(updated) =>
-                  onChange(projects.map((p) => (p.slug === updated.slug ? updated : p)))
+                  onChange(projects.map((p) => (p.id === updated.id ? updated : p)))
                 }
-                onDelete={() => onChange(projects.filter((p) => p.slug !== project.slug))}
+                onDelete={() => onChange(projects.filter((p) => p.id !== project.id))}
               />
             ))}
           </div>
