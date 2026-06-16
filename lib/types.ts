@@ -18,6 +18,7 @@ export type AboutContent = {
   heroTagline: string;     // Subtitle paragraph shown in hero
   availableForWork: boolean;
   photo?: string;          // Path to profile photo, e.g. /profile.png
+  resumeUrl?: string;      // Path to a downloadable résumé PDF, e.g. /resume.pdf
   bio: string[];           // Array of paragraph strings
   skills: string[];
 };

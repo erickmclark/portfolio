@@ -1,5 +1,5 @@
 import { getSiteContent } from '@/lib/content';
-import { ArrowRight, Mail } from 'lucide-react';
+import { ArrowRight, Mail, FileText } from 'lucide-react';
 import AnimateIn from './animate-in';
 
 export default async function Hero() {
@@ -55,6 +55,17 @@ export default async function Hero() {
               <Mail size={16} className="text-muted" />
               Contact Me
             </a>
+            {about.resumeUrl && (
+              <a
+                href={about.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-border hover:border-accent/60 hover:bg-accent/5 text-white font-semibold rounded-lg transition-all duration-200"
+              >
+                <FileText size={16} className="text-muted" />
+                Resume
+              </a>
+            )}
           </div>
         </AnimateIn>
       </div>

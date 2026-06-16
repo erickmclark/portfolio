@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/nav";
+import Footer from "@/components/footer";
 import { getSiteContent } from "@/lib/content";
 
 const geist = Geist({
@@ -56,12 +57,16 @@ export default async function RootLayout({
   return (
     <html lang="en" className={geist.variable}>
       <body className="bg-background text-foreground antialiased">
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
         <Nav name={about.name} />
         {children}
+        <Footer />
       </body>
     </html>
   );

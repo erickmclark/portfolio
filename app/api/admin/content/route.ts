@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { isAuthenticated } from '@/lib/auth';
-import { getSiteContent } from '@/lib/content';
+import { getSiteContentUncached } from '@/lib/content';
 import { validateSiteContent } from '@/lib/validate';
 
 async function getStore() {
@@ -13,7 +14,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {
-    const content = await getSiteContent();
+    const content = await getSiteContentUncached();
     return NextResponse.json({ content });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
@@ -35,6 +36,11 @@ export async function PUT(request: NextRequest) {
     }
     const store = await getStore();
     await store.set('data', JSON.stringify(result.content));
+    // Bust the cached public reads so the new content goes live immediately.
+    // revalidateTag clears the unstable_cache data entry (and pages that read
+    // it); revalidatePath refreshes the rendered route tree as a backstop.
+    revalidateTag('site-content', 'max');
+    revalidatePath('/', 'layout');
     return NextResponse.json({ ok: true });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

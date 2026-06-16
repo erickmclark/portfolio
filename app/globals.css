@@ -39,6 +39,26 @@ section[id] {
   border-radius: 2px;
 }
 
+/* Skip-to-content link — off-screen until focused via keyboard */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  margin: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transform: translateY(-150%);
+  transition: transform 0.15s ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 /* Honour the user's reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
   html {

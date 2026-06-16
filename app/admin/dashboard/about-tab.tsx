@@ -120,6 +120,22 @@ export default function AboutTab({
         <p className="text-xs text-muted mt-1">Shown below your name and title on the homepage.</p>
       </div>
 
+      {/* ── Résumé ────────────────────────────────────────────────────── */}
+      <div>
+        <label className="text-xs text-muted uppercase tracking-widest mb-1 block">
+          Résumé URL <span className="text-muted normal-case tracking-normal">(optional)</span>
+        </label>
+        <input
+          value={about.resumeUrl ?? ''}
+          onChange={(e) => update('resumeUrl', e.target.value)}
+          placeholder="/resume.pdf"
+          className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors"
+        />
+        <p className="text-xs text-muted mt-1">
+          Place the PDF in the <code>/public</code> folder (e.g. <code>/resume.pdf</code>) and enter its path here. Shows a Resume button in the hero — leave blank to hide.
+        </p>
+      </div>
+
       {/* ── Profile photo ─────────────────────────────────────────────── */}
       <div>
         <label className="text-xs text-muted uppercase tracking-widest mb-1 block">Profile Photo</label>
