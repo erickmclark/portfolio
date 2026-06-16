@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { unstable_cache } from 'next/cache';
 import type { SiteContent } from './types';
 
 function readFile(): SiteContent {
@@ -9,11 +8,11 @@ function readFile(): SiteContent {
 }
 
 /**
- * Reads the live site content straight from Netlify Blobs (or the local
- * data.json fallback). Uncached — use this where freshness matters, e.g. the
- * admin editor reading content to edit, and in tests.
+ * Reads live site content from Netlify Blobs (or the local data.json fallback).
+ * Always fresh: public pages use `export const dynamic = 'force-dynamic'`, so
+ * admin saves appear on the site immediately with no cache to bust.
  */
-export async function getSiteContentUncached(): Promise<SiteContent> {
+export async function getSiteContent(): Promise<SiteContent> {
   try {
     const { getStore } = await import('@netlify/blobs');
     const store = getStore('site-content');
@@ -24,16 +23,3 @@ export async function getSiteContentUncached(): Promise<SiteContent> {
   }
   return readFile();
 }
-
-/**
- * Cached across requests so ordinary page views don't hit Netlify Blobs on
- * every render. The admin save route calls `revalidateTag('site-content')`,
- * so published edits appear immediately. The 60s `revalidate` is a safety net
- * that re-reads Blobs after a code redeploy (whose prerender would otherwise
- * be pinned to the committed data.json seed). Use this in all public pages.
- */
-export const getSiteContent = unstable_cache(
-  getSiteContentUncached,
-  ['site-content'],
-  { tags: ['site-content'], revalidate: 60 },
-);

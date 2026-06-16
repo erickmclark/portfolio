@@ -6,16 +6,11 @@ import { getSiteContent } from "@/lib/content";
 import MarkdownRenderer from "@/components/markdown-renderer";
 import ProjectImage from "@/components/project-image";
 
+export const dynamic = 'force-dynamic';
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
-
-// Prerender a static page + OG image for each known project. New slugs added
-// later via the admin render on-demand and are cached thereafter.
-export async function generateStaticParams() {
-  const { projects } = await getSiteContent();
-  return projects.map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

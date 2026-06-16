@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getSiteContentUncached as getSiteContent } from "./content";
+import { getSiteContent } from "./content";
 
 // Netlify Blobs is unavailable in the test environment, so getSiteContent()
 // should transparently fall back to reading content/data.json.

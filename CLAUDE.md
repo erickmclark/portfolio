@@ -66,11 +66,9 @@ GITHUB_REPO=portfolio
 - TypeScript check: `npx tsc --noEmit`
 
 ## Pages and rendering
-- Public pages are **cached**, not `force-dynamic`. `lib/content.ts` exports two loaders:
-  - `getSiteContent()` — wrapped in `unstable_cache` with tag `site-content`; used by all public pages/components so reads don't hit Netlify Blobs on every request.
-  - `getSiteContentUncached()` — raw read; used by the admin content `GET` (always edit fresh data) and in tests.
-- The admin save (`PUT /api/admin/content`) calls `revalidateTag('site-content')`, so published edits go live immediately even though pages are cached.
-- `app/projects/[slug]/page.tsx` uses `generateStaticParams()` to prerender a page + OG image per project; unknown slugs render on-demand and cache.
+- `app/page.tsx` — `export const dynamic = 'force-dynamic'` (reads Blobs at request time, so admin saves are instant).
+- `app/projects/[slug]/page.tsx` — `export const dynamic = 'force-dynamic'`, no `generateStaticParams` (dynamic because the project list can change from admin).
+- `lib/content.ts` → `getSiteContent()` reads Blobs fresh every call (no caching). Tried `unstable_cache` + `revalidateTag` once, but on-demand purge wasn't instant on Netlify, so we kept `force-dynamic` for instant edits.
 - All public-facing components (`hero`, `projects`, `about`, `contact`, `footer`) are **async server components**.
 - SEO/files: `app/sitemap.ts`, `app/robots.ts`, `app/opengraph-image.tsx` (home card), `app/projects/[slug]/opengraph-image.tsx` (per-project card).
 
