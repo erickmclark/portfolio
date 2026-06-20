@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAuthenticated } from '@/lib/auth';
-import { getSiteContent } from '@/lib/content';
+import { getSiteContent, getRedis } from '@/lib/content';
 import { validateSiteContent } from '@/lib/validate';
-
-async function getStore() {
-  const { getStore: netlifyGetStore } = await import('@netlify/blobs');
-  return netlifyGetStore('site-content');
-}
 
 export async function GET() {
   if (!(await isAuthenticated())) {
@@ -33,8 +28,11 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       );
     }
-    const store = await getStore();
-    await store.set('data', JSON.stringify(result.content));
+    const redis = getRedis();
+    if (!redis) {
+      return NextResponse.json({ error: 'Content store (KV) is not configured' }, { status: 500 });
+    }
+    await redis.set('data', JSON.stringify(result.content));
     return NextResponse.json({ ok: true });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

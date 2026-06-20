@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getSiteContent } from "./content";
 
-// Netlify Blobs is unavailable in the test environment, so getSiteContent()
+// The KV store is unavailable in the test environment, so getSiteContent()
 // should transparently fall back to reading content/data.json.
 describe("getSiteContent (file fallback)", () => {
   it("returns the parsed site content shape", async () => {

@@ -14,8 +14,8 @@ as the sole content editor.
   content. Per-project detail pages at `/projects/[slug]`.
 - **Admin dashboard** (`/admin`): password-protected editor for projects, about, and contact
   content, with image upload and drag-to-reorder for projects.
-- **Instant content updates**: edits persist to Netlify Blobs at runtime — no rebuild, no build
-  minutes consumed. Code changes are the only thing that triggers a Netlify deploy.
+- **Instant content updates**: edits persist to a runtime KV store (Upstash Redis) — no rebuild,
+  no build minutes consumed. Code changes (and image uploads) are the only thing that triggers a deploy.
 - **Quality bar**: accessible (visible focus, reduced-motion support), responsive, SEO-ready
   (metadata, OG image, structured data), and fast.
 

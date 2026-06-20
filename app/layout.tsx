@@ -4,6 +4,7 @@ import "./globals.css";
 import Nav from "@/components/nav";
 import Footer from "@/components/footer";
 import { getSiteContent } from "@/lib/content";
+import { SITE_URL } from "@/lib/site";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -16,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = `${about.name} — ${about.title}`;
   const description = about.heroTagline;
   return {
-    metadataBase: new URL("https://clarkport.netlify.app"),
+    metadataBase: new URL(SITE_URL),
     title: {
       default: title,
       template: `%s | ${about.name}`,
@@ -50,7 +51,7 @@ export default async function RootLayout({
     name: about.name,
     jobTitle: about.title,
     description: about.heroTagline,
-    url: "https://clarkport.netlify.app",
+    url: SITE_URL,
     sameAs: [contact.githubUrl, contact.linkedinUrl].filter(Boolean),
   };
 

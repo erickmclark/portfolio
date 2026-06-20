@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { getSiteContent } from '@/lib/content';
+import { SITE_URL } from '@/lib/site';
 
-const BASE = 'https://clarkport.netlify.app';
+const BASE = SITE_URL;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { projects } = await getSiteContent();

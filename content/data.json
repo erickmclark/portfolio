@@ -2,53 +2,133 @@
   "projects": [
     {
       "id": "prj-prepera",
-      "slug": "project-one",
+      "slug": "prepera",
       "title": "Prepera",
-      "tagline": "A short description of what this project does.",
-      "description": "## Overview\n\nProject One is a web application that solves a specific problem. Built with modern tooling and shipped to production.\n\n## Key Features\n\n- Feature A: brief explanation\n- Feature B: brief explanation\n- Feature C: brief explanation\n\n## Challenges\n\nDescribe the interesting technical challenges you solved here.",
+      "tagline": "AI-powered job-search platform — resume optimization, interview coaching, and salary negotiation, from saved job to signed offer.",
+      "description": "## Overview\n\nPrepera is an AI-powered job-search platform that guides job seekers from their first saved listing all the way to a signed offer — combining job discovery, application tracking, and AI coaching in one product.\n\n## Key Features\n\n- **Job discovery & AI matching** — search listings aggregated from major job boards, matched to your profile and experience.\n- **Visual job tracker** — a drag-and-drop Kanban pipeline (Saved → Applied → Screening → Interview → Offer) with email sync to auto-capture recruiter communication.\n- **AI resume optimization** — tailor your resume to each role and get past applicant tracking systems.\n- **Interview coaching & salary negotiation** — practice tools and guidance to walk in confident and maximize your offer.\n\n## Stack\n\nNext.js, TypeScript, Supabase/Postgres, Tailwind CSS, Stripe, and LLM integrations.",
       "tech": [
         "Next.js",
         "TypeScript",
-        "Postgres",
-        "Tailwind CSS"
+        "Supabase",
+        "PostgreSQL",
+        "Tailwind CSS",
+        "AI / LLMs"
       ],
-      "githubUrl": "https://github.com/erickmclark/prepera",
       "liveUrl": "https://preperahq.com/",
-      "image": "/projects/project-one.png",
+      "image": "/projects/prepera.png",
       "featured": true,
       "order": 0
+    },
+    {
+      "id": "prj-authmatch",
+      "slug": "authmatch",
+      "title": "AuthMatch AI",
+      "tagline": "HIPAA-regulated AI co-pilot that matches prior-authorization cases to Medicare coverage policy and surfaces the met / not-met criteria.",
+      "description": "## Overview\n\nAuthMatch AI is a HIPAA-regulated co-pilot for utilization-management reviewers who process insurance prior authorizations. It matches each case (HCPCS/CPT code + member state) to the controlling Medicare coverage policy (NCD/LCD, MAC-jurisdiction-aware) and extracts the cited *Met / Not Met / Indeterminate* criteria from clinical documentation — with a licensed human reviewer signing off on every case.\n\n## Built for compliance\n\nTargets CMS-0057-F turnaround requirements (7-day standard, 72-hour expedited) taking effect January 2026.\n\n## Architecture\n\n- **web** — Next.js reviewer UI; a thin proxy that handles no PHI and makes no LLM calls.\n- **api** — FastAPI service that does all PHI processing, the LLM gateway, OCR, guideline matching, and criteria extraction.\n- **supabase** — Postgres schema, row-level-security policies, and an audit-log trigger on every access.\n\n## Stack\n\nNext.js, FastAPI / Python, Supabase/Postgres, and LLMs — designed around strict PHI isolation and auditability.",
+      "tech": [
+        "Next.js",
+        "FastAPI",
+        "Python",
+        "Supabase",
+        "PostgreSQL",
+        "AI / LLMs"
+      ],
+      "liveUrl": "https://authmatch-ai-web.vercel.app",
+      "image": "/projects/authmatch.png",
+      "featured": true,
+      "order": 1
+    },
+    {
+      "id": "prj-dupars-bbq",
+      "slug": "dupars-bbq",
+      "title": "Dupar's BBQ",
+      "tagline": "Full-stack catering site — mobile menu, multi-step quote builder with Stripe-deposit checkout, and an owner admin dashboard.",
+      "description": "## Overview\n\nA full-stack catering website for Dupar's BBQ, a Houston-area BBQ operation. It replaces a static PDF menu with a mobile-friendly storefront and turns phone-and-voicemail ordering into a self-serve quote-and-deposit flow — while giving the owner a dashboard to manage it all.\n\n## Key Features\n\n- **Browsable menu** with photos and current pricing, built for mobile.\n- **Multi-step quote builder** so customers can request event catering in minutes.\n- **Stripe-deposit checkout** to lock in bookings.\n- **Owner admin dashboard** to manage menu, quotes, and orders.\n- **Automated notifications** by email (Resend) and SMS (Twilio).\n\n## Stack\n\nNext.js, TypeScript, Supabase, Stripe, Resend, and Twilio.",
+      "tech": [
+        "Next.js",
+        "TypeScript",
+        "Supabase",
+        "Stripe",
+        "Twilio",
+        "Resend"
+      ],
+      "liveUrl": "https://dupars-bbq-website.vercel.app",
+      "image": "/projects/dupars-bbq.png",
+      "featured": false,
+      "order": 3
+    },
+    {
+      "id": "prj-angie-cares",
+      "slug": "angie-cares",
+      "title": "Angie Cares",
+      "tagline": "Marketing and intake site for a special-education parent-advocacy practice — clear services, consultation scheduling, and an online intake flow for families.",
+      "description": "## Overview\n\nA marketing and intake website for Angie Cares, a special-education parent-advocacy practice. It helps parents and caregivers of children with disabilities, learning differences, and behavioral or mental-health concerns understand the available services, see what an engagement looks like, and get started — through consultation scheduling and an online intake flow.\n\n## Key Features\n\n- **Clear services overview** — parent advocacy, IEP/504 guidance, special-education support, and resource navigation, so families know what to expect.\n- **Consultation scheduling & intake form** — a streamlined path from first visit to a booked conversation.\n- **Training & workshop booking** plus a parent-resources section.\n- **Email notifications** on new inquiries.\n\n## Stack\n\nNext.js, TypeScript, Supabase, Resend, and Tailwind CSS.",
+      "tech": [
+        "Next.js",
+        "TypeScript",
+        "Supabase",
+        "Resend",
+        "Tailwind CSS"
+      ],
+      "liveUrl": "https://angie-cares-website.vercel.app",
+      "image": "/projects/angie-cares.png",
+      "featured": false,
+      "order": 4
+    },
+    {
+      "id": "prj-gen4me",
+      "slug": "gen4me",
+      "title": "Gen4Me",
+      "tagline": "Turns a one-line idea into a tailored CLAUDE.md, a research-backed PRD, and a drift audit — grounded in your real stack.",
+      "description": "## Overview\n\nGen4Me generates the documentation AI coding agents actually follow. From a one-line description of your project, it produces a tailored CLAUDE.md, a research-backed PRD, a build PLAN, and per-directory rules — then audits an existing CLAUDE.md for drift as your code moves.\n\n## How it works\n\n1. **Describe** — one line about your project.\n2. **Research** — live web research fills in the gaps about your stack.\n3. **Enrich** — confirm assumptions, not boilerplate.\n4. **Generate** — CLAUDE.md, PRD, PLAN, and per-directory rules.\n5. **Audit** — catch drift between your docs and your code over time.\n\n## Stack\n\nNext.js, TypeScript, Supabase/Postgres, and LLMs — with live web research grounding every document in your real stack.",
+      "tech": [
+        "Next.js",
+        "TypeScript",
+        "Supabase",
+        "PostgreSQL",
+        "AI / LLMs"
+      ],
+      "liveUrl": "https://gen4me.com/",
+      "image": "/projects/gen4me.png",
+      "featured": true,
+      "order": 2
     }
   ],
   "about": {
     "name": "Erick Clark",
-    "title": "Software Engineer",
-    "heroTagline": "I build fast, reliable web products — from APIs to polished UIs. Currently open to full-time roles and freelance projects.",
+    "title": "Full-Stack Engineer",
+    "heroTagline": "I design and ship production AI-powered web apps end-to-end — from Python/FastAPI and Postgres backends to polished Next.js interfaces. Open to full-time roles and freelance projects.",
     "availableForWork": true,
     "photo": "",
     "resumeUrl": "",
     "bio": [
-      "I'm a software engineer with X years of experience building full-stack web applications. I specialize in TypeScript, React, and Node.js — and I care deeply about performance, clean architecture, and developer experience.",
-      "Previously at [Company A] and [Company B], where I worked on [brief description of impact]. I'm currently looking for new opportunities.",
-      "Outside of code: [one personal detail — hiking, music, coffee, etc.]."
+      "I'm a full-stack software engineer who builds and ships AI-powered products end to end — taking ideas from a blank repo to live SaaS, owning the database, backend, AI integration, and front-end.",
+      "My work spans regulated healthcare AI (AuthMatch, a HIPAA prior-authorization co-pilot), consumer AI (Prepera, an AI job-search platform), and full-stack commerce (a catering site with Stripe checkout and an owner dashboard). I work primarily in TypeScript and Python — Next.js, FastAPI, Supabase/Postgres, Stripe, and LLMs like Claude and GPT.",
+      "Through my studio, NightPivot, I also design AI automation workflows for growing businesses. I'm open to full-time engineering roles and freelance projects — the fastest way to reach me is email."
     ],
     "skills": [
       "TypeScript",
+      "JavaScript",
+      "Python",
       "React",
       "Next.js",
       "Node.js",
-      "Go",
-      "Python",
+      "FastAPI",
+      "Supabase",
       "PostgreSQL",
-      "Redis",
-      "Docker",
-      "AWS",
-      "Claude Code",
-      "Artificial Intelligence"
+      "Stripe",
+      "Tailwind CSS",
+      "React Native (Expo)",
+      "Vercel",
+      "Claude (Anthropic)",
+      "OpenAI",
+      "n8n",
+      "AI / LLM apps"
     ]
   },
   "contact": {
     "email": "erickmclark@hotmail.com",
     "githubUrl": "https://github.com/erickmclark",
-    "linkedinUrl": "https://linkedin.com/in/erickmclark"
+    "linkedinUrl": "https://www.linkedin.com/in/erick-clark-66988b85/"
   }
 }
