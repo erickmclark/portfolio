@@ -29,8 +29,19 @@ export type ContactContent = {
   linkedinUrl: string;
 };
 
+export type ExperienceItem = {
+  id: string;          // Stable identity, like Project.id
+  role: string;        // e.g. "Full-Stack Engineer"
+  company: string;     // e.g. "NightPivot"
+  start: string;       // e.g. "2023"
+  end: string;         // e.g. "2025" — empty string means "Present"
+  description: string; // Short paragraph about the role
+  order: number;
+};
+
 export type SiteContent = {
   projects: Project[];
   about: AboutContent;
   contact: ContactContent;
+  experience: ExperienceItem[];
 };

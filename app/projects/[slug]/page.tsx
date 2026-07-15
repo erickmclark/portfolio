@@ -19,6 +19,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: project.title,
     description: project.tagline,
+    alternates: {
+      canonical: `/projects/${project.slug}`,
+    },
     openGraph: {
       title: project.title,
       description: project.tagline,
@@ -86,9 +89,9 @@ export default async function ProjectPage({ params }: Props) {
 
             {project.tech.length > 0 && (
               <div className="bg-surface border border-border rounded-2xl p-5">
-                <h3 className="text-xs font-semibold tracking-widest uppercase text-muted mb-3">
+                <h2 className="text-xs font-semibold tracking-widest uppercase text-muted mb-3">
                   Tech Stack
-                </h3>
+                </h2>
                 <div className="flex flex-wrap gap-2">
                   {project.tech.map((t) => (
                     <span key={t} className="text-xs px-2.5 py-1 rounded-lg border border-border text-muted bg-background">

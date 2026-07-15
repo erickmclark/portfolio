@@ -7,8 +7,9 @@ import { validateSiteContent } from '@/lib/validate';
 import AboutTab from './about-tab';
 import ContactTab from './contact-tab';
 import ProjectsTab from './projects-tab';
+import ExperienceTab from './experience-tab';
 
-type Tab = 'projects' | 'about' | 'contact';
+type Tab = 'projects' | 'experience' | 'about' | 'contact';
 
 export default function DashboardClient() {
   const [content, setContent] = useState<SiteContent | null>(null);
@@ -22,12 +23,14 @@ export default function DashboardClient() {
     fetch('/api/admin/content')
       .then((r) => r.json())
       .then(({ content }: { content: SiteContent }) => {
-        // Backfill stable ids for any legacy project saved before the id field existed.
+        // Backfill stable ids for any legacy project saved before the id field
+        // existed, and the experience list for data saved before it existed.
         setContent({
           ...content,
           projects: content.projects.map((p) =>
             p.id ? p : { ...p, id: crypto.randomUUID() }
           ),
+          experience: content.experience ?? [],
         });
       })
       .catch(() => setSaveError('Failed to load content.'));
@@ -79,6 +82,7 @@ export default function DashboardClient() {
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'projects', label: 'Projects' },
+    { id: 'experience', label: 'Experience' },
     { id: 'about', label: 'About' },
     { id: 'contact', label: 'Contact' },
   ];
@@ -114,6 +118,12 @@ export default function DashboardClient() {
           <ProjectsTab
             projects={content.projects}
             onChange={(projects) => update({ ...content, projects })}
+          />
+        )}
+        {tab === 'experience' && (
+          <ExperienceTab
+            experience={content.experience}
+            onChange={(experience) => update({ ...content, experience })}
           />
         )}
         {tab === 'about' && (

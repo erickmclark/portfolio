@@ -30,6 +30,17 @@ function validContent(): SiteContent {
       githubUrl: "https://github.com/jane",
       linkedinUrl: "https://linkedin.com/in/jane",
     },
+    experience: [
+      {
+        id: "x-one",
+        role: "Software Engineer",
+        company: "Acme",
+        start: "2023",
+        end: "",
+        description: "Built things.",
+        order: 0,
+      },
+    ],
   };
 }
 
@@ -133,5 +144,37 @@ describe("validateSiteContent", () => {
     delete c.about.photo;
     const result = validateSiteContent(c);
     expect(result.ok).toBe(true);
+  });
+
+  it("accepts legacy content with no experience field and defaults it to []", () => {
+    const c = validContent() as unknown as Record<string, unknown>;
+    delete c.experience;
+    const result = validateSiteContent(c);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.content.experience).toEqual([]);
+  });
+
+  it("rejects an experience entry with an empty role", () => {
+    const c = validContent();
+    c.experience[0].role = "  ";
+    const result = validateSiteContent(c);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toMatch(/role/i);
+  });
+
+  it("rejects duplicate experience ids", () => {
+    const c = validContent();
+    c.experience.push({ ...c.experience[0] });
+    const result = validateSiteContent(c);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toMatch(/duplicate experience id/i);
+  });
+
+  it("rejects a non-array experience field", () => {
+    const c = validContent() as unknown as Record<string, unknown>;
+    c.experience = "nope";
+    const result = validateSiteContent(c);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toMatch(/experience/i);
   });
 });

@@ -1,10 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import Nav from "@/components/nav";
 import Footer from "@/components/footer";
 import { getSiteContent } from "@/lib/content";
 import { SITE_URL } from "@/lib/site";
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+};
 
 const geist = Geist({
   subsets: ["latin"],
@@ -23,6 +29,9 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${about.name}`,
     },
     description,
+    alternates: {
+      canonical: "/",
+    },
     openGraph: {
       type: "website",
       locale: "en_US",
@@ -52,11 +61,13 @@ export default async function RootLayout({
     jobTitle: about.title,
     description: about.heroTagline,
     url: SITE_URL,
+    email: `mailto:${contact.email}`,
+    ...(about.photo ? { image: `${SITE_URL}${about.photo}` } : {}),
     sameAs: [contact.githubUrl, contact.linkedinUrl].filter(Boolean),
   };
 
   return (
-    <html lang="en" className={geist.variable}>
+    <html lang="en" className={geist.variable} data-scroll-behavior="smooth">
       <body className="bg-background text-foreground antialiased">
         <a href="#main-content" className="skip-link">
           Skip to content
@@ -68,6 +79,8 @@ export default async function RootLayout({
         <Nav name={about.name} />
         {children}
         <Footer />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

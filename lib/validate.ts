@@ -85,6 +85,38 @@ export function validateSiteContent(input: unknown): ValidationResult {
     });
   }
 
+  // ── experience ─────────────────────────────────────────────────────────
+  // Absent on legacy data — treated as an empty list.
+  const experience = input.experience;
+  if (experience !== undefined) {
+    if (!Array.isArray(experience)) {
+      errors.push('experience must be an array.');
+    } else {
+      const seenIds = new Set<string>();
+      experience.forEach((x, i) => {
+        const where = `experience[${i}]`;
+        if (!isObject(x)) {
+          errors.push(`${where} must be an object.`);
+          return;
+        }
+        if (typeof x.id !== 'string' || x.id.trim() === '') {
+          errors.push(`${where}.id must be a non-empty string.`);
+        } else if (seenIds.has(x.id)) {
+          errors.push(`Duplicate experience id "${x.id}" — ids must be unique.`);
+        } else {
+          seenIds.add(x.id);
+        }
+        if (typeof x.role !== 'string' || x.role.trim() === '') errors.push(`${where}.role must be a non-empty string.`);
+        if (typeof x.company !== 'string' || x.company.trim() === '') errors.push(`${where}.company must be a non-empty string.`);
+        if (typeof x.start !== 'string') errors.push(`${where}.start must be a string.`);
+        if (typeof x.end !== 'string') errors.push(`${where}.end must be a string.`);
+        if (typeof x.description !== 'string') errors.push(`${where}.description must be a string.`);
+        if (typeof x.order !== 'number') errors.push(`${where}.order must be a number.`);
+      });
+    }
+  }
+
   if (errors.length > 0) return { ok: false, errors };
-  return { ok: true, content: input as unknown as SiteContent };
+  const content = input as unknown as SiteContent;
+  return { ok: true, content: { ...content, experience: content.experience ?? [] } };
 }

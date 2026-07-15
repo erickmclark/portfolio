@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { cache } from 'react';
 import { Redis } from '@upstash/redis';
 import type { SiteContent } from './types';
 
@@ -27,16 +28,24 @@ export function getRedis(): Redis | null {
  * Reads live site content from Upstash Redis (or the local data.json fallback).
  * Always fresh: public pages use `export const dynamic = 'force-dynamic'`, so
  * admin saves appear on the site immediately with no cache to bust.
+ *
+ * Wrapped in React `cache()` for per-request dedupe only — layout plus every
+ * section component share one Redis read per request, with no persistence
+ * across requests (unlike `unstable_cache`, which was intentionally dropped).
  */
-export async function getSiteContent(): Promise<SiteContent> {
+export const getSiteContent = cache(async (): Promise<SiteContent> => {
+  let content: SiteContent | null = null;
   try {
     const redis = getRedis();
     if (redis) {
       const raw = await redis.get<string>(CONTENT_KEY);
-      if (raw && typeof raw === 'string') return JSON.parse(raw) as SiteContent;
+      if (raw && typeof raw === 'string') content = JSON.parse(raw) as SiteContent;
     }
   } catch {
     // KV unavailable (local dev without env vars) — fall through
   }
-  return readFile();
-}
+  content ??= readFile();
+  // Legacy data saved before the experience field existed
+  content.experience ??= [];
+  return content;
+});
