@@ -26,7 +26,9 @@ export default function AnimateIn({
     // collapses the transition to ~0ms, so content appears instantly (no slide)
     // once it scrolls into view.
 
-    // Fire immediately if already in viewport (e.g. hero on page load)
+    // Fire immediately if already in viewport (e.g. hero on page load).
+    // rootMargin starts the reveal ~200px before the element enters the
+    // viewport so fast scrolling never lands on a still-hidden section.
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -34,10 +36,18 @@ export default function AnimateIn({
           obs.disconnect();
         }
       },
-      { threshold: 0.12 }
+      { threshold: 0, rootMargin: "0px 0px 200px 0px" }
     );
     obs.observe(el);
-    return () => obs.disconnect();
+
+    // Fallback: reveal everything shortly after mount so printing, full-page
+    // capture, or an observer that never fires can't leave content invisible.
+    const fallback = window.setTimeout(() => setInView(true), 2000);
+
+    return () => {
+      obs.disconnect();
+      window.clearTimeout(fallback);
+    };
   }, []);
 
   const hiddenClass = {

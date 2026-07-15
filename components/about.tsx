@@ -13,7 +13,7 @@ export default async function About() {
     .slice(0, 2);
 
   return (
-    <section id="about" className="py-24 px-6 bg-surface">
+    <section id="about" className="py-24 px-6 bg-surface overflow-x-clip">
       <div className="max-w-site mx-auto">
         <AnimateIn direction="up">
           <p className="text-accent text-xs font-semibold tracking-widest uppercase mb-3">

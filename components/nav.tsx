@@ -34,24 +34,24 @@ export default function Nav({ name }: Props) {
           {name}
         </Link>
         <nav className="flex items-center gap-1">
-          <a
-            href="#projects"
+          <Link
+            href="/#projects"
             className="px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface rounded-lg transition-all duration-200"
           >
             Work
-          </a>
-          <a
-            href="#about"
+          </Link>
+          <Link
+            href="/#about"
             className="px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface rounded-lg transition-all duration-200"
           >
             About
-          </a>
-          <a
-            href="#contact"
+          </Link>
+          <Link
+            href="/#contact"
             className="ml-2 px-4 py-2 text-sm font-semibold text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors duration-200"
           >
             Contact
-          </a>
+          </Link>
         </nav>
       </div>
     </header>
