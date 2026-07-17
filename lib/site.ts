@@ -6,4 +6,4 @@
  * production URL). The literal fallback only applies if that var is unset.
  */
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://clarkport.vercel.app';
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://iamerickclark.com';
