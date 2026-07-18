@@ -92,6 +92,43 @@
       "image": "/projects/gen4me.png",
       "featured": true,
       "order": 2
+    },
+    {
+      "id": "prj-sanctionswatch",
+      "slug": "sanctionswatch",
+      "title": "SanctionsWatch",
+      "tagline": "SaaS platform that monitors regulatory sanctions changes across international jurisdictions, with AI-powered analysis and alerts for compliance teams.",
+      "description": "## Overview\n\nSanctionsWatch is a SaaS platform that helps compliance teams stay ahead of fast-moving regulatory sanctions. It continuously monitors sanctions changes across international jurisdictions and uses AI to surface what matters — turning scattered regulatory updates into clear, actionable alerts.\n\n## Key Features\n\n- **Cross-jurisdiction monitoring** — track sanctions changes across multiple international regulatory bodies in one place.\n- **AI-powered analysis** — automatically summarize and assess the impact of each change so teams don't have to parse raw regulatory text.\n- **Alerts for compliance teams** — timely notifications when relevant updates land, keeping organizations audit-ready.\n\n## Stack\n\nNext.js, TypeScript, Supabase/Postgres, Tailwind CSS, and LLM integrations.",
+      "tech": [
+        "Next.js",
+        "TypeScript",
+        "Supabase",
+        "PostgreSQL",
+        "Tailwind CSS",
+        "AI / LLMs"
+      ],
+      "liveUrl": "https://sanctionswatch.vercel.app",
+      "image": "/projects/sanctionswatch.png",
+      "featured": false,
+      "order": 5
+    },
+    {
+      "id": "prj-g2-complaint-miner",
+      "slug": "g2-complaint-miner",
+      "title": "G2 Complaint Miner",
+      "tagline": "CLI tool that scrapes G2 reviews, classifies complaints with Claude, and scores AI product opportunities.",
+      "description": "## Overview\n\nG2 Complaint Miner is a command-line tool for finding product opportunities hiding in customer complaints. It scrapes reviews from G2, uses Claude to classify and categorize the complaints, and scores the resulting gaps as potential AI product opportunities.\n\n## Key Features\n\n- **Automated review scraping** — pull reviews for target products directly from G2.\n- **AI complaint classification** — use Claude to categorize and structure unstructured review text into actionable complaint themes.\n- **Opportunity scoring** — rank recurring pain points to highlight the most promising AI product opportunities.\n\n## Stack\n\nTypeScript, Node.js CLI, Claude API, and Postgres.",
+      "tech": [
+        "TypeScript",
+        "Node.js",
+        "Claude API",
+        "PostgreSQL",
+        "CLI"
+      ],
+      "liveUrl": "https://g2-complaint-miner.vercel.app",
+      "image": "/projects/g2-complaint-miner.png",
+      "featured": false,
+      "order": 6
     }
   ],
   "about": {
