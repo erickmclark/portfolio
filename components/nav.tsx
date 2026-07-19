@@ -26,35 +26,35 @@ export default function Nav({ name }: Props) {
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-site mx-auto px-6 h-[72px] flex items-center justify-between">
+      <div className="max-w-site mx-auto px-4 sm:px-6 h-[72px] flex items-center justify-between">
         <Link
           href="/"
           className="text-sm font-bold tracking-tight hover:text-accent transition-colors duration-200"
         >
           {name}
         </Link>
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-0 sm:gap-1">
           <Link
             href="/#projects"
-            className="px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface rounded-lg transition-all duration-200"
+            className="px-2 sm:px-4 py-2 text-[13px] sm:text-sm text-muted hover:text-white hover:bg-surface rounded-lg transition-all duration-200"
           >
             Work
           </Link>
           <Link
             href="/#about"
-            className="px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface rounded-lg transition-all duration-200"
+            className="px-2 sm:px-4 py-2 text-[13px] sm:text-sm text-muted hover:text-white hover:bg-surface rounded-lg transition-all duration-200"
           >
             About
           </Link>
           <Link
             href="/#experience"
-            className="hidden sm:block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface rounded-lg transition-all duration-200"
+            className="px-2 sm:px-4 py-2 text-[13px] sm:text-sm text-muted hover:text-white hover:bg-surface rounded-lg transition-all duration-200"
           >
             Experience
           </Link>
           <Link
             href="/#contact"
-            className="ml-2 px-4 py-2 text-sm font-semibold text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors duration-200"
+            className="ml-1 sm:ml-2 px-3 sm:px-4 py-2 text-[13px] sm:text-sm font-semibold text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors duration-200"
           >
             Contact
           </Link>
