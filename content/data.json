@@ -5,8 +5,7 @@
       "slug": "prepera",
       "title": "Prepera",
       "tagline": "AI job-search platform that coaches candidates from first saved listing to signed offer.",
-      "description": "## The problem\n\nA job search runs across a dozen tools: job boards, tracking spreadsheets, resume editors, interview-prep videos, salary forums. Prepera puts the whole search in one place and adds an AI coach at every step.\n\n## What it does\n\nCandidates search listings aggregated from major job boards, then track every application on a drag-and-drop pipeline that runs from Saved through Applied, Screening, Interview, and Offer. Email sync captures recruiter replies automatically. The AI layer tailors resumes to each role, runs practice interviews, and preps salary negotiation before the offer call.\n\n## Status\n\nIn production at preperahq.com with Stripe billing.\n\n## How it's built\n\nNext.js and TypeScript on the front end, Supabase and Postgres behind it, with Claude and OpenAI powering the coaching features."
-      ,
+      "description": "## The problem\n\nA job search runs across a dozen tools: job boards, tracking spreadsheets, resume editors, interview-prep videos, salary forums. Prepera puts the whole search in one place and adds an AI coach at every step.\n\n## What it does\n\nCandidates search listings aggregated from major job boards, then track every application on a drag-and-drop pipeline that runs from Saved through Applied, Screening, Interview, and Offer. Email sync captures recruiter replies automatically. The AI layer tailors resumes to each role, runs practice interviews, and preps salary negotiation before the offer call.\n\n## Status\n\nIn production at preperahq.com with Stripe billing.\n\n## How it's built\n\nNext.js and TypeScript on the front end, Supabase and Postgres behind it, with Claude and OpenAI powering the coaching features.",
       "tech": [
         "Next.js",
         "TypeScript",
@@ -25,8 +24,7 @@
       "slug": "authmatch",
       "title": "AuthMatch AI",
       "tagline": "Prior-authorization copilot that matches each case to Medicare coverage policy and shows reviewers which criteria are met.",
-      "description": "## The problem\n\nInsurance prior authorizations are slow because reviewers have to find the controlling Medicare policy for every case by hand. New CMS rules (CMS-0057-F, effective January 2026) put hard deadlines on that work: seven days for standard requests, 72 hours for expedited ones.\n\n## What it does\n\nAuthMatch matches each case, by HCPCS/CPT code and member state, to the controlling NCD or LCD policy and reads the clinical documentation against it. The reviewer sees each criterion marked Met, Not Met, or Indeterminate with the supporting evidence cited. A licensed human reviewer signs off on every case.\n\n## Architecture\n\nThe Next.js reviewer UI is a thin shell that never touches PHI. All PHI processing, OCR, guideline matching, and LLM calls live in a FastAPI service. Postgres enforces row-level security, and an audit trigger logs every access. The design goal was strict PHI isolation and a defensible audit trail."
-      ,
+      "description": "## The problem\n\nInsurance prior authorizations are slow because reviewers have to find the controlling Medicare policy for every case by hand. New CMS rules (CMS-0057-F, effective January 2026) put hard deadlines on that work: seven days for standard requests, 72 hours for expedited ones.\n\n## What it does\n\nAuthMatch matches each case, by HCPCS/CPT code and member state, to the controlling NCD or LCD policy and reads the clinical documentation against it. The reviewer sees each criterion marked Met, Not Met, or Indeterminate with the supporting evidence cited. A licensed human reviewer signs off on every case.\n\n## Architecture\n\nThe Next.js reviewer UI is a thin shell that never touches PHI. All PHI processing, OCR, guideline matching, and LLM calls live in a FastAPI service. Postgres enforces row-level security, and an audit trigger logs every access. The design goal was strict PHI isolation and a defensible audit trail.",
       "tech": [
         "Next.js",
         "FastAPI",
@@ -45,8 +43,7 @@
       "slug": "dupars-bbq",
       "title": "Dupar's BBQ",
       "tagline": "Catering storefront that replaced a PDF menu and voicemail orders with self-serve quotes and Stripe deposits.",
-      "description": "## The problem\n\nDupar's BBQ, a Houston catering operation, ran on a static PDF menu and a voicemail box. Getting a quote took days of phone tag, and bookings had no deposit to hold them.\n\n## What it does\n\nCustomers browse the menu with photos and current pricing on their phone, build a catering quote in a few steps, and lock in their event date with a Stripe deposit. The owner manages the menu, quotes, and orders from an admin dashboard, and gets notified of every new request by email and text.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, Stripe, Resend for email, and Twilio for SMS."
-      ,
+      "description": "## The problem\n\nDupar's BBQ, a Houston catering operation, ran on a static PDF menu and a voicemail box. Getting a quote took days of phone tag, and bookings had no deposit to hold them.\n\n## What it does\n\nCustomers browse the menu with photos and current pricing on their phone, build a catering quote in a few steps, and lock in their event date with a Stripe deposit. The owner manages the menu, quotes, and orders from an admin dashboard, and gets notified of every new request by email and text.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, Stripe, Resend for email, and Twilio for SMS.",
       "tech": [
         "Next.js",
         "TypeScript",
@@ -65,8 +62,7 @@
       "slug": "angie-cares",
       "title": "Angie Cares",
       "tagline": "Marketing and intake site for a special-education advocacy practice, taking families from first visit to booked consultation.",
-      "description": "## The problem\n\nParents navigating special education, IEPs, and 504 plans often don't know what an advocate does or how to get started. Angie Cares needed a site that explains the practice in plain language and turns visitors into booked consultations.\n\n## What it does\n\nThe site walks families through the services on offer (parent advocacy, IEP and 504 guidance, special-education support, and resource navigation), sets expectations for what an engagement looks like, and moves them to a booked conversation through consultation scheduling and an online intake form. Trainings and workshops are bookable too, and every new inquiry triggers an email notification.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, Resend, and Tailwind CSS."
-      ,
+      "description": "## The problem\n\nParents navigating special education, IEPs, and 504 plans often don't know what an advocate does or how to get started. Angie Cares needed a site that explains the practice in plain language and turns visitors into booked consultations.\n\n## What it does\n\nThe site walks families through the services on offer (parent advocacy, IEP and 504 guidance, special-education support, and resource navigation), sets expectations for what an engagement looks like, and moves them to a booked conversation through consultation scheduling and an online intake form. Trainings and workshops are bookable too, and every new inquiry triggers an email notification.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, Resend, and Tailwind CSS.",
       "tech": [
         "Next.js",
         "TypeScript",
@@ -84,8 +80,7 @@
       "slug": "gen4me",
       "title": "Gen4Me",
       "tagline": "Turns a one-line project idea into the CLAUDE.md, PRD, and build plan your AI coding agents need.",
-      "description": "## The problem\n\nAI coding agents are only as good as the context you give them, and most projects have stale docs or none at all.\n\n## What it does\n\nFrom a one-line description of your project, Gen4Me researches your stack on the live web, asks you to confirm its assumptions instead of guessing, and generates a tailored CLAUDE.md, a research-backed PRD, a build plan, and per-directory rules. As the codebase evolves, it audits the docs against the code and flags drift.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, and Postgres, with LLM pipelines grounded by live web research."
-      ,
+      "description": "## The problem\n\nAI coding agents are only as good as the context you give them, and most projects have stale docs or none at all.\n\n## What it does\n\nFrom a one-line description of your project, Gen4Me researches your stack on the live web, asks you to confirm its assumptions instead of guessing, and generates a tailored CLAUDE.md, a research-backed PRD, a build plan, and per-directory rules. As the codebase evolves, it audits the docs against the code and flags drift.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, and Postgres, with LLM pipelines grounded by live web research.",
       "tech": [
         "Next.js",
         "TypeScript",
@@ -103,8 +98,7 @@
       "slug": "sanctionswatch",
       "title": "SanctionsWatch",
       "tagline": "Monitors sanctions changes across U.S., U.K., E.U., U.N., and Canadian authorities and turns them into clear alerts for compliance teams.",
-      "description": "## The problem\n\nSanctions lists change constantly across U.S., U.K., E.U., U.N., and Canadian authorities, and most compliance teams find out by reading raw regulatory text after the fact.\n\n## What it does\n\nSanctionsWatch ingests updates from each authority, deduplicates and classifies them, summarizes the impact with an LLM, and alerts the teams that need to act. The goal is an audit-ready trail from regulatory change to acknowledgment.\n\n## How it's built\n\nNext.js and TypeScript on Supabase and Postgres, with an ingestion pipeline built on Apify and n8n."
-      ,
+      "description": "## The problem\n\nSanctions lists change constantly across U.S., U.K., E.U., U.N., and Canadian authorities, and most compliance teams find out by reading raw regulatory text after the fact.\n\n## What it does\n\nSanctionsWatch ingests updates from each authority, deduplicates and classifies them, summarizes the impact with an LLM, and alerts the teams that need to act. The goal is an audit-ready trail from regulatory change to acknowledgment.\n\n## How it's built\n\nNext.js and TypeScript on Supabase and Postgres, with an ingestion pipeline built on Apify and n8n.",
       "tech": [
         "Next.js",
         "TypeScript",
@@ -123,8 +117,7 @@
       "slug": "g2-complaint-miner",
       "title": "G2 Complaint Miner",
       "tagline": "CLI that mines G2 reviews for recurring complaints and scores them as AI product opportunities.",
-      "description": "## The idea\n\nCustomer complaints are a product roadmap nobody reads, and G2 reviews are full of them.\n\n## What it does\n\nThe CLI scrapes G2 reviews for target products, uses Claude to classify unstructured review text into complaint themes, and scores recurring pain points as candidate AI product opportunities. It's the research tool I use to decide what to build next.\n\n## How it's built\n\nTypeScript, Node.js, the Claude API, and Postgres."
-      ,
+      "description": "## The idea\n\nCustomer complaints are a product roadmap nobody reads, and G2 reviews are full of them.\n\n## What it does\n\nThe CLI scrapes G2 reviews for target products, uses Claude to classify unstructured review text into complaint themes, and scores recurring pain points as candidate AI product opportunities. It's the research tool I use to decide what to build next.\n\n## How it's built\n\nTypeScript, Node.js, the Claude API, and Postgres.",
       "tech": [
         "TypeScript",
         "Node.js",
