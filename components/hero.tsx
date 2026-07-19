@@ -68,6 +68,19 @@ export default async function Hero() {
             )}
           </div>
         </AnimateIn>
+
+        <AnimateIn delay={460} direction="up">
+          <div className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
+            {['JPMorgan Chase', 'MBA', 'M.S. MIS', 'PMP', 'PSM I', 'AWS Certified', 'U.S. Army Veteran'].map(
+              (credential, i) => (
+                <span key={credential} className="flex items-center gap-x-3">
+                  {i > 0 && <span aria-hidden className="text-muted/50">·</span>}
+                  {credential}
+                </span>
+              )
+            )}
+          </div>
+        </AnimateIn>
       </div>
     </section>
   );

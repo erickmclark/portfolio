@@ -4,8 +4,9 @@
       "id": "prj-prepera",
       "slug": "prepera",
       "title": "Prepera",
-      "tagline": "AI-powered job-search platform — resume optimization, interview coaching, and salary negotiation, from saved job to signed offer.",
-      "description": "## Overview\n\nPrepera is an AI-powered job-search platform that guides job seekers from their first saved listing all the way to a signed offer — combining job discovery, application tracking, and AI coaching in one product.\n\n## Key Features\n\n- **Job discovery & AI matching** — search listings aggregated from major job boards, matched to your profile and experience.\n- **Visual job tracker** — a drag-and-drop Kanban pipeline (Saved → Applied → Screening → Interview → Offer) with email sync to auto-capture recruiter communication.\n- **AI resume optimization** — tailor your resume to each role and get past applicant tracking systems.\n- **Interview coaching & salary negotiation** — practice tools and guidance to walk in confident and maximize your offer.\n\n## Stack\n\nNext.js, TypeScript, Supabase/Postgres, Tailwind CSS, Stripe, and LLM integrations.",
+      "tagline": "AI job-search platform that coaches candidates from first saved listing to signed offer.",
+      "description": "## The problem\n\nA job search runs across a dozen tools: job boards, tracking spreadsheets, resume editors, interview-prep videos, salary forums. Prepera puts the whole search in one place and adds an AI coach at every step.\n\n## What it does\n\nCandidates search listings aggregated from major job boards, then track every application on a drag-and-drop pipeline that runs from Saved through Applied, Screening, Interview, and Offer. Email sync captures recruiter replies automatically. The AI layer tailors resumes to each role, runs practice interviews, and preps salary negotiation before the offer call.\n\n## Status\n\nIn production at preperahq.com with Stripe billing.\n\n## How it's built\n\nNext.js and TypeScript on the front end, Supabase and Postgres behind it, with Claude and OpenAI powering the coaching features."
+      ,
       "tech": [
         "Next.js",
         "TypeScript",
@@ -23,8 +24,9 @@
       "id": "prj-authmatch",
       "slug": "authmatch",
       "title": "AuthMatch AI",
-      "tagline": "HIPAA-regulated AI co-pilot that matches prior-authorization cases to Medicare coverage policy and surfaces the met / not-met criteria.",
-      "description": "## Overview\n\nAuthMatch AI is a HIPAA-regulated co-pilot for utilization-management reviewers who process insurance prior authorizations. It matches each case (HCPCS/CPT code + member state) to the controlling Medicare coverage policy (NCD/LCD, MAC-jurisdiction-aware) and extracts the cited *Met / Not Met / Indeterminate* criteria from clinical documentation — with a licensed human reviewer signing off on every case.\n\n## Built for compliance\n\nTargets CMS-0057-F turnaround requirements (7-day standard, 72-hour expedited) taking effect January 2026.\n\n## Architecture\n\n- **web** — Next.js reviewer UI; a thin proxy that handles no PHI and makes no LLM calls.\n- **api** — FastAPI service that does all PHI processing, the LLM gateway, OCR, guideline matching, and criteria extraction.\n- **supabase** — Postgres schema, row-level-security policies, and an audit-log trigger on every access.\n\n## Stack\n\nNext.js, FastAPI / Python, Supabase/Postgres, and LLMs — designed around strict PHI isolation and auditability.",
+      "tagline": "Prior-authorization copilot that matches each case to Medicare coverage policy and shows reviewers which criteria are met.",
+      "description": "## The problem\n\nInsurance prior authorizations are slow because reviewers have to find the controlling Medicare policy for every case by hand. New CMS rules (CMS-0057-F, effective January 2026) put hard deadlines on that work: seven days for standard requests, 72 hours for expedited ones.\n\n## What it does\n\nAuthMatch matches each case, by HCPCS/CPT code and member state, to the controlling NCD or LCD policy and reads the clinical documentation against it. The reviewer sees each criterion marked Met, Not Met, or Indeterminate with the supporting evidence cited. A licensed human reviewer signs off on every case.\n\n## Architecture\n\nThe Next.js reviewer UI is a thin shell that never touches PHI. All PHI processing, OCR, guideline matching, and LLM calls live in a FastAPI service. Postgres enforces row-level security, and an audit trigger logs every access. The design goal was strict PHI isolation and a defensible audit trail."
+      ,
       "tech": [
         "Next.js",
         "FastAPI",
@@ -42,8 +44,9 @@
       "id": "prj-dupars-bbq",
       "slug": "dupars-bbq",
       "title": "Dupar's BBQ",
-      "tagline": "Full-stack catering site — mobile menu, multi-step quote builder with Stripe-deposit checkout, and an owner admin dashboard.",
-      "description": "## Overview\n\nA full-stack catering website for Dupar's BBQ, a Houston-area BBQ operation. It replaces a static PDF menu with a mobile-friendly storefront and turns phone-and-voicemail ordering into a self-serve quote-and-deposit flow — while giving the owner a dashboard to manage it all.\n\n## Key Features\n\n- **Browsable menu** with photos and current pricing, built for mobile.\n- **Multi-step quote builder** so customers can request event catering in minutes.\n- **Stripe-deposit checkout** to lock in bookings.\n- **Owner admin dashboard** to manage menu, quotes, and orders.\n- **Automated notifications** by email (Resend) and SMS (Twilio).\n\n## Stack\n\nNext.js, TypeScript, Supabase, Stripe, Resend, and Twilio.",
+      "tagline": "Catering storefront that replaced a PDF menu and voicemail orders with self-serve quotes and Stripe deposits.",
+      "description": "## The problem\n\nDupar's BBQ, a Houston catering operation, ran on a static PDF menu and a voicemail box. Getting a quote took days of phone tag, and bookings had no deposit to hold them.\n\n## What it does\n\nCustomers browse the menu with photos and current pricing on their phone, build a catering quote in a few steps, and lock in their event date with a Stripe deposit. The owner manages the menu, quotes, and orders from an admin dashboard, and gets notified of every new request by email and text.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, Stripe, Resend for email, and Twilio for SMS."
+      ,
       "tech": [
         "Next.js",
         "TypeScript",
@@ -61,8 +64,9 @@
       "id": "prj-angie-cares",
       "slug": "angie-cares",
       "title": "Angie Cares",
-      "tagline": "Marketing and intake site for a special-education parent-advocacy practice — clear services, consultation scheduling, and an online intake flow for families.",
-      "description": "## Overview\n\nA marketing and intake website for Angie Cares, a special-education parent-advocacy practice. It helps parents and caregivers of children with disabilities, learning differences, and behavioral or mental-health concerns understand the available services, see what an engagement looks like, and get started — through consultation scheduling and an online intake flow.\n\n## Key Features\n\n- **Clear services overview** — parent advocacy, IEP/504 guidance, special-education support, and resource navigation, so families know what to expect.\n- **Consultation scheduling & intake form** — a streamlined path from first visit to a booked conversation.\n- **Training & workshop booking** plus a parent-resources section.\n- **Email notifications** on new inquiries.\n\n## Stack\n\nNext.js, TypeScript, Supabase, Resend, and Tailwind CSS.",
+      "tagline": "Marketing and intake site for a special-education advocacy practice, taking families from first visit to booked consultation.",
+      "description": "## The problem\n\nParents navigating special education, IEPs, and 504 plans often don't know what an advocate does or how to get started. Angie Cares needed a site that explains the practice in plain language and turns visitors into booked consultations.\n\n## What it does\n\nThe site walks families through the services on offer (parent advocacy, IEP and 504 guidance, special-education support, and resource navigation), sets expectations for what an engagement looks like, and moves them to a booked conversation through consultation scheduling and an online intake form. Trainings and workshops are bookable too, and every new inquiry triggers an email notification.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, Resend, and Tailwind CSS."
+      ,
       "tech": [
         "Next.js",
         "TypeScript",
@@ -79,8 +83,9 @@
       "id": "prj-gen4me",
       "slug": "gen4me",
       "title": "Gen4Me",
-      "tagline": "Turns a one-line idea into a tailored CLAUDE.md, a research-backed PRD, and a drift audit — grounded in your real stack.",
-      "description": "## Overview\n\nGen4Me generates the documentation AI coding agents actually follow. From a one-line description of your project, it produces a tailored CLAUDE.md, a research-backed PRD, a build PLAN, and per-directory rules — then audits an existing CLAUDE.md for drift as your code moves.\n\n## How it works\n\n1. **Describe** — one line about your project.\n2. **Research** — live web research fills in the gaps about your stack.\n3. **Enrich** — confirm assumptions, not boilerplate.\n4. **Generate** — CLAUDE.md, PRD, PLAN, and per-directory rules.\n5. **Audit** — catch drift between your docs and your code over time.\n\n## Stack\n\nNext.js, TypeScript, Supabase/Postgres, and LLMs — with live web research grounding every document in your real stack.",
+      "tagline": "Turns a one-line project idea into the CLAUDE.md, PRD, and build plan your AI coding agents need.",
+      "description": "## The problem\n\nAI coding agents are only as good as the context you give them, and most projects have stale docs or none at all.\n\n## What it does\n\nFrom a one-line description of your project, Gen4Me researches your stack on the live web, asks you to confirm its assumptions instead of guessing, and generates a tailored CLAUDE.md, a research-backed PRD, a build plan, and per-directory rules. As the codebase evolves, it audits the docs against the code and flags drift.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, and Postgres, with LLM pipelines grounded by live web research."
+      ,
       "tech": [
         "Next.js",
         "TypeScript",
@@ -97,8 +102,9 @@
       "id": "prj-sanctionswatch",
       "slug": "sanctionswatch",
       "title": "SanctionsWatch",
-      "tagline": "SaaS platform that monitors regulatory sanctions changes across international jurisdictions, with AI-powered analysis and alerts for compliance teams.",
-      "description": "## Overview\n\nSanctionsWatch is a SaaS platform that helps compliance teams stay ahead of fast-moving regulatory sanctions. It continuously monitors sanctions changes across international jurisdictions and uses AI to surface what matters — turning scattered regulatory updates into clear, actionable alerts.\n\n## Key Features\n\n- **Cross-jurisdiction monitoring** — track sanctions changes across multiple international regulatory bodies in one place.\n- **AI-powered analysis** — automatically summarize and assess the impact of each change so teams don't have to parse raw regulatory text.\n- **Alerts for compliance teams** — timely notifications when relevant updates land, keeping organizations audit-ready.\n\n## Stack\n\nNext.js, TypeScript, Supabase/Postgres, Tailwind CSS, and LLM integrations.",
+      "tagline": "Monitors sanctions changes across U.S., U.K., E.U., U.N., and Canadian authorities and turns them into clear alerts for compliance teams.",
+      "description": "## The problem\n\nSanctions lists change constantly across U.S., U.K., E.U., U.N., and Canadian authorities, and most compliance teams find out by reading raw regulatory text after the fact.\n\n## What it does\n\nSanctionsWatch ingests updates from each authority, deduplicates and classifies them, summarizes the impact with an LLM, and alerts the teams that need to act. The goal is an audit-ready trail from regulatory change to acknowledgment.\n\n## How it's built\n\nNext.js and TypeScript on Supabase and Postgres, with an ingestion pipeline built on Apify and n8n."
+      ,
       "tech": [
         "Next.js",
         "TypeScript",
@@ -116,8 +122,9 @@
       "id": "prj-g2-complaint-miner",
       "slug": "g2-complaint-miner",
       "title": "G2 Complaint Miner",
-      "tagline": "CLI tool that scrapes G2 reviews, classifies complaints with Claude, and scores AI product opportunities.",
-      "description": "## Overview\n\nG2 Complaint Miner is a command-line tool for finding product opportunities hiding in customer complaints. It scrapes reviews from G2, uses Claude to classify and categorize the complaints, and scores the resulting gaps as potential AI product opportunities.\n\n## Key Features\n\n- **Automated review scraping** — pull reviews for target products directly from G2.\n- **AI complaint classification** — use Claude to categorize and structure unstructured review text into actionable complaint themes.\n- **Opportunity scoring** — rank recurring pain points to highlight the most promising AI product opportunities.\n\n## Stack\n\nTypeScript, Node.js CLI, Claude API, and Postgres.",
+      "tagline": "CLI that mines G2 reviews for recurring complaints and scores them as AI product opportunities.",
+      "description": "## The idea\n\nCustomer complaints are a product roadmap nobody reads, and G2 reviews are full of them.\n\n## What it does\n\nThe CLI scrapes G2 reviews for target products, uses Claude to classify unstructured review text into complaint themes, and scores recurring pain points as candidate AI product opportunities. It's the research tool I use to decide what to build next.\n\n## How it's built\n\nTypeScript, Node.js, the Claude API, and Postgres."
+      ,
       "tech": [
         "TypeScript",
         "Node.js",
@@ -133,15 +140,15 @@
   ],
   "about": {
     "name": "Erick Clark",
-    "title": "Full-Stack Engineer",
-    "heroTagline": "I design and ship production AI-powered web apps end-to-end — from Python/FastAPI and Postgres backends to polished Next.js interfaces. Open to full-time roles and freelance projects.",
+    "title": "Executive & AI Builder",
+    "heroTagline": "VP and Chief of Staff for Legal Technology at JPMorgan Chase, and founder of an independent portfolio of AI products across healthcare, regulatory intelligence, and career tech. I set technology strategy for a living and ship the software myself.",
     "availableForWork": true,
     "photo": "",
-    "resumeUrl": "",
+    "resumeUrl": "/Erick-Clark-Resume-2026.pdf",
     "bio": [
-      "I'm a full-stack software engineer who builds and ships AI-powered products end to end — taking ideas from a blank repo to live SaaS, owning the database, backend, AI integration, and front-end.",
-      "My work spans regulated healthcare AI (AuthMatch, a HIPAA prior-authorization co-pilot), consumer AI (Prepera, an AI job-search platform), and full-stack commerce (a catering site with Stripe checkout and an owner dashboard). I work primarily in TypeScript and Python — Next.js, FastAPI, Supabase/Postgres, Stripe, and LLMs like Claude and GPT.",
-      "Through my studio, NightPivot, I also design AI automation workflows for growing businesses. I'm open to full-time engineering roles and freelance projects — the fastest way to reach me is email."
+      "I'm a technology strategy and operations executive with more than 15 years across financial services, energy, technology services, and the U.S. Army. At JPMorgan Chase I serve as VP and Chief of Staff for Legal Technology, where I own the annual strategy cycle for a seven-product global portfolio: AI investment priorities, product governance, and financial and workforce planning for a labor budget between $25M and $36M supporting roughly 164 people.",
+      "I also build. Since 2024 I've shipped an independent portfolio of AI products end to end, from database schema to production deploy. AuthMatch AI helps utilization-management reviewers match prior-authorization cases to Medicare coverage policy. Prepera coaches job seekers from saved listing to signed offer. SanctionsWatch tracks regulatory sanctions across five jurisdictions. Every one keeps a human decision-maker in the loop.",
+      "I hold an MBA, an M.S. in Management Information Systems, and PMP, Professional Scrum Master, AWS Cloud Practitioner, and FinOps certifications. Through my studio NightPivot I take on AI product and automation work for growing businesses. The fastest way to reach me is email."
     ],
     "skills": [
       "TypeScript",
@@ -168,5 +175,60 @@
     "githubUrl": "https://github.com/erickmclark",
     "linkedinUrl": "https://www.linkedin.com/in/erick-clark-66988b85/"
   },
-  "experience": []
+  "experience": [
+    {
+      "id": "exp-jpmc",
+      "role": "VP, Chief of Staff (Strategy & Execution), Legal Technology",
+      "company": "JPMorgan Chase",
+      "start": "2019",
+      "end": "",
+      "description": "Own Legal Technology's annual strategy cycle and multi-year roadmap: portfolio objectives, AI investment priorities, product governance, and financial and workforce planning for a $24.9M to $36.2M labor portfolio supporting roughly 164 employees. Built and operationalized the organization's AI strategy, and develop the executive reporting that goes to JPMorgan's General Counsel and senior Technology leadership. Sponsored modernization initiatives that cut technology costs by $3M.",
+      "order": 0
+    },
+    {
+      "id": "exp-nightpivot",
+      "role": "Founder & AI Product Strategist",
+      "company": "NightPivot",
+      "start": "2024",
+      "end": "",
+      "description": "Design and ship AI products end to end across healthcare, regulatory intelligence, and career technology, including AuthMatch AI, SanctionsWatch, Prepera, and Gen4Me. Also build AI automation workflows for growing businesses. Every product keeps a human decision-maker in the loop and ships with governance controls built in.",
+      "order": 1
+    },
+    {
+      "id": "exp-csat",
+      "role": "Senior IT PMO Business Partner",
+      "company": "CSAT Solutions",
+      "start": "2018",
+      "end": "2019",
+      "description": "Senior PMO business partner for Apple and Dell technology programs. Shipped an automated, NIST 800-88 compliant data-deletion solution for decommissioned government laptops that cut human error by 90%, and led automation and modernization initiatives worth about $5M in annual savings.",
+      "order": 2
+    },
+    {
+      "id": "exp-nrg",
+      "role": "Project Manager & Implementation Consultant",
+      "company": "NRG Energy",
+      "start": "2016",
+      "end": "2018",
+      "description": "Led delivery of retail-energy platforms across business, technology, compliance, and vendor teams. SAP billing enhancements cut annual operating costs by $500K, and a PCI-compliant IVR payment system expanded secure self-service while reducing average call-handling time by 20%.",
+      "order": 3
+    },
+    {
+      "id": "exp-centerpoint",
+      "role": "Project Manager & Business Analyst",
+      "company": "CenterPoint Energy",
+      "start": "2015",
+      "end": "2016",
+      "description": "Led the $29.4M fiber expansion program, improving communications throughput by 40%, and governed $8M in capital-project budgets across engineering, operations, vendors, and field teams.",
+      "order": 4
+    },
+    {
+      "id": "exp-army",
+      "role": "Intelligence Analyst",
+      "company": "United States Army",
+      "start": "2011",
+      "end": "2015",
+      "description": "Produced predictive intelligence assessments and delivered classified briefings to senior leaders, translating complex findings into clear recommended actions. Supervised and developed junior analysts.",
+      "order": 5
+    }
+  ]
 }
