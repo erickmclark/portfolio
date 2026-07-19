@@ -77,8 +77,8 @@ export default async function About() {
                 )}
               </div>
               <div className="absolute -bottom-5 -right-5 bg-background border border-border rounded-2xl px-4 py-3 shadow-xl">
-                <p className="text-2xl font-black text-foreground leading-none">{about.skills.length}+</p>
-                <p className="text-xs text-muted mt-0.5">Technologies</p>
+                <p className="text-2xl font-black text-foreground leading-none">15+</p>
+                <p className="text-xs text-muted mt-0.5">Years in tech</p>
               </div>
             </div>
           </AnimateIn>
