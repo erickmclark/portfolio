@@ -58,14 +58,14 @@ export default async function About() {
 
           <AnimateIn direction="right" delay={120} className="flex justify-center lg:justify-end">
             <div className="relative">
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-accent/20 via-transparent to-transparent blur-xl" />
-              <div className="relative w-72 h-72 rounded-3xl border border-border overflow-hidden bg-gradient-to-br from-accent/20 via-surface to-border">
+              <div className="absolute -inset-4 rounded-full bg-gradient-to-br from-accent/20 via-transparent to-transparent blur-xl" />
+              <div className="relative w-72 h-72 rounded-full border border-border overflow-hidden bg-gradient-to-br from-accent/20 via-surface to-border">
                 {about.photo ? (
                   <Image
                     src={about.photo}
                     alt={about.name}
                     fill
-                    className="object-cover"
+                    className="object-cover scale-105"
                     sizes="288px"
                   />
                 ) : (
@@ -76,7 +76,7 @@ export default async function About() {
                   </div>
                 )}
               </div>
-              <div className="absolute -bottom-5 -right-5 bg-background border border-border rounded-2xl px-4 py-3 shadow-xl">
+              <div className="absolute -bottom-2 right-2 bg-background border border-border rounded-2xl px-4 py-3 shadow-xl">
                 <p className="text-2xl font-black text-foreground leading-none">15+</p>
                 <p className="text-xs text-muted mt-0.5">Years in tech</p>
               </div>
