@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getSiteContent } from '@/lib/content';
+import { getSiteContent, publicProjects } from '@/lib/content';
 import { SITE_URL } from '@/lib/site';
 
 const BASE = SITE_URL;
@@ -9,7 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const lastModified = new Date();
 
-  const projectRoutes: MetadataRoute.Sitemap = projects.map((p) => ({
+  const projectRoutes: MetadataRoute.Sitemap = publicProjects(projects).map((p) => ({
     url: `${BASE}/projects/${p.slug}`,
     lastModified,
     changeFrequency: 'monthly',

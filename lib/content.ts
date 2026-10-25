@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { cache } from 'react';
 import { Redis } from '@upstash/redis';
-import type { SiteContent } from './types';
+import type { ExperienceItem, Project, SiteContent } from './types';
 
 const CONTENT_KEY = 'data';
 
@@ -47,5 +47,16 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
   content ??= readFile();
   // Legacy data saved before the experience field existed
   content.experience ??= [];
+  // Legacy records predate visibility — treat them as public
+  for (const p of content.projects) p.visibility ??= 'public';
+  for (const x of content.experience) x.visibility ??= 'public';
   return content;
 });
+
+export function publicProjects(projects: Project[]): Project[] {
+  return projects.filter((p) => (p.visibility ?? 'public') === 'public');
+}
+
+export function publicExperience(experience: ExperienceItem[]): ExperienceItem[] {
+  return experience.filter((x) => (x.visibility ?? 'public') === 'public');
+}

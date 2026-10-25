@@ -1,10 +1,76 @@
 {
   "projects": [
     {
+      "id": "prj-jpmc-legal-tech",
+      "slug": "jpmorgan-legal-technology",
+      "title": "JPMorgan Chase: Legal Technology Strategy & Transformation",
+      "tagline": "Connected business priorities to technology strategy, product governance, multi-year roadmaps, financial and workforce planning, and executive decision-making across a global Legal Technology organization.",
+      "description": "## The challenge\n\nIn Legal Technology, the challenge is not simply delivering isolated projects. It is aligning different product areas, technical teams, business partners, resources, and control obligations around a coherent set of priorities. I led the management processes that helped translate those priorities into plans, ownership, governance, and delivery accountability.\n\n## My contribution\n\nAnnual strategy cycle, portfolio and roadmap alignment, financial and workforce planning, organizational operating-model improvements, executive reviews, and AI opportunity prioritization.\n\n## Outcome\n\nHelped establish clearer priorities, accountability, and decision-making across the technology portfolio.",
+      "tech": [],
+      "featured": true,
+      "order": 0,
+      "category": "Enterprise Leadership",
+      "relationship": "Employment",
+      "status": "Historical role",
+      "visibility": "public",
+      "caseStudy": {
+        "role": "Vice President, Chief of Staff — Strategy & Execution, Legal Technology",
+        "dates": "July 2019–August 2026",
+        "intro": "In Legal Technology, the challenge is not simply delivering isolated projects. It is aligning different product areas, technical teams, business partners, resources, and control obligations around a coherent set of priorities. I led the management processes that helped translate those priorities into plans, ownership, governance, and delivery accountability.",
+        "responsibility": "Annual strategy cycle, portfolio and roadmap alignment, financial and workforce planning, organizational operating-model improvements, executive reviews, and AI opportunity prioritization.",
+        "outcome": "Helped establish clearer priorities, accountability, and decision-making across the technology portfolio."
+      },
+      "images": [],
+      "image": ""
+    },
+    {
+      "id": "prj-ai-engineering-factory",
+      "slug": "ai-engineering-factory",
+      "title": "AI Engineering Factory & Analytics",
+      "tagline": "Built a supervised AI-assisted engineering system that coordinates planning, development, testing, independent review, and human release decisions, alongside a dashboard for delivery evidence and failure analysis.",
+      "description": "## The problem\n\nAs a solo founder building multiple products, I needed more structured development capacity without losing control over code quality, security, ownership, or the release process.\n\n## The system\n\nI designed a governed workflow in which work is planned, assigned to specialized AI agents, isolated for implementation, checked through automated tests, reviewed independently, and presented for a human decision before release.\n\n## The controls\n\nScoped task ownership, isolated work environments, security restrictions, testing and review requirements, bounded repair attempts, stop conditions, and recorded execution evidence.\n\n## The analytics\n\nA companion dashboard examines tasks, review outcomes, failures, timing, cost-related records where available, and evidence quality to make engineering performance more visible.\n\n## What this demonstrates\n\nOperating-system design for AI-assisted engineering; agent orchestration; quality governance; engineering metrics; traceability; and iterative improvement.",
+      "tech": [],
+      "featured": true,
+      "order": 1,
+      "category": "AI Engineering Systems",
+      "relationship": "Independent Product",
+      "status": "Advanced supervised system",
+      "visibility": "public",
+      "caseStudy": {
+        "intro": "Operating-system design for AI-assisted engineering; agent orchestration; quality governance; engineering metrics; traceability; and iterative improvement.",
+        "challenge": "As a solo founder building multiple products, I needed more structured development capacity without losing control over code quality, security, ownership, or the release process.",
+        "delivered": "I designed a governed workflow in which work is planned, assigned to specialized AI agents, isolated for implementation, checked through automated tests, reviewed independently, and presented for a human decision before release. A companion dashboard examines tasks, review outcomes, failures, timing, cost-related records where available, and evidence quality to make engineering performance more visible.",
+        "riskAndControls": "Scoped task ownership, isolated work environments, security restrictions, testing and review requirements, bounded repair attempts, stop conditions, and recorded execution evidence."
+      },
+      "images": [],
+      "image": ""
+    },
+    {
+      "id": "prj-ai-governance-platform",
+      "slug": "ai-strategy-governance-platform",
+      "title": "AI Strategy & Governance Platform",
+      "tagline": "Connecting AI opportunities to business objectives, prioritization, governance decisions, evidence, accountability, and value measurement.",
+      "description": "## The challenge\n\nOrganizations need a way to connect AI enthusiasm to disciplined decisions: which opportunities matter, who owns them, what risks they carry, and whether they generate value. I am developing a platform that brings those questions into one managed workflow.\n\n## Work under development\n\nUse-case inventory, objectives and KPIs, prioritization, risk and approval rules, supporting evidence, audit history, and value-hypothesis tracking.\n\n## Status\n\nIn development.",
+      "tech": [],
+      "featured": true,
+      "order": 2,
+      "category": "AI Strategy & Governance",
+      "relationship": "Company Product",
+      "status": "In Development",
+      "visibility": "public",
+      "caseStudy": {
+        "challenge": "Organizations need a way to connect AI enthusiasm to disciplined decisions: which opportunities matter, who owns them, what risks they carry, and whether they generate value. I am developing a platform that brings those questions into one managed workflow.",
+        "delivered": "Work under development: use-case inventory, objectives and KPIs, prioritization, risk and approval rules, supporting evidence, audit history, and value-hypothesis tracking.",
+        "outcome": "In development."
+      },
+      "images": [],
+      "image": ""
+    },
+    {
       "id": "prj-prepera",
       "slug": "prepera",
       "title": "Prepera",
-      "tagline": "AI job-search platform that coaches candidates from first saved listing to signed offer.",
+      "tagline": "Brings résumé optimization, job tracking, AI voice interview practice, and salary-negotiation preparation into one career workflow.",
       "description": "## The problem\n\nA job search runs across a dozen tools: job boards, tracking spreadsheets, resume editors, interview-prep videos, salary forums. Prepera puts the whole search in one place and adds an AI coach at every step.\n\n## What it does\n\nCandidates search listings aggregated from major job boards, then track every application on a drag-and-drop pipeline that runs from Saved through Applied, Screening, Interview, and Offer. Email sync captures recruiter replies automatically. The AI layer tailors resumes to each role, runs practice interviews, and preps salary negotiation before the offer call.\n\n## Status\n\nIn production at preperahq.com with Stripe billing.\n\n## How it's built\n\nNext.js and TypeScript on the front end, Supabase and Postgres behind it, with Claude and OpenAI powering the coaching features.",
       "tech": [
         "Next.js",
@@ -17,7 +83,19 @@
       "liveUrl": "https://preperahq.com/",
       "image": "/projects/prepera.png",
       "featured": true,
-      "order": 0
+      "order": 4,
+      "category": "AI & SaaS Products",
+      "relationship": "Independent Product",
+      "status": "Status to confirm",
+      "visibility": "public",
+      "externalUrl": "https://preperahq.com",
+      "images": [
+        {
+          "url": "/projects/prepera.png",
+          "alt": "Prepera application screenshot",
+          "kind": "screenshot"
+        }
+      ]
     },
     {
       "id": "prj-authmatch",
@@ -36,44 +114,74 @@
       "liveUrl": "https://authmatch-ai-web.vercel.app",
       "image": "/projects/authmatch.png",
       "featured": true,
-      "order": 1
+      "order": 3,
+      "category": "AI & SaaS Products",
+      "relationship": "Independent Product",
+      "status": "Status to confirm",
+      "visibility": "public",
+      "externalUrl": "https://authmatch-ai-web.vercel.app",
+      "images": [
+        {
+          "url": "/projects/authmatch.png",
+          "alt": "AuthMatch AI reviewer interface screenshot",
+          "kind": "screenshot"
+        }
+      ]
     },
     {
       "id": "prj-dupars-bbq",
       "slug": "dupars-bbq",
       "title": "Dupar's BBQ",
-      "tagline": "Catering storefront that replaced a PDF menu and voicemail orders with self-serve quotes and Stripe deposits.",
-      "description": "## The problem\n\nDupar's BBQ, a Houston catering operation, ran on a static PDF menu and a voicemail box. Getting a quote took days of phone tag, and bookings had no deposit to hold them.\n\n## What it does\n\nCustomers browse the menu with photos and current pricing on their phone, build a catering quote in a few steps, and lock in their event date with a Stripe deposit. The owner manages the menu, quotes, and orders from an admin dashboard, and gets notified of every new request by email and text.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, Stripe, Resend for email, and Twilio for SMS.",
+      "tagline": "A customer-facing catering website intended to make services and event inquiries easier to explore.",
+      "description": "## The project\n\nDupar's BBQ is a Houston catering business. This is a customer-facing catering website intended to make its services and event inquiries easier to explore.",
       "tech": [
         "Next.js",
         "TypeScript",
-        "Supabase",
-        "Stripe",
-        "Twilio",
-        "Resend"
+        "Supabase"
       ],
       "liveUrl": "https://dupars-bbq-website.vercel.app",
       "image": "/projects/dupars-bbq.png",
       "featured": false,
-      "order": 3
+      "order": 6,
+      "category": "Web & App Development",
+      "relationship": "Client Work",
+      "status": "Delivered scope to confirm",
+      "visibility": "public",
+      "images": [
+        {
+          "url": "/projects/dupars-bbq.png",
+          "alt": "Dupar's BBQ catering website screenshot",
+          "kind": "screenshot"
+        }
+      ]
     },
     {
       "id": "prj-angie-cares",
       "slug": "angie-cares",
       "title": "Angie Cares",
-      "tagline": "Marketing and intake site for a special-education advocacy practice, taking families from first visit to booked consultation.",
-      "description": "## The problem\n\nParents navigating special education, IEPs, and 504 plans often don't know what an advocate does or how to get started. Angie Cares needed a site that explains the practice in plain language and turns visitors into booked consultations.\n\n## What it does\n\nThe site walks families through the services on offer (parent advocacy, IEP and 504 guidance, special-education support, and resource navigation), sets expectations for what an engagement looks like, and moves them to a booked conversation through consultation scheduling and an online intake form. Trainings and workshops are bookable too, and every new inquiry triggers an email notification.\n\n## How it's built\n\nNext.js, TypeScript, Supabase, Resend, and Tailwind CSS.",
+      "tagline": "A website and consultation experience designed to help families learn about special-education advocacy services and take a clear next step.",
+      "description": "## The project\n\nA website and consultation experience designed to help families learn about special-education advocacy services and take a clear next step.",
       "tech": [
         "Next.js",
         "TypeScript",
         "Supabase",
-        "Resend",
         "Tailwind CSS"
       ],
       "liveUrl": "https://angie-cares-website.vercel.app",
       "image": "/projects/angie-cares.png",
       "featured": false,
-      "order": 4
+      "order": 7,
+      "category": "Web & App Development",
+      "relationship": "Client Work",
+      "status": "Delivered scope to confirm",
+      "visibility": "public",
+      "images": [
+        {
+          "url": "/projects/angie-cares.png",
+          "alt": "Angie Cares website screenshot",
+          "kind": "screenshot"
+        }
+      ]
     },
     {
       "id": "prj-gen4me",
@@ -91,7 +199,19 @@
       "liveUrl": "https://gen4me.com/",
       "image": "/projects/gen4me.png",
       "featured": true,
-      "order": 2
+      "order": 5,
+      "category": "AI & SaaS Products",
+      "relationship": "Independent Product",
+      "status": "Status to confirm",
+      "visibility": "public",
+      "externalUrl": "https://gen4me.com",
+      "images": [
+        {
+          "url": "/projects/gen4me.png",
+          "alt": "Gen4Me application screenshot",
+          "kind": "screenshot"
+        }
+      ]
     },
     {
       "id": "prj-sanctionswatch",
@@ -107,10 +227,20 @@
         "Tailwind CSS",
         "AI / LLMs"
       ],
-      "liveUrl": "https://sanctionswatch.vercel.app",
       "image": "/projects/sanctionswatch.png",
       "featured": false,
-      "order": 5
+      "order": 8,
+      "category": "AI & SaaS Products",
+      "relationship": "Independent Product",
+      "status": "Status to confirm",
+      "visibility": "public",
+      "images": [
+        {
+          "url": "/projects/sanctionswatch.png",
+          "alt": "SanctionsWatch application screenshot",
+          "kind": "screenshot"
+        }
+      ]
     },
     {
       "id": "prj-g2-complaint-miner",
@@ -128,20 +258,58 @@
       "liveUrl": "https://g2-complaint-miner.vercel.app",
       "image": "/projects/g2-complaint-miner.png",
       "featured": false,
-      "order": 6
+      "order": 10,
+      "category": "AI & SaaS Products",
+      "relationship": "Independent Product",
+      "status": "Status to confirm",
+      "visibility": "public",
+      "externalUrl": "https://g2-complaint-miner.vercel.app",
+      "images": [
+        {
+          "url": "/projects/g2-complaint-miner.png",
+          "alt": "G2 Complaint Miner screenshot",
+          "kind": "screenshot"
+        }
+      ]
+    },
+    {
+      "id": "prj-regulatory-intelligence",
+      "slug": "regulatory-intelligence-platform",
+      "title": "Regulatory Intelligence Platform",
+      "tagline": "Collects regulatory changes across jurisdictions, reduces duplicate information, classifies updates, and produces structured summaries and alerts.",
+      "description": "## The problem\n\nRegulatory updates appear across fragmented sources and require repeated manual monitoring.\n\n## The solution\n\nIngestion, classification, deduplication, summarization, and alerts.\n\n## Status\n\nMVP.",
+      "tech": [],
+      "featured": false,
+      "order": 9,
+      "category": "AI & SaaS Products",
+      "relationship": "Independent Product",
+      "status": "MVP",
+      "visibility": "public",
+      "caseStudy": {
+        "challenge": "Regulatory updates appear across fragmented sources and require repeated manual monitoring.",
+        "delivered": "Ingestion, classification, deduplication, summarization, and alerts.",
+        "outcome": "MVP."
+      },
+      "images": [],
+      "image": ""
     }
   ],
   "about": {
     "name": "Erick Clark",
-    "title": "Executive & AI Builder",
-    "heroTagline": "VP and Chief of Staff for Legal Technology at JPMorgan Chase, and founder of an independent portfolio of AI products across healthcare, regulatory intelligence, and career tech. I set technology strategy for a living and ship the software myself.",
+    "title": "Technology Strategy & AI Transformation Executive",
+    "heroTagline": "Former JPMorgan Chase Vice President and Chief of Staff with more than 15 years of experience across technology strategy, enterprise transformation, portfolio governance, and business operations. I also design and build AI-powered products, giving me direct experience connecting executive decisions to technical execution.",
     "availableForWork": true,
     "photo": "/profile.png",
     "resumeUrl": "/Erick-Clark-Resume-2026.pdf",
     "bio": [
-      "I'm a technology strategy and operations executive with more than 15 years across financial services, energy, technology services, and the U.S. Army. At JPMorgan Chase I serve as VP and Chief of Staff for Legal Technology, where I own the annual strategy cycle for a seven-product global portfolio: AI investment priorities, product governance, and financial and workforce planning for a labor budget between $25M and $36M supporting roughly 164 people.",
-      "I also build. Since 2024 I've shipped an independent portfolio of AI products end to end, from database schema to production deploy. AuthMatch AI helps utilization-management reviewers match prior-authorization cases to Medicare coverage policy. Prepera coaches job seekers from saved listing to signed offer. SanctionsWatch tracks regulatory sanctions across five jurisdictions. Every one keeps a human decision-maker in the loop.",
-      "I hold an MBA, an M.S. in Management Information Systems, and PMP, Professional Scrum Master, AWS Cloud Practitioner, and FinOps certifications. Through my studio NightPivot I take on AI product and automation work for growing businesses. The fastest way to reach me is email."
+      "I'm a technology strategy and transformation executive with more than 15 years of experience across financial services, energy, technology services, and the U.S. Army.",
+      "Most recently, I served as Vice President and Chief of Staff for Legal Technology at JPMorgan Chase. My responsibilities connected technology strategy, product portfolio governance, financial and workforce planning, executive operations, and cross-functional execution. I worked with senior leaders and technology teams to translate priorities into plans, establish accountability, and move complex initiatives forward.",
+      "My experience extends beyond corporate strategy. I have led technology programs, supported large-scale modernization efforts, improved business processes, and managed initiatives across highly regulated environments.",
+      "In recent years, I've expanded into hands-on AI product development. I design and build applications involving language models, AI agents, data integrations, document intelligence, workflow automation, and cloud infrastructure. This has strengthened my understanding of the implementation challenges, technical decisions, and governance considerations that determine whether an AI initiative succeeds.",
+      "I also founded Clark Strategic Systems LLC, known publicly as Clark Strategics, to help organizations address technology challenges through consulting and implementation.",
+      "My perspective is shaped by both executive leadership and direct experience developing software. I understand the decisions required to fund and govern technology, along with the work involved in making it operational.",
+      "Credentials: Master of Business Administration (MBA); Master of Science, Management Information Systems; Bachelor of Science, Business & Accounting; Project Management Professional (PMP); Professional Scrum Master I (PSM I); AWS Certified Cloud Practitioner; FinOps Certified Practitioner; United States Army Veteran.",
+      "Identify the real problem. Make clear decisions. Deliver something that creates value."
     ],
     "skills": [
       "TypeScript",
@@ -171,21 +339,33 @@
   "experience": [
     {
       "id": "exp-jpmc",
-      "role": "VP, Chief of Staff (Strategy & Execution), Legal Technology",
+      "role": "Vice President, Chief of Staff — Strategy & Execution, Legal Technology",
       "company": "JPMorgan Chase",
-      "start": "2019",
-      "end": "",
-      "description": "Own Legal Technology's annual strategy cycle and multi-year roadmap: portfolio objectives, AI investment priorities, product governance, and financial and workforce planning for a $24.9M to $36.2M labor portfolio supporting roughly 164 employees. Built and operationalized the organization's AI strategy, and develop the executive reporting that goes to JPMorgan's General Counsel and senior Technology leadership. Sponsored modernization initiatives that cut technology costs by $3M.",
-      "order": 0
+      "start": "July 2019",
+      "end": "August 2026",
+      "description": "Guided technology strategy, roadmap governance, AI prioritization, operating-model improvement, financial/workforce planning, and executive business operations.",
+      "order": 0,
+      "visibility": "public"
     },
     {
-      "id": "exp-nightpivot",
-      "role": "Founder & AI Product Strategist",
-      "company": "NightPivot",
+      "id": "exp-css",
+      "role": "Founder",
+      "company": "Clark Strategic Systems LLC",
+      "start": "2026",
+      "end": "",
+      "description": "Building a consulting and engineering firm focused on practical technology strategy, AI, automation, and application delivery.",
+      "order": 1,
+      "visibility": "public"
+    },
+    {
+      "id": "exp-independent-ai",
+      "role": "Product Strategist & Builder",
+      "company": "Independent AI Product Portfolio",
       "start": "2024",
       "end": "",
-      "description": "Design and ship AI products end to end across healthcare, regulatory intelligence, and career technology, including AuthMatch AI, SanctionsWatch, Prepera, and Gen4Me. Also build AI automation workflows for growing businesses. Every product keeps a human decision-maker in the loop and ships with governance controls built in.",
-      "order": 1
+      "description": "Designing and developing AI-powered products spanning healthcare, career technology, regulatory intelligence, and engineering workflows.",
+      "order": 2,
+      "visibility": "public"
     },
     {
       "id": "exp-csat",
@@ -194,7 +374,8 @@
       "start": "2018",
       "end": "2019",
       "description": "Senior PMO business partner for Apple and Dell technology programs. Shipped an automated, NIST 800-88 compliant data-deletion solution for decommissioned government laptops that cut human error by 90%, and led automation and modernization initiatives worth about $5M in annual savings.",
-      "order": 2
+      "order": 3,
+      "visibility": "public"
     },
     {
       "id": "exp-nrg",
@@ -203,7 +384,8 @@
       "start": "2016",
       "end": "2018",
       "description": "Led delivery of retail-energy platforms across business, technology, compliance, and vendor teams. SAP billing enhancements cut annual operating costs by $500K, and a PCI-compliant IVR payment system expanded secure self-service while reducing average call-handling time by 20%.",
-      "order": 3
+      "order": 4,
+      "visibility": "public"
     },
     {
       "id": "exp-centerpoint",
@@ -212,7 +394,8 @@
       "start": "2015",
       "end": "2016",
       "description": "Led the $29.4M fiber expansion program, improving communications throughput by 40%, and governed $8M in capital-project budgets across engineering, operations, vendors, and field teams.",
-      "order": 4
+      "order": 5,
+      "visibility": "public"
     },
     {
       "id": "exp-army",
@@ -221,7 +404,18 @@
       "start": "2011",
       "end": "2015",
       "description": "Produced predictive intelligence assessments and delivered classified briefings to senior leaders, translating complex findings into clear recommended actions. Supervised and developed junior analysts.",
-      "order": 5
+      "order": 6,
+      "visibility": "public"
+    },
+    {
+      "id": "exp-nightpivot",
+      "role": "Founder & AI Product Strategist",
+      "company": "NightPivot",
+      "start": "2024",
+      "end": "",
+      "description": "Design and ship AI products end to end across healthcare, regulatory intelligence, and career technology, including AuthMatch AI, SanctionsWatch, Prepera, and Gen4Me. Also build AI automation workflows for growing businesses. Every product keeps a human decision-maker in the loop and ships with governance controls built in.",
+      "order": 99,
+      "visibility": "archived"
     }
   ]
 }
