@@ -1,12 +1,12 @@
-import { getSiteContent } from '@/lib/content';
+import { getSiteContent, publicExperience } from '@/lib/content';
 import AnimateIn from './animate-in';
 
 export default async function Experience() {
   const { experience } = await getSiteContent();
 
-  if (experience.length === 0) return null;
+  const items = [...publicExperience(experience)].sort((a, b) => a.order - b.order);
 
-  const items = [...experience].sort((a, b) => a.order - b.order);
+  if (items.length === 0) return null;
 
   return (
     <section id="experience" className="py-24 px-6">

@@ -1,10 +1,10 @@
-import { getSiteContent } from '@/lib/content';
+import { getSiteContent, publicProjects } from '@/lib/content';
 import ProjectCard from './project-card';
 import AnimateIn from './animate-in';
 
 export default async function Projects() {
   const { projects } = await getSiteContent();
-  const sorted = [...projects].sort((a, b) => {
+  const sorted = [...publicProjects(projects)].sort((a, b) => {
     if (a.featured && !b.featured) return -1;
     if (!a.featured && b.featured) return 1;
     return a.order - b.order;

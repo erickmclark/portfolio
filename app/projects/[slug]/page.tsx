@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, GitBranch, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getSiteContent } from "@/lib/content";
+import { getSiteContent, publicProjects } from "@/lib/content";
 import MarkdownRenderer from "@/components/markdown-renderer";
 import ProjectImage from "@/components/project-image";
 
@@ -14,7 +14,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = (await getSiteContent()).projects.find((p) => p.slug === slug);
+  const project = publicProjects((await getSiteContent()).projects).find((p) => p.slug === slug);
   if (!project) return {};
   return {
     title: project.title,
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;
-  const project = (await getSiteContent()).projects.find((p) => p.slug === slug);
+  const project = publicProjects((await getSiteContent()).projects).find((p) => p.slug === slug);
   if (!project) return notFound();
 
   return (

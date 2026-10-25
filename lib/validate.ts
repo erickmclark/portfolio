@@ -1,4 +1,11 @@
 import type { SiteContent } from './types';
+import {
+  CASE_STUDY_SECTIONS,
+  IMAGE_KINDS,
+  PROJECT_CATEGORIES,
+  PROJECT_RELATIONSHIPS,
+  VISIBILITIES,
+} from './types';
 
 export type ValidationResult =
   | { ok: true; content: SiteContent }
@@ -10,6 +17,10 @@ function isObject(v: unknown): v is Record<string, unknown> {
 
 function isStringArray(v: unknown): v is string[] {
   return Array.isArray(v) && v.every((item) => typeof item === 'string');
+}
+
+function isOneOf(v: unknown, allowed: readonly string[]): boolean {
+  return typeof v === 'string' && allowed.includes(v);
 }
 
 export function validateSiteContent(input: unknown): ValidationResult {
@@ -82,6 +93,47 @@ export function validateSiteContent(input: unknown): ValidationResult {
       if (typeof p.order !== 'number') errors.push(`${where}.order must be a number.`);
       if (p.githubUrl !== undefined && typeof p.githubUrl !== 'string') errors.push(`${where}.githubUrl must be a string when present.`);
       if (p.liveUrl !== undefined && typeof p.liveUrl !== 'string') errors.push(`${where}.liveUrl must be a string when present.`);
+      if (p.category !== undefined && !isOneOf(p.category, PROJECT_CATEGORIES)) {
+        errors.push(`${where}.category must be one of: ${PROJECT_CATEGORIES.join(', ')}.`);
+      }
+      if (p.relationship !== undefined && !isOneOf(p.relationship, PROJECT_RELATIONSHIPS)) {
+        errors.push(`${where}.relationship must be one of: ${PROJECT_RELATIONSHIPS.join(', ')}.`);
+      }
+      if (p.status !== undefined && typeof p.status !== 'string') errors.push(`${where}.status must be a string when present.`);
+      if (p.visibility !== undefined && !isOneOf(p.visibility, VISIBILITIES)) {
+        errors.push(`${where}.visibility must be one of: ${VISIBILITIES.join(', ')}.`);
+      }
+      if (p.externalUrl !== undefined && typeof p.externalUrl !== 'string') errors.push(`${where}.externalUrl must be a string when present.`);
+      if (p.caseStudy !== undefined) {
+        if (!isObject(p.caseStudy)) {
+          errors.push(`${where}.caseStudy must be an object when present.`);
+        } else {
+          for (const [key, value] of Object.entries(p.caseStudy)) {
+            if (!(CASE_STUDY_SECTIONS as readonly string[]).includes(key)) {
+              errors.push(`${where}.caseStudy.${key} is not a known section.`);
+            } else if (typeof value !== 'string') {
+              errors.push(`${where}.caseStudy.${key} must be a string.`);
+            }
+          }
+        }
+      }
+      if (p.images !== undefined) {
+        if (!Array.isArray(p.images)) {
+          errors.push(`${where}.images must be an array when present.`);
+        } else {
+          p.images.forEach((img, j) => {
+            const iw = `${where}.images[${j}]`;
+            if (!isObject(img)) {
+              errors.push(`${iw} must be an object.`);
+              return;
+            }
+            if (typeof img.url !== 'string' || img.url.trim() === '') errors.push(`${iw}.url must be a non-empty string.`);
+            if (typeof img.alt !== 'string' || img.alt.trim() === '') errors.push(`${iw}.alt must be a non-empty string.`);
+            if (img.caption !== undefined && typeof img.caption !== 'string') errors.push(`${iw}.caption must be a string when present.`);
+            if (!isOneOf(img.kind, IMAGE_KINDS)) errors.push(`${iw}.kind must be one of: ${IMAGE_KINDS.join(', ')}.`);
+          });
+        }
+      }
     });
   }
 
@@ -112,6 +164,9 @@ export function validateSiteContent(input: unknown): ValidationResult {
         if (typeof x.end !== 'string') errors.push(`${where}.end must be a string.`);
         if (typeof x.description !== 'string') errors.push(`${where}.description must be a string.`);
         if (typeof x.order !== 'number') errors.push(`${where}.order must be a number.`);
+        if (x.visibility !== undefined && !isOneOf(x.visibility, VISIBILITIES)) {
+          errors.push(`${where}.visibility must be one of: ${VISIBILITIES.join(', ')}.`);
+        }
       });
     }
   }

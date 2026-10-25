@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getSiteContent } from "./content";
+import { getSiteContent, publicExperience, publicProjects } from "./content";
+import type { ExperienceItem, Project } from "./types";
 
 // The KV store is unavailable in the test environment, so getSiteContent()
 // should transparently fall back to reading content/data.json.
@@ -22,5 +23,33 @@ describe("getSiteContent (file fallback)", () => {
       expect(p.image).toBeTypeOf("string");
       expect(Array.isArray(p.tech)).toBe(true);
     }
+  });
+});
+
+describe("visibility helpers", () => {
+  const proj = (id: string, visibility?: Project["visibility"]) =>
+    ({ id, slug: id, title: id, tagline: "", description: "", tech: [], featured: false, order: 0, visibility }) as Project;
+  const exp = (id: string, visibility?: ExperienceItem["visibility"]) =>
+    ({ id, role: "r", company: "c", start: "", end: "", description: "", order: 0, visibility }) as ExperienceItem;
+
+  it("publicProjects keeps public and legacy (undefined) records only", () => {
+    const out = publicProjects([proj("a", "public"), proj("b", "hidden"), proj("c", "archived"), proj("d")]);
+    expect(out.map((p) => p.id)).toEqual(["a", "d"]);
+  });
+
+  it("publicExperience keeps public and legacy (undefined) records only", () => {
+    const out = publicExperience([exp("a", "public"), exp("b", "archived"), exp("c", "hidden"), exp("d")]);
+    expect(out.map((x) => x.id)).toEqual(["a", "d"]);
+  });
+
+  it("migrated data.json defaults visibility and archives NightPivot out of public experience", async () => {
+    const { projects, experience } = await getSiteContent();
+    expect(projects.every((p) => p.visibility)).toBe(true);
+    expect(experience.find((x) => x.company === "NightPivot")?.visibility).toBe("archived");
+    expect(publicExperience(experience).some((x) => x.company === "NightPivot")).toBe(false);
+    const jpm = publicExperience(experience).find((x) => x.company === "JPMorgan Chase");
+    expect(jpm?.start).toBe("July 2019");
+    expect(jpm?.end).toBe("August 2026");
+    expect(publicProjects(projects).some((p) => p.slug.includes("deb"))).toBe(false);
   });
 });

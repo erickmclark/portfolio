@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { getSiteContent } from '@/lib/content';
+import { getSiteContent, publicProjects } from '@/lib/content';
 
 export const alt = 'Project';
 export const size = { width: 1200, height: 630 };
@@ -10,7 +10,7 @@ type Props = { params: Promise<{ slug: string }> };
 export default async function Image({ params }: Props) {
   const { slug } = await params;
   const { projects, about } = await getSiteContent();
-  const project = projects.find((p) => p.slug === slug);
+  const project = publicProjects(projects).find((p) => p.slug === slug);
 
   const title = project?.title ?? about.name;
   const tagline = project?.tagline ?? '';

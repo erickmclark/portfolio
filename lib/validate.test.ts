@@ -177,4 +177,51 @@ describe("validateSiteContent", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.errors.join(" ")).toMatch(/experience/i);
   });
+
+  it("accepts a project with every new content-spec field", () => {
+    const c = validContent();
+    Object.assign(c.projects[0], {
+      category: "AI & SaaS Products",
+      relationship: "Independent Product",
+      status: "MVP",
+      visibility: "hidden",
+      externalUrl: "https://example.com",
+      caseStudy: { challenge: "A", outcome: "" },
+      images: [{ url: "/a.png", alt: "Alt", caption: "Cap", kind: "conceptual" }],
+    });
+    c.experience[0].visibility = "archived";
+    expect(validateSiteContent(c).ok).toBe(true);
+  });
+
+  const badProject: Array<[string, Record<string, unknown>, RegExp]> = [
+    ["bad category", { category: "Other" }, /category/],
+    ["bad relationship", { relationship: "Freelance" }, /relationship/],
+    ["non-string status", { status: 3 }, /status/],
+    ["bad visibility", { visibility: "private" }, /visibility/],
+    ["non-string externalUrl", { externalUrl: 5 }, /externalUrl/],
+    ["non-object caseStudy", { caseStudy: "text" }, /caseStudy/],
+    ["non-string section", { caseStudy: { challenge: 1 } }, /caseStudy\.challenge/],
+    ["unknown section", { caseStudy: { bogus: "x" } }, /caseStudy\.bogus/],
+    ["non-array images", { images: "x.png" }, /images/],
+    ["image missing url", { images: [{ alt: "a", kind: "screenshot" }] }, /url/],
+    ["image missing alt", { images: [{ url: "/a.png", kind: "screenshot" }] }, /alt/],
+    ["image empty alt", { images: [{ url: "/a.png", alt: " ", kind: "screenshot" }] }, /alt/],
+    ["image bad kind", { images: [{ url: "/a.png", alt: "a", kind: "photo" }] }, /kind/],
+    ["image non-string caption", { images: [{ url: "/a.png", alt: "a", kind: "screenshot", caption: 1 }] }, /caption/],
+  ];
+  it.each(badProject)("rejects a project with %s", (_name, patch, pattern) => {
+    const c = validContent();
+    Object.assign(c.projects[0], patch);
+    const result = validateSiteContent(c);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toMatch(pattern);
+  });
+
+  it("rejects an experience entry with a bad visibility", () => {
+    const c = validContent();
+    (c.experience[0] as unknown as Record<string, unknown>).visibility = "gone";
+    const result = validateSiteContent(c);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toMatch(/visibility/);
+  });
 });
