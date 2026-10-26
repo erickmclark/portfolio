@@ -5,8 +5,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
+import HideOnAdmin from "@/components/hide-on-admin";
 import MobileBottomNav from "@/components/mobile-bottom-nav";
-import { HOME_SEO } from "@/lib/home-copy";
 import { getSiteContent } from "@/lib/content";
 import { SITE_URL } from "@/lib/site";
 
@@ -41,9 +41,9 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { about } = await getSiteContent();
-  const title = HOME_SEO.title;
-  const description = HOME_SEO.description;
+  const { about, site } = await getSiteContent();
+  const title = site.seo.home.title;
+  const description = site.seo.home.description;
   return {
     metadataBase: new URL(SITE_URL),
     title: {
@@ -74,14 +74,14 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { about, contact } = await getSiteContent();
+  const { about, contact, site } = await getSiteContent();
 
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: about.name,
     jobTitle: about.title,
-    description: HOME_SEO.description,
+    description: site.seo.home.description,
     url: SITE_URL,
     email: `mailto:${contact.email}`,
     ...(about.photo ? { image: `${SITE_URL}${about.photo}` } : {}),
@@ -96,11 +96,13 @@ export default async function RootLayout({
         </a>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c") }}
         />
         <SiteHeader name={about.name} resumeUrl={about.resumeUrl} />
         {children}
-        <SiteFooter />
+        <HideOnAdmin>
+          <SiteFooter />
+        </HideOnAdmin>
         <MobileBottomNav resumeUrl={about.resumeUrl} />
         <Analytics />
         <SpeedInsights />

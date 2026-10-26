@@ -1,8 +1,8 @@
-import { PROJECT_CATEGORIES } from './types';
-import type { Project, ProjectCategory } from './types';
+import { PROJECT_CATEGORIES, VIEWS } from './types';
+import type { Project, ProjectCategory, View } from './types';
 
-export const VIEWS = ['it', 'consultant', 'builder'] as const;
-export type View = (typeof VIEWS)[number];
+export { VIEWS };
+export type { View };
 export const DEFAULT_VIEW: View = 'it';
 
 export const VIEW_LABELS: Record<View, string> = {
@@ -65,18 +65,18 @@ export const FEATURED_ORDER: Record<View, string[]> = {
 
 /** The AI Engineering Factory gets the full-width feature card only in views whose featured list includes it. */
 export const FACTORY_ID = 'prj-ai-engineering-factory';
-export function hasFactoryFeature(view: View): boolean {
-  return FEATURED_ORDER[view].includes(FACTORY_ID);
+export function hasFactoryFeature(view: View, order: Record<View, string[]> = FEATURED_ORDER): boolean {
+  return order[view].includes(FACTORY_ID);
 }
 
 /** The view's featured projects first, in order; every other project follows in content order. */
-export function orderProjects(projects: Project[], view: View): Project[] {
+export function orderProjects(projects: Project[], view: View, order: Record<View, string[]> = FEATURED_ORDER): Project[] {
   const byContent = [...projects].sort((a, b) => {
     if (a.featured !== b.featured) return a.featured ? -1 : 1;
     return a.order - b.order;
   });
   const rank = (p: Project) => {
-    const i = FEATURED_ORDER[view].indexOf(p.id);
+    const i = order[view].indexOf(p.id);
     return i === -1 ? Number.MAX_SAFE_INTEGER : i;
   };
   return byContent

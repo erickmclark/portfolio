@@ -1,11 +1,13 @@
 import { ArrowRight } from "lucide-react";
-import { APPROACH } from "@/lib/home-copy";
+import { getSiteContent } from "@/lib/content";
 import type { View } from "@/lib/home-view";
 import ApproachAssembly from "./approach-assembly";
 import Configuration from "./configuration";
 import SectionHead from "./section-head";
 
-export default function Approach({ view }: { view: View }) {
+export default async function Approach({ view }: { view: View }) {
+  const { home } = await getSiteContent();
+  const APPROACH = home.approach;
   return (
     <section id="approach" aria-labelledby="approach-title" className="public-shell border-t border-ink">
       <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-10 sm:py-24">
@@ -14,9 +16,9 @@ export default function Approach({ view }: { view: View }) {
         <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,602px)_minmax(0,1fr)] lg:gap-[72px]">
           <div>
             <ol>
-              {APPROACH.steps.map((s) => (
-                <li key={s.n} data-step className="border-t border-ink py-6">
-                  <p className="font-mono text-[11px] font-medium">{s.n}</p>
+              {APPROACH.steps.map((s, i) => (
+                <li key={s.title} data-step className="border-t border-ink py-6">
+                  <p className="font-mono text-[11px] font-medium">{String(i + 1).padStart(2, "0")}</p>
                   <h3 className="mt-3 font-display text-[32px] font-bold leading-[1.1] tracking-[-0.03em] sm:text-[40px]">
                     {s.title}
                   </h3>
@@ -29,7 +31,7 @@ export default function Approach({ view }: { view: View }) {
             </a>
           </div>
           <div className="hidden self-center border border-ink p-10 lg:block">
-            <Configuration view={view} labels={false} />
+            <Configuration view={view} capabilities={home.capabilities[view]} labels={false} />
           </div>
         </div>
         </ApproachAssembly>

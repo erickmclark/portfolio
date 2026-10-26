@@ -1,9 +1,11 @@
-import { POV } from "@/lib/home-copy";
+import { getSiteContent } from "@/lib/content";
 import { Eyebrow } from "./section-head";
 
 const MARKS = ["bg-brand-yellow", "bg-brand-pink", "bg-brand-blue"];
 
-export default function PointOfView() {
+export default async function PointOfView() {
+  const { home } = await getSiteContent();
+  const POV = home.pointOfView;
   return (
     <section id="point-of-view" aria-labelledby="pov-title" className="public-shell border-t border-ink">
       <div className="mx-auto grid max-w-[1440px] gap-12 px-4 py-16 sm:px-10 sm:py-24 lg:grid-cols-2 lg:gap-[72px]">

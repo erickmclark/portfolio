@@ -2,7 +2,8 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { cache } from 'react';
 import { Redis } from '@upstash/redis';
-import type { ExperienceItem, Project, SiteContent } from './types';
+import { withContentDefaults } from './home-copy';
+import type { ExperienceItem, Project, ResolvedSiteContent, SiteContent } from './types';
 
 const CONTENT_KEY = 'data';
 
@@ -33,7 +34,7 @@ export function getRedis(): Redis | null {
  * section component share one Redis read per request, with no persistence
  * across requests (unlike `unstable_cache`, which was intentionally dropped).
  */
-export const getSiteContent = cache(async (): Promise<SiteContent> => {
+export const getSiteContent = cache(async (): Promise<ResolvedSiteContent> => {
   let content: SiteContent | null = null;
   try {
     const redis = getRedis();
@@ -50,7 +51,7 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
   // Legacy records predate visibility — treat them as public
   for (const p of content.projects) p.visibility ??= 'public';
   for (const x of content.experience) x.visibility ??= 'public';
-  return content;
+  return withContentDefaults(content);
 });
 
 export function publicProjects(projects: Project[]): Project[] {
