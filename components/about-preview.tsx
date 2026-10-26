@@ -24,7 +24,7 @@ export default async function AboutPreview() {
                 width={160}
                 height={160}
                 sizes="160px"
-                className="h-40 w-40 rounded-full object-cover"
+                className="h-40 w-40 rounded-full object-cover ring-2 ring-brand-blue shadow-glow"
               />
             )}
             {closing && (

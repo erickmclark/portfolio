@@ -37,7 +37,7 @@ export default async function Hero({ view }: { view: View }) {
                 width={64}
                 height={64}
                 priority
-                className="h-16 w-16 rounded-full object-cover"
+                className="h-16 w-16 rounded-full object-cover ring-2 ring-brand-blue shadow-glow"
               />
             )}
             <div>
