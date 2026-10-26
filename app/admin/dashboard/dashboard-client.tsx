@@ -8,6 +8,8 @@ import { validateSiteContent } from '@/lib/validate';
 import AboutTab from './about-tab';
 import ContactTab from './contact-tab';
 import ProjectsTab from './projects-tab';
+import HomeTab from './home-tab';
+import SiteTab from './site-tab';
 import { applyRouteImages } from './gallery-utils';
 import { applyGitHubFill, applySlugImageMove, removeProject, type DeleteNotice } from './project-updates';
 import ExperienceTab from './experience-tab';
@@ -144,12 +146,8 @@ export default function DashboardClient() {
         </div>
       ) : (
       <div className="px-4 py-8 md:px-10">
-        {(tab === 'home' || tab === 'site') && (
-          <section aria-labelledby="placeholder-title" className="border border-ink p-6">
-            <h1 id="placeholder-title" className="font-display text-2xl font-bold">{tab === 'home' ? 'Home page' : 'Site'}</h1>
-            <p className="mt-2 text-ink-muted">This editor arrives with T-6.</p>
-          </section>
-        )}
+        {tab === 'home' && <HomeTab content={content} onChange={update} />}
+        {tab === 'site' && <SiteTab content={content} onChange={update} />}
         {tab === 'projects' && (
           <ProjectsTab
             projects={content.projects}
