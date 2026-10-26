@@ -1,3 +1,5 @@
+import { readFileSync } from "fs";
+import { join } from "path";
 import { describe, expect, it } from "vitest";
 import { validateSiteContent } from "./validate";
 import type { SiteContent } from "./types";
@@ -206,6 +208,9 @@ describe("validateSiteContent", () => {
     ["image missing url", { images: [{ alt: "a", kind: "screenshot" }] }, /url/],
     ["image missing alt", { images: [{ url: "/a.png", kind: "screenshot" }] }, /alt/],
     ["image empty alt", { images: [{ url: "/a.png", alt: " ", kind: "screenshot" }] }, /alt/],
+    ["http image url", { images: [{ url: "http://x.example/a.png", alt: "a", kind: "screenshot" }] }, /same-origin path or an https URL/],
+    ["protocol-relative image url", { images: [{ url: "//x.example/a.png", alt: "a", kind: "screenshot" }] }, /same-origin path or an https URL/],
+    ["javascript legacy image", { image: "javascript:alert(1)" }, /image must be a same-origin path or an https URL/],
     ["image bad kind", { images: [{ url: "/a.png", alt: "a", kind: "photo" }] }, /kind/],
     ["image non-string caption", { images: [{ url: "/a.png", alt: "a", kind: "screenshot", caption: 1 }] }, /caption/],
   ];
@@ -223,5 +228,21 @@ describe("validateSiteContent", () => {
     const result = validateSiteContent(c);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.errors.join(" ")).toMatch(/visibility/);
+  });
+
+  it("accepts an empty legacy image and https/same-origin gallery urls", () => {
+    const c = validContent();
+    c.projects[0].image = "";
+    c.projects[0].images = [
+      { url: "https://qdghepacnxxksvfb.public.blob.vercel-storage.com/projects/p-alpha/a.png", alt: "a", kind: "screenshot" },
+      { url: "/projects/alpha.png", alt: "b", kind: "conceptual" },
+    ];
+    expect(validateSiteContent(c).ok).toBe(true);
+  });
+
+  it("still validates the shipped content/data.json", () => {
+    const data = JSON.parse(readFileSync(join(process.cwd(), "content", "data.json"), "utf-8"));
+    const result = validateSiteContent(data);
+    expect(result.ok).toBe(true);
   });
 });
