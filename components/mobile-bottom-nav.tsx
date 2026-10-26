@@ -61,7 +61,7 @@ export default function MobileBottomNav({ photo }: { photo?: string }) {
       </Link>
       <Link href="/about" aria-current={aria("about")} onClick={tap("about")} className={cls("about")}>
         {photo ? (
-          <Image src={photo} alt="" width={20} height={20} sizes="20px" className="h-5 w-5 rounded-full object-cover ring-1 ring-white/60" />
+          <Image src={photo} alt="" width={20} height={20} sizes="20px" className="h-5 w-5 rounded-full object-cover ring-1 ring-brand-sky shadow-[0_0_6px_1px_var(--color-brand-sky)]" />
         ) : (
           <CircleUser {...ico} />
         )}
