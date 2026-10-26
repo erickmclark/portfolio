@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { LinkedInIcon } from '@/components/brand-icons';
+import PrivacyDialog, { type PrivacyContent } from '@/components/privacy-dialog';
 import {
   COMMON_FIELDS,
   CONTACT_FIELDS,
@@ -24,13 +25,15 @@ type Props = {
   email: string;
   linkedinUrl?: string;
   resumeUrl?: string;
+  privacy: PrivacyContent;
 };
 
 type Status = 'idle' | 'sending' | 'success' | 'disabled' | 'error' | 'rate';
 
 const SENSITIVE = "Please don't submit passwords, protected health information, government IDs, or confidential business documents through this form.";
 const PRODUCT_WARNING = 'Do not include patient information, credentials, or confidential records.';
-const PRIVACY_LABEL = 'I have read the Privacy Policy and agree that my details are used to respond to this inquiry.';
+const PRIVACY_BEFORE = 'I have read the ';
+const PRIVACY_AFTER = ' and agree that my details are used to respond to this inquiry.';
 const CSS_NOTE = 'This request may be handled through Clark Strategic Systems LLC (Clark Strategics), my consulting and engineering firm.';
 const FOLLOW_LABEL = `Optional: send me occasional development updates about the ${GOVERNANCE_PLATFORM_PRODUCT}. Separate from this inquiry; unsubscribe from any update.`;
 const SERVER_ERROR = "Your message couldn't be sent. Please try again or use the direct email link.";
@@ -67,7 +70,9 @@ const control =
 const note = 'rounded-2xl border border-ink bg-paper px-4 py-3 text-[15px] leading-[1.5]';
 const errText = 'mt-1.5 text-sm text-red-700';
 
-export default function ContactForm({ intent, initialValues, sourcePage, onValuesChange, onSent, email, linkedinUrl, resumeUrl }: Props) {
+export default function ContactForm({ intent, initialValues, sourcePage, onValuesChange, onSent, email, linkedinUrl, resumeUrl, privacy: privacyContent }: Props) {
+  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const privacyLinkRef = useRef<HTMLAnchorElement>(null);
   const uid = useId();
   const [values, setValues] = useState<Record<string, string>>(initialValues);
   const [privacy, setPrivacy] = useState(false);
@@ -281,8 +286,30 @@ export default function ContactForm({ intent, initialValues, sourcePage, onValue
                   className="mt-0.5 size-6 shrink-0 accent-ink"
                 />
                 <label htmlFor={fid('privacy')} className="min-h-6 text-[15px] leading-[1.5]">
-                  {PRIVACY_LABEL}
+                  {PRIVACY_BEFORE}
+                  <a
+                    ref={privacyLinkRef}
+                    href="/privacy"
+                    className="font-semibold underline underline-offset-4"
+                    onClick={(e) => {
+                      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                      e.preventDefault();
+                      setPrivacyOpen(true);
+                    }}
+                  >
+                    Privacy Policy
+                  </a>
+                  {PRIVACY_AFTER}
                 </label>
+                <PrivacyDialog
+                  open={privacyOpen}
+                  onClose={() => {
+                    setPrivacyOpen(false);
+                    privacyLinkRef.current?.focus();
+                  }}
+                  content={privacyContent}
+                  email={email}
+                />
               </div>
               {errors.privacyAcknowledged && (
                 <p id={`${fid('privacy')}-err`} className={errText}>
