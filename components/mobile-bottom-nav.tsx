@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
+import { Suspense, useState, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { BriefcaseBusiness, CircleUser, House, Mail } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { parseView, viewHref, type View } from "@/lib/home-view";
 import { resolveBottomNavItem, shouldSetPending, type BottomNavItem, type PendingBottomNav } from "@/lib/bottom-nav-current";
 
 const item =
@@ -13,7 +14,7 @@ const ico = { "aria-hidden": true, size: 20, strokeWidth: 2.25 } as const;
 const active = "text-brand-sky";
 const ORDER: BottomNavItem[] = ["home", "work", "about", "contact"];
 
-export default function MobileBottomNav({ photo }: { photo?: string }) {
+function BottomNav({ photo, view }: { photo?: string; view: View }) {
   const pathname = usePathname();
   // Optimistic highlight for the in-flight navigation started by a tap; cleared as soon as the pathname changes.
   const [pending, setPending] = useState<PendingBottomNav | null>(null);
@@ -51,26 +52,39 @@ export default function MobileBottomNav({ photo }: { photo?: string }) {
         }}
         className="pointer-events-none absolute top-0.5 left-1 h-11 w-[calc((100%-0.5rem)/4)] rounded-full bg-black/40 motion-reduce:transition-none!"
       />
-      <Link href="/" aria-current={aria("home")} onClick={tap("home")} className={cls("home")}>
+      <Link href={viewHref("/", view)} aria-current={aria("home")} onClick={tap("home")} className={cls("home")}>
         <House {...ico} />
         Home
       </Link>
-      <Link href="/work" aria-current={aria("work")} onClick={tap("work")} className={cls("work")}>
+      <Link href={viewHref("/work", view)} aria-current={aria("work")} onClick={tap("work")} className={cls("work")}>
         <BriefcaseBusiness {...ico} />
-        My Work
+        Work
       </Link>
-      <Link href="/about" aria-current={aria("about")} onClick={tap("about")} className={cls("about")}>
+      <Link href={viewHref("/about", view)} aria-current={aria("about")} onClick={tap("about")} className={cls("about")}>
         {photo ? (
           <Image src={photo} alt="" width={20} height={20} sizes="20px" className="h-5 w-5 rounded-full object-cover ring-1 ring-brand-sky shadow-[0_0_6px_1px_var(--color-brand-sky)]" />
         ) : (
           <CircleUser {...ico} />
         )}
-        About Me
+        About
       </Link>
-      <Link href="/contact" aria-current={aria("contact")} onClick={tap("contact")} className={cls("contact")}>
+      <Link href={viewHref("/contact", view)} aria-current={aria("contact")} onClick={tap("contact")} className={cls("contact")}>
         <Mail {...ico} />
-        Contact Me
+        Contact
       </Link>
     </nav>
+  );
+}
+
+function WithView({ photo }: { photo?: string }) {
+  return <BottomNav photo={photo} view={parseView(useSearchParams().get("view") ?? undefined)} />;
+}
+
+// useSearchParams needs a Suspense boundary on statically prerendered routes; the fallback renders the default-view links.
+export default function MobileBottomNav({ photo }: { photo?: string }) {
+  return (
+    <Suspense fallback={<BottomNav photo={photo} view="it" />}>
+      <WithView photo={photo} />
+    </Suspense>
   );
 }
