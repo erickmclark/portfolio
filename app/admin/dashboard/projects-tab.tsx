@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useId } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -19,7 +19,38 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, ChevronDown, ChevronUp, Trash2, Plus, GitBranch } from 'lucide-react';
-import type { Project, ProjectImage } from '@/lib/types';
+import {
+  PROJECT_CATEGORIES,
+  PROJECT_RELATIONSHIPS,
+  VISIBILITIES,
+  CASE_STUDY_SECTIONS,
+  type Project,
+  type ProjectImage,
+  type ProjectCategory,
+  type ProjectRelationship,
+  type Visibility,
+  type CaseStudySection,
+} from '@/lib/types';
+import GalleryManager from './gallery-manager';
+import { galleryImages } from './gallery-utils';
+
+// Human titles for case-study sections (content spec 6, required project page template).
+const CASE_STUDY_LABELS: Record<CaseStudySection, string> = {
+  role: 'Role',
+  dates: 'Dates',
+  intro: 'Detail intro',
+  challenge: 'The challenge',
+  responsibility: 'My responsibility',
+  keyDecisions: 'Key decisions',
+  delivered: 'What I delivered',
+  howItWorks: 'How it works',
+  riskAndControls: 'Risk and controls',
+  outcome: 'Outcome and evidence',
+  learned: 'What I learned / would improve',
+};
+
+const fieldClass =
+  'w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors';
 
 // ── Tech tag chip editor ───────────────────────────────────────────────────
 function TechTagsEditor({
@@ -71,33 +102,39 @@ function TechTagsEditor({
 function SortableProject({
   project,
   onUpdate,
+  onRouteImages,
   onDelete,
   slugError,
 }: {
   project: Project;
   onUpdate: (updated: Project) => void;
+  onRouteImages: (images: ProjectImage[]) => void;
   onDelete: () => void;
   slugError?: string;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: project.id,
   });
+  const uid = useId();
   const [expanded, setExpanded] = useState(false);
   const [fetching, setFetching] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [localPreview, setLocalPreview] = useState<string | null>(null);
-  const [imageError, setImageError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [lightbox, setLightbox] = useState(false);
+  const [caseStudyOpen, setCaseStudyOpen] = useState(false);
   const [movingImage, setMovingImage] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const slugAtFocus = useRef<string | null>(null);
 
   const style = { transform: CSS.Transform.toString(transform), transition };
 
   function set<K extends keyof Project>(key: K, value: Project[K]) {
     onUpdate({ ...project, [key]: value });
+  }
+
+  function setCaseStudySection(key: CaseStudySection, value: string) {
+    const next = { ...project.caseStudy };
+    if (value === '') delete next[key];
+    else next[key] = value;
+    set('caseStudy', Object.keys(next).length ? next : undefined);
   }
 
   async function fetchFromGitHub() {
@@ -117,57 +154,6 @@ function SortableProject({
       }
     } finally {
       setFetching(false);
-    }
-  }
-
-  async function handleImageFile(file: File) {
-    setUploading(true);
-    setImageError(null);
-    const preview = URL.createObjectURL(file);
-    setLocalPreview(preview);
-    try {
-      const base = `/api/admin/projects/${project.id}/images`;
-      const form = new FormData();
-      form.append('file', file);
-      form.append('alt', project.title || 'Project image');
-      const res = await fetch(base, { method: 'POST', body: form });
-      const data = (await res.json().catch(() => ({}))) as {
-        images?: ProjectImage[];
-        image?: string;
-        error?: string;
-      };
-      if (!res.ok || !data.images) {
-        setImageError(data.error ?? 'Image upload failed.');
-        return;
-      }
-      let { images, image } = data;
-      // Make the new upload (appended last) the cover, without deleting anything.
-      if (images.length > 1) {
-        const urls = [images[images.length - 1].url, ...images.slice(0, -1).map((i) => i.url)];
-        const reorder = await fetch(base, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ urls }),
-        });
-        const reordered = (await reorder.json().catch(() => ({}))) as {
-          images?: ProjectImage[];
-          image?: string;
-          error?: string;
-        };
-        if (!reorder.ok || !reordered.images) {
-          setImageError(reordered.error ?? 'Image uploaded, but setting it as the cover failed.');
-          return;
-        }
-        images = reordered.images;
-        image = reordered.image ?? image;
-      }
-      onUpdate({ ...project, images, image });
-    } catch {
-      setImageError('Image upload failed.');
-    } finally {
-      URL.revokeObjectURL(preview);
-      setLocalPreview(null);
-      setUploading(false);
     }
   }
 
@@ -240,6 +226,11 @@ function SortableProject({
         {slugError && (
           <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-red-400/20 text-red-400 border border-red-400/30">
             Slug issue
+          </span>
+        )}
+        {project.visibility && project.visibility !== 'public' && (
+          <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-border text-muted border border-border capitalize">
+            {project.visibility}
           </span>
         )}
         {project.featured && (
@@ -337,6 +328,73 @@ function SortableProject({
             />
           </div>
 
+          <div>
+            <label htmlFor={`${uid}-ext`} className="text-xs text-muted uppercase tracking-widest mb-1 block">External URL (optional)</label>
+            <input
+              id={`${uid}-ext`}
+              value={project.externalUrl ?? ''}
+              onChange={(e) => set('externalUrl', e.target.value || undefined)}
+              placeholder="https://"
+              className={fieldClass}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor={`${uid}-cat`} className="text-xs text-muted uppercase tracking-widest mb-1 block">Category</label>
+              <select
+                id={`${uid}-cat`}
+                value={project.category ?? ''}
+                onChange={(e) => set('category', (e.target.value || undefined) as ProjectCategory | undefined)}
+                className={fieldClass}
+              >
+                <option value="">Not set</option>
+                {PROJECT_CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor={`${uid}-rel`} className="text-xs text-muted uppercase tracking-widest mb-1 block">Relationship</label>
+              <select
+                id={`${uid}-rel`}
+                value={project.relationship ?? ''}
+                onChange={(e) => set('relationship', (e.target.value || undefined) as ProjectRelationship | undefined)}
+                className={fieldClass}
+              >
+                <option value="">Not set</option>
+                {PROJECT_RELATIONSHIPS.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor={`${uid}-status`} className="text-xs text-muted uppercase tracking-widest mb-1 block">Status</label>
+              <input
+                id={`${uid}-status`}
+                value={project.status ?? ''}
+                onChange={(e) => set('status', e.target.value || undefined)}
+                placeholder="e.g. MVP, Live"
+                className={fieldClass}
+              />
+            </div>
+            <div>
+              <label htmlFor={`${uid}-vis`} className="text-xs text-muted uppercase tracking-widest mb-1 block">Visibility</label>
+              <select
+                id={`${uid}-vis`}
+                aria-describedby={`${uid}-vis-hint`}
+                value={project.visibility ?? 'public'}
+                onChange={(e) => set('visibility', e.target.value as Visibility)}
+                className={fieldClass}
+              >
+                {VISIBILITIES.map((v) => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
+              </select>
+              <p id={`${uid}-vis-hint`} className="text-xs text-muted mt-1">Hidden and archived projects are kept in the admin but never shown publicly.</p>
+            </div>
+          </div>
+
           <TechTagsEditor tags={project.tech} onChange={(tech) => set('tech', tech)} />
 
           {/* Featured toggle */}
@@ -351,100 +409,54 @@ function SortableProject({
             <span className="text-sm">Featured <span className="text-muted">(shown first on the site)</span></span>
           </div>
 
-          {/* Image upload */}
-          <div>
-            <label className="text-xs text-muted uppercase tracking-widest mb-1 block">Project Image</label>
-            <div
-              onDrop={(e) => {
-                e.preventDefault();
-                const file = e.dataTransfer.files[0];
-                if (file) handleImageFile(file);
-              }}
-              onDragOver={(e) => e.preventDefault()}
-              onClick={() => fileInputRef.current?.click()}
-              className="relative border-2 border-dashed border-border hover:border-accent rounded-lg overflow-hidden cursor-pointer transition-colors group"
-            >
-              {localPreview || project.image ? (
-                <div className="relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={localPreview ?? project.image}
-                    alt="Project preview"
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <p className="text-sm text-white font-medium">
-                      {uploading ? 'Uploading…' : 'Click or drop to set a new cover'}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="p-6 text-center">
-                  {uploading ? (
-                    <p className="text-sm text-muted animate-pulse">Uploading…</p>
-                  ) : (
-                    <p className="text-sm text-muted">Drop an image here or click to upload</p>
-                  )}
-                </div>
-              )}
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleImageFile(file);
-              }}
-            />
-            {(localPreview || project.image) && (
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); setLightbox(true); }}
-                className="mt-2 text-xs text-muted hover:text-white transition-colors"
-              >
-                Full preview ↗
-              </button>
-            )}
-            {imageError && <p className="mt-2 text-xs text-red-400">{imageError}</p>}
-          </div>
+          <GalleryManager
+            projectId={project.id}
+            projectTitle={project.title}
+            images={galleryImages(project)}
+            onChange={(images, image) => onUpdate({ ...project, images, image })}
+            onRouteImages={onRouteImages}
+          />
 
-          {/* Lightbox */}
-          {lightbox && (
-            <div
-              className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6"
-              onClick={() => setLightbox(false)}
+          {/* Case study */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setCaseStudyOpen((v) => !v)}
+              aria-expanded={caseStudyOpen}
+              className="flex items-center gap-2 text-xs text-muted hover:text-white uppercase tracking-widest transition-colors"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={localPreview ?? project.image}
-                alt="Full preview"
-                className="max-w-full max-h-full rounded-xl shadow-2xl object-contain"
-                onClick={(e) => e.stopPropagation()}
-              />
-              <button
-                type="button"
-                onClick={() => setLightbox(false)}
-                className="absolute top-4 right-4 text-white/70 hover:text-white text-2xl leading-none"
-                aria-label="Close preview"
-              >
-                ×
-              </button>
-            </div>
-          )}
+              {caseStudyOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              Case study
+            </button>
+            {caseStudyOpen && (
+              <div className="mt-3 space-y-4">
+                {CASE_STUDY_SECTIONS.map((key) => (
+                  <div key={key}>
+                    <label htmlFor={`${uid}-cs-${key}`} className="text-xs text-muted uppercase tracking-widest mb-1 block">{CASE_STUDY_LABELS[key]}</label>
+                    <textarea
+                      id={`${uid}-cs-${key}`}
+                      value={project.caseStudy?.[key] ?? ''}
+                      onChange={(e) => setCaseStudySection(key, e.target.value)}
+                      rows={4}
+                      className={`${fieldClass} resize-y`}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Delete — kept at bottom */}
           <button
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors"
+            className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Trash2 size={14} />
-            Delete project
+            {deleting ? 'Deleting…' : 'Delete project'}
           </button>
-          {deleteError && <p className="text-xs text-red-400">{deleteError}</p>}
+          {deleteError && <p role="alert" className="text-xs text-red-400">{deleteError}</p>}
         </div>
       )}
     </div>
@@ -455,9 +467,11 @@ function SortableProject({
 export default function ProjectsTab({
   projects,
   onChange,
+  onRouteImages,
 }: {
   projects: Project[];
   onChange: (projects: Project[]) => void;
+  onRouteImages: (projectId: string, images: ProjectImage[]) => void;
 }) {
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -538,6 +552,7 @@ export default function ProjectsTab({
                 onUpdate={(updated) =>
                   onChange(projects.map((p) => (p.id === updated.id ? updated : p)))
                 }
+                onRouteImages={(images) => onRouteImages(project.id, images)}
                 onDelete={() => onChange(projects.filter((p) => p.id !== project.id))}
               />
             ))}

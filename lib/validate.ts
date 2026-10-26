@@ -1,5 +1,5 @@
 import type { SiteContent } from './types';
-import { isAllowedImageUrl } from './image-url';
+import { isAbsoluteHttpsUrl, isAllowedImageUrl } from './image-url';
 import {
   CASE_STUDY_SECTIONS,
   IMAGE_KINDS,
@@ -106,6 +106,7 @@ export function validateSiteContent(input: unknown): ValidationResult {
         errors.push(`${where}.visibility must be one of: ${VISIBILITIES.join(', ')}.`);
       }
       if (p.externalUrl !== undefined && typeof p.externalUrl !== 'string') errors.push(`${where}.externalUrl must be a string when present.`);
+      else if (typeof p.externalUrl === 'string' && p.externalUrl !== '' && !isAbsoluteHttpsUrl(p.externalUrl)) errors.push(`${where}.externalUrl must be an absolute https URL.`);
       if (p.caseStudy !== undefined) {
         if (!isObject(p.caseStudy)) {
           errors.push(`${where}.caseStudy must be an object when present.`);
