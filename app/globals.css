@@ -38,7 +38,6 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
   --max-width-site: 1200px;
-  --shadow-glow: 0 0 18px 2px color-mix(in srgb, var(--color-brand-blue) 45%, transparent);
 }
 
 html {

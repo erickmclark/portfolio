@@ -21,7 +21,7 @@ export default async function About({ level = 2 }: { level?: 1 | 2 }) {
                 width={160}
                 height={160}
                 sizes="160px"
-                className="h-40 w-40 rounded-full object-cover ring-2 ring-brand-blue shadow-glow"
+                className="h-40 w-40 rounded-full object-cover ring-[3px] ring-brand-blue ring-offset-4 ring-offset-paper"
               />
               {about.quote?.trim() && (
                 <blockquote className="mt-6 max-w-[34ch] text-[17px] italic leading-[1.5] text-ink-muted">
