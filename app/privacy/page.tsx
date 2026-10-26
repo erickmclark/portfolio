@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { getSiteContent } from '@/lib/content';
 import { Eyebrow } from '@/components/section-head';
 import PrivacyParagraph from '@/components/privacy-paragraph';
+import ScrollReset from '@/components/scroll-reset';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { site } = await getSiteContent();
@@ -31,6 +32,7 @@ export default async function PrivacyPage() {
   const { privacy } = site;
   return (
     <main id="main-content" className="public-shell">
+      <ScrollReset />
       <div className="mx-auto max-w-[1440px] px-4 pb-24 pt-16 sm:px-10 sm:pt-20">
         <header className="pb-12">
           <Eyebrow>{privacy.eyebrow}</Eyebrow>

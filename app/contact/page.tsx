@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import type { Metadata } from "next";
 import ContactDialog from "@/components/contact-dialog";
+import ScrollReset from "@/components/scroll-reset";
 import { getSiteContent } from "@/lib/content";
 import { resolveContactOpen } from "@/lib/contact";
 
@@ -26,6 +27,7 @@ export default async function ContactPage({
   const { intent, values } = resolveContactOpen(sp);
   return (
     <main id="main-content" className="public-shell">
+      <ScrollReset />
       <div className="bg-white">
         <div className="mx-auto max-w-[960px] px-4 py-12 sm:px-10 sm:py-20">
           <h1 className="font-display text-4xl font-bold leading-[1.02] tracking-[-0.03em] sm:text-[56px]">
