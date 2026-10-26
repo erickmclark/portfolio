@@ -353,3 +353,31 @@ describe("validateSiteContent", () => {
     });
   });
 });
+
+describe("about photo and resumeUrl", () => {
+  const withAbout = (patch: Record<string, unknown>) => {
+    const c = validContent();
+    return { ...c, about: { ...c.about, ...patch } };
+  };
+  it.each([
+    [{ photo: "/profile.png", resumeUrl: "/Erick-Clark-Resume-2026.pdf" }],
+    [{ photo: "https://x.public.blob.vercel-storage.com/projects/_about/photo-a.png", resumeUrl: "https://x.public.blob.vercel-storage.com/projects/_about/resume-a.pdf" }],
+    [{ photo: "", resumeUrl: "" }],
+    [{}],
+  ])("accepts %j", (patch) => {
+    expect(validateSiteContent(withAbout(patch)).ok).toBe(true);
+  });
+  it.each([
+    ["photo", "http://x.com/a.png"],
+    ["photo", "javascript:alert(1)"],
+    ["photo", "//evil.com/a.png"],
+    ["photo", "a.png"],
+    ["resumeUrl", "http://x.com/r.pdf"],
+    ["resumeUrl", "data:application/pdf;base64,AAAA"],
+    ["resumeUrl", "resume.pdf"],
+  ])("rejects about.%s = %s", (key, value) => {
+    const result = validateSiteContent(withAbout({ [key]: value }));
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toContain(`about.${key}`);
+  });
+});

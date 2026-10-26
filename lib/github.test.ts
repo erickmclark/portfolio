@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getRepoInfo, putRepoImage, moveRepoImage } from "./github";
+import { getRepoInfo, moveRepoImage } from "./github";
 
 beforeEach(() => {
   vi.stubEnv("GITHUB_TOKEN", "test-token");
@@ -47,43 +47,6 @@ describe("getRepoInfo", () => {
         .mockResolvedValueOnce(jsonResponse({}, false))
     );
     await expect(getRepoInfo("erickmclark", "nope")).rejects.toThrow(/not found/i);
-  });
-});
-
-describe("putRepoImage", () => {
-  it("fetches the existing SHA, then PUTs base64 content", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(jsonResponse({ sha: "existing-sha" })) // GET existing file
-      .mockResolvedValueOnce(jsonResponse({ content: { sha: "new-sha" } })); // PUT
-    vi.stubGlobal("fetch", fetchMock);
-
-    const result = await putRepoImage(
-      "prepera",
-      "data:image/png;base64,AAAA"
-    );
-
-    expect(result).toBe("/projects/prepera.png");
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-
-    // The PUT body strips the data-URI prefix and includes the fetched SHA.
-    const putBody = JSON.parse(fetchMock.mock.calls[1][1].body);
-    expect(putBody.content).toBe("AAAA");
-    expect(putBody.sha).toBe("existing-sha");
-  });
-
-  it("uploads without a SHA when the file does not yet exist", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(jsonResponse({}, false)) // GET 404 — no existing file
-      .mockResolvedValueOnce(jsonResponse({ content: { sha: "new-sha" } }));
-    vi.stubGlobal("fetch", fetchMock);
-
-    await putRepoImage("brand-new", "data:image/png;base64,BBBB");
-
-    const putBody = JSON.parse(fetchMock.mock.calls[1][1].body);
-    expect(putBody.content).toBe("BBBB");
-    expect(putBody.sha).toBeUndefined();
   });
 });
 

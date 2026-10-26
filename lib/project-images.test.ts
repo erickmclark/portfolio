@@ -7,6 +7,8 @@ import {
   blobPrefix,
   deleteProjectBlobs,
   ensureImages,
+  aboutAssetPath,
+  sniffPdf,
   isAllowedImageUrl,
   isProjectBlobUrl,
   isValidProjectId,
@@ -98,5 +100,21 @@ describe('blob cleanup', () => {
     blob.list.mockResolvedValue({ blobs: [], hasMore: false });
     await deleteProjectBlobs('p1');
     expect(blob.del).not.toHaveBeenCalled();
+  });
+});
+
+describe('about assets', () => {
+  it('builds paths under the reserved _about folder', () => {
+    expect(aboutAssetPath('photo', 'jpg')).toBe('projects/_about/photo.jpg');
+    expect(aboutAssetPath('resume')).toBe('projects/_about/resume.pdf');
+  });
+  it('never treats _about as a project id', () => {
+    expect(isValidProjectId('_about')).toBe(false);
+    expect(isValidProjectId('about')).toBe(true);
+  });
+  it('sniffPdf checks the %PDF- magic number', () => {
+    expect(sniffPdf(new TextEncoder().encode('%PDF-1.4 x'))).toBe(true);
+    expect(sniffPdf(new TextEncoder().encode('%PDF'))).toBe(false);
+    expect(sniffPdf(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d]))).toBe(false);
   });
 });

@@ -9,8 +9,24 @@ export const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const ID_PATTERN = /^[A-Za-z0-9_-]+$/;
 const BLOB_HOST_SUFFIX = '.public.blob.vercel-storage.com';
 
+/** Blob folder for About assets; reserved so no project id can ever address it. */
+export const ABOUT_ASSET_FOLDER = '_about';
+export const MAX_RESUME_BYTES = 10 * 1024 * 1024;
+
 export function isValidProjectId(id: string): boolean {
-  return typeof id === 'string' && ID_PATTERN.test(id);
+  return typeof id === 'string' && ID_PATTERN.test(id) && id !== ABOUT_ASSET_FOLDER;
+}
+
+/** Blob path (before the random suffix) for an About asset. */
+export function aboutAssetPath(kind: 'photo' | 'resume', ext?: string): string {
+  return kind === 'resume'
+    ? `projects/${ABOUT_ASSET_FOLDER}/resume.pdf`
+    : `projects/${ABOUT_ASSET_FOLDER}/photo.${ext ?? 'png'}`;
+}
+
+/** True when the bytes start with the PDF magic number. */
+export function sniffPdf(bytes: Uint8Array): boolean {
+  return bytes.length >= 5 && [...'%PDF-'].every((c, i) => bytes[i] === c.charCodeAt(0));
 }
 
 export function blobPrefix(projectId: string): string {
