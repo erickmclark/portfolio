@@ -93,10 +93,29 @@ describe('POST /api/admin/about/assets', () => {
     m.put.mockResolvedValue({ url: 'https://x.public.blob.vercel-storage.com/projects/_about/resume-abc.pdf' });
     const res = await POST(req({ kind: 'resume', bytes: PDF, type: 'application/pdf' }));
     expect(res.status).toBe(200);
-    expect(m.put.mock.calls[0][0]).toBe('projects/_about/resume.pdf');
+    expect(m.put.mock.calls[0][0]).toMatch(/^projects\/_about\/resume\/[0-9a-f-]{36}\/N-Resume\.pdf$/);
+    expect(m.put.mock.calls[0][2]).toMatchObject({ access: 'public', addRandomSuffix: false, contentType: 'application/pdf' });
     const about = JSON.parse(m.set.mock.calls[0][1]).about;
     expect(about.resumeUrl).toMatch(/resume-abc\.pdf$/);
     expect(about.photo).toBe('/profile.png');
+  });
+
+  it('names the resume from about.name and uses a distinct folder per upload', async () => {
+    const c = content();
+    c.about.name = 'Erick Clark';
+    m.get.mockResolvedValue(JSON.stringify(c));
+    await POST(req({ kind: 'resume', bytes: PDF, type: 'application/pdf' }));
+    await POST(req({ kind: 'resume', bytes: PDF, type: 'application/pdf' }));
+    const [a, b] = [m.put.mock.calls[0][0], m.put.mock.calls[1][0]];
+    expect(a).toMatch(/\/Erick-Clark-Resume\.pdf$/);
+    expect(a).not.toBe(b);
+  });
+
+  it('still uploads a resume with a fallback name when the pre-upload read fails', async () => {
+    m.get.mockRejectedValueOnce(new Error('down'));
+    const res = await POST(req({ kind: 'resume', bytes: PDF, type: 'application/pdf' }));
+    expect(res.status).toBe(200);
+    expect(m.put.mock.calls[0][0]).toMatch(/\/Resume\.pdf$/);
   });
 
   it('500s and removes the new blob when KV cannot be read', async () => {

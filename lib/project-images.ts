@@ -24,6 +24,18 @@ export function aboutAssetPath(kind: 'photo' | 'resume', ext?: string): string {
     : `projects/${ABOUT_ASSET_FOLDER}/photo.${ext ?? 'png'}`;
 }
 
+/** Blob path for a résumé: a per-upload folder keeps each URL distinct and the last segment (the download filename) readable. */
+export function resumeAssetPath(name: string | undefined, unique: string): string {
+  const slug = (typeof name === 'string' ? name : '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60)
+    .replace(/-+$/g, '');
+  return `projects/${ABOUT_ASSET_FOLDER}/resume/${unique}/${slug ? `${slug}-Resume` : 'Resume'}.pdf`;
+}
+
 /** True when the bytes start with the PDF magic number. */
 export function sniffPdf(bytes: Uint8Array): boolean {
   return bytes.length >= 5 && [...'%PDF-'].every((c, i) => bytes[i] === c.charCodeAt(0));

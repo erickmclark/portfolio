@@ -8,6 +8,7 @@ import {
   MAX_RESUME_BYTES,
   aboutAssetPath,
   readStoredContent,
+  resumeAssetPath,
   sniffImageType,
   sniffPdf,
 } from '@/lib/project-images';
@@ -32,6 +33,9 @@ export async function POST(request: NextRequest) {
     const bytes = new Uint8Array(await file.arrayBuffer());
     if (bytes.length > max) return fail(tooLarge, 400);
 
+    const redis = getRedis();
+    if (!redis) return fail('Content store (KV) is not configured', 500);
+
     let path: string;
     let contentType: string;
     if (kind === 'photo') {
@@ -41,13 +45,13 @@ export async function POST(request: NextRequest) {
       contentType = type.contentType;
     } else {
       if (!sniffPdf(bytes)) return fail('Unsupported file. Upload a PDF.', 400);
-      path = aboutAssetPath('resume');
+      // Name for the download filename only; the commit below still uses a fresh post-upload read.
+      const named = await readStoredContent(redis);
+      path = resumeAssetPath('content' in named ? named.content.about?.name : undefined, crypto.randomUUID());
       contentType = 'application/pdf';
     }
 
-    const redis = getRedis();
-    if (!redis) return fail('Content store (KV) is not configured', 500);
-    const blob = await put(path, file, { access: 'public', addRandomSuffix: true, contentType });
+    const blob = await put(path, file, { access: 'public', addRandomSuffix: kind === 'photo', contentType });
 
     // The upload is slow: commit against a fresh read so a Save that landed meanwhile survives.
     try {
