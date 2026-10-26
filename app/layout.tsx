@@ -5,12 +5,14 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
+import MobileBottomNav from "@/components/mobile-bottom-nav";
 import { HOME_SEO } from "@/lib/home-copy";
 import { getSiteContent } from "@/lib/content";
 import { SITE_URL } from "@/lib/site";
 
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
+  viewportFit: "cover",
 };
 
 const geist = Geist({
@@ -99,6 +101,7 @@ export default async function RootLayout({
         <SiteHeader name={about.name} resumeUrl={about.resumeUrl} />
         {children}
         <SiteFooter />
+        <MobileBottomNav resumeUrl={about.resumeUrl} />
         <Analytics />
         <SpeedInsights />
       </body>
