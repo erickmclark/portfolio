@@ -201,6 +201,9 @@ describe("validateSiteContent", () => {
     ["non-string status", { status: 3 }, /status/],
     ["bad visibility", { visibility: "private" }, /visibility/],
     ["non-string externalUrl", { externalUrl: 5 }, /externalUrl/],
+    ["http externalUrl", { externalUrl: "http://example.com" }, /externalUrl must be an absolute https URL/],
+    ["relative externalUrl", { externalUrl: "/work" }, /externalUrl must be an absolute https URL/],
+    ["javascript externalUrl", { externalUrl: "javascript:alert(1)" }, /externalUrl must be an absolute https URL/],
     ["non-object caseStudy", { caseStudy: "text" }, /caseStudy/],
     ["non-string section", { caseStudy: { challenge: 1 } }, /caseStudy\.challenge/],
     ["unknown section", { caseStudy: { bogus: "x" } }, /caseStudy\.bogus/],
@@ -220,6 +223,12 @@ describe("validateSiteContent", () => {
     const result = validateSiteContent(c);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.errors.join(" ")).toMatch(pattern);
+  });
+
+  it("accepts an empty externalUrl", () => {
+    const c = validContent();
+    Object.assign(c.projects[0], { externalUrl: "" });
+    expect(validateSiteContent(c).ok).toBe(true);
   });
 
   it("rejects an experience entry with a bad visibility", () => {

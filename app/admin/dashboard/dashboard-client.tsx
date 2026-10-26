@@ -7,6 +7,7 @@ import { validateSiteContent } from '@/lib/validate';
 import AboutTab from './about-tab';
 import ContactTab from './contact-tab';
 import ProjectsTab from './projects-tab';
+import { applyRouteImages } from './gallery-utils';
 import ExperienceTab from './experience-tab';
 
 type Tab = 'projects' | 'experience' | 'about' | 'contact';
@@ -38,6 +39,13 @@ export default function DashboardClient() {
 
   function update(updated: SiteContent) {
     setContent(updated);
+    setDirty(true);
+    setSaved(false);
+    setSaveError('');
+  }
+
+  function updateFromLatest(fn: (latest: SiteContent) => SiteContent) {
+    setContent((prev) => (prev ? fn(prev) : prev));
     setDirty(true);
     setSaved(false);
     setSaveError('');
@@ -118,6 +126,7 @@ export default function DashboardClient() {
           <ProjectsTab
             projects={content.projects}
             onChange={(projects) => update({ ...content, projects })}
+            onRouteImages={(id, images) => updateFromLatest((latest) => applyRouteImages(latest, id, images))}
           />
         )}
         {tab === 'experience' && (
