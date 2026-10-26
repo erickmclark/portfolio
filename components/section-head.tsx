@@ -11,21 +11,24 @@ export default function SectionHead({
   heading,
   lede,
   headingId,
+  level = 2,
 }: {
   eyebrow: string;
   heading: string;
   lede?: string;
   headingId: string;
+  level?: 1 | 2;
 }) {
+  const H = level === 1 ? "h1" : "h2";
   return (
     <div>
       <Eyebrow>{eyebrow}</Eyebrow>
-      <h2
+      <H
         id={headingId}
         className="mt-6 max-w-[1100px] font-display text-[40px] font-bold leading-[1.02] tracking-[-0.03em] text-ink sm:text-6xl lg:text-[80px] lg:tracking-[-0.025em]"
       >
         {heading}
-      </h2>
+      </H>
       {lede && (
         <p className="mt-5 max-w-[760px] text-xl font-medium leading-[1.3] text-ink sm:text-[26px]">{lede}</p>
       )}

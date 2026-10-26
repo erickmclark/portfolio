@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PROJECT_CATEGORIES } from "@/lib/types";
 import type { ProjectCategory } from "@/lib/types";
-import { DEFAULT_VIEW, homeHref, type View } from "@/lib/home-view";
+import { DEFAULT_VIEW, workHref, type View } from "@/lib/home-view";
 
 export default function WorkCategorySelect({ view, category }: { view: View; category: ProjectCategory | null }) {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function WorkCategorySelect({ view, category }: { view: View; cat
   }
 
   return (
-    <form action="/#work" method="get" onSubmit={(e) => e.preventDefault()} className="mt-10 flex flex-col gap-2 sm:max-w-sm">
+    <form action="/work" method="get" onSubmit={(e) => e.preventDefault()} className="mt-10 flex flex-col gap-2 sm:max-w-sm">
       {view !== DEFAULT_VIEW && <input type="hidden" name="view" value={view} />}
       <label htmlFor="work-category" className="font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink-muted">
         Category
@@ -29,7 +29,7 @@ export default function WorkCategorySelect({ view, category }: { view: View; cat
           onChange={(e) => {
             const next = (PROJECT_CATEGORIES as readonly string[]).includes(e.target.value) ? (e.target.value as ProjectCategory) : null;
             setValue(e.target.value);
-            router.push(homeHref(view, next, "work"), { scroll: false });
+            router.push(workHref(view, next), { scroll: false });
           }}
           className="h-11 w-full cursor-pointer appearance-none rounded-full border-2 border-ink bg-paper pl-5 pr-11 text-[15px] font-semibold text-ink hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
