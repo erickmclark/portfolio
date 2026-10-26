@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Download } from "lucide-react";
 import { getSiteContent } from "@/lib/content";
 import { formatCredentials } from "@/lib/credentials";
@@ -7,6 +6,7 @@ import { VIEWS, homeHref, type View } from "@/lib/home-view";
 import Configuration from "./configuration";
 import { ConfigurationMotion, ViewFade } from "./hero-motion";
 import { Eyebrow } from "./section-head";
+import ViewToggle from "./view-toggle";
 
 const VIEW_TOWER: Record<View, string> = {
   it: "IT Professional (tower)",
@@ -50,21 +50,7 @@ export default async function Hero({ view }: { view: View }) {
           </div>
 
           <Eyebrow className="mt-8">{home.selectorLabel}</Eyebrow>
-          <nav aria-label="Audience view" className="mt-2.5 inline-flex border-2 border-ink">
-            {VIEWS.map((v, i) => (
-              <Link
-                key={v}
-                href={homeHref(v)}
-                scroll={false}
-                aria-current={v === view ? "true" : undefined}
-                className={`on-dark inline-flex min-h-11 items-center px-4 text-sm font-semibold ${
-                  i > 0 ? "border-l-2 border-ink" : ""
-                } ${v === view ? "bg-ink text-white" : "bg-paper text-ink hover:bg-white"}`}
-              >
-                {home.viewLabels[v]}
-              </Link>
-            ))}
-          </nav>
+          <ViewToggle view={view} items={VIEWS.map((v) => ({ view: v, label: home.viewLabels[v], href: homeHref(v) }))} />
         </div>
 
         <ViewFade view={view} className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
