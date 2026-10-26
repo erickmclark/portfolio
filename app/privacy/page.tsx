@@ -1,9 +1,9 @@
 export const dynamic = 'force-dynamic';
 
-import { Fragment } from 'react';
 import type { Metadata } from 'next';
 import { getSiteContent } from '@/lib/content';
 import { Eyebrow } from '@/components/section-head';
+import PrivacyParagraph from '@/components/privacy-paragraph';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { site } = await getSiteContent();
@@ -26,24 +26,6 @@ function Row({ id, title, children }: { id: string; title: string; children: Rea
   );
 }
 
-function Paragraph({ text, email }: { text: string; email: string }) {
-  const parts = text.split('{email}');
-  return (
-    <p>
-      {parts.map((part, i) => (
-        <Fragment key={i}>
-          {part}
-          {i < parts.length - 1 && (
-            <a href={`mailto:${email}`} className="break-all font-semibold underline underline-offset-4">
-              {email}
-            </a>
-          )}
-        </Fragment>
-      ))}
-    </p>
-  );
-}
-
 export default async function PrivacyPage() {
   const { contact, site } = await getSiteContent();
   const { privacy } = site;
@@ -63,7 +45,7 @@ export default async function PrivacyPage() {
         {privacy.sections.map((sec) => (
           <Row key={sec.id} id={sec.id} title={sec.title}>
             {sec.paragraphs.map((para, i) => (
-              <Paragraph key={i} text={para} email={contact.email} />
+              <PrivacyParagraph key={i} text={para} email={contact.email} />
             ))}
           </Row>
         ))}

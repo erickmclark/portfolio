@@ -19,7 +19,7 @@ export default async function ContactPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const [{ contact, about, contactPage }, sp] = await Promise.all([
+  const [{ contact, about, contactPage, site }, sp] = await Promise.all([
     getSiteContent(),
     searchParams,
   ]);
@@ -43,6 +43,7 @@ export default async function ContactPage({
             email={contact.email}
             linkedinUrl={contact.linkedinUrl}
             resumeUrl={about.resumeUrl}
+            privacy={site.privacy}
           />
           <div className="mt-8 border-t border-ink pt-6">
             <p className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">Or write directly</p>

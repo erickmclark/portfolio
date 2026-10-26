@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { GitHubIcon, LinkedInIcon } from "@/components/brand-icons";
+import PrivacyLink from "@/components/privacy-link";
 import { getSiteContent } from "@/lib/content";
 import { CLARK_STRATEGICS_URL } from "@/lib/home-copy";
 
@@ -44,6 +45,9 @@ export default async function SiteFooter() {
             <Link className={link} href="/contact">
               Contact
             </Link>
+            <PrivacyLink className={link} content={site.privacy} email={contact.email}>
+              Privacy Policy
+            </PrivacyLink>
           </nav>
         </div>
         <p className="mt-10 border-t border-white/80 pt-6 font-mono text-[11px] font-medium uppercase tracking-[0.12em]">

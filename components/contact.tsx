@@ -4,7 +4,7 @@ import { GitHubIcon, LinkedInIcon } from "@/components/brand-icons";
 import { getSiteContent } from "@/lib/content";
 
 export default async function Contact() {
-  const { contact, about, contactPage } = await getSiteContent();
+  const { contact, about, contactPage, site } = await getSiteContent();
   const btn = "inline-flex min-h-11 items-center gap-2 rounded-full px-5 text-[15px] font-semibold";
   return (
     <section id="contact" aria-labelledby="contact-title" className="public-shell border-t border-ink">
@@ -17,7 +17,7 @@ export default async function Contact() {
         </h2>
         <p className="mt-6 max-w-[760px] text-xl font-medium leading-[1.3] sm:text-[26px]">{contactPage.intro}</p>
         <div className="mt-10">
-          <ContactDialog sourcePage="/" topicLabels={contactPage.topics} email={contact.email} linkedinUrl={contact.linkedinUrl} resumeUrl={about.resumeUrl} />
+          <ContactDialog sourcePage="/" topicLabels={contactPage.topics} email={contact.email} linkedinUrl={contact.linkedinUrl} resumeUrl={about.resumeUrl} privacy={site.privacy} />
         </div>
         <div className="mt-12 border-t border-ink pt-6">
           <p className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">Or write directly</p>

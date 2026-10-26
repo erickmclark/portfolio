@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { ChevronDown, X } from 'lucide-react';
 import ContactForm from '@/components/contact-form';
+import type { SiteContent } from '@/lib/types';
 import { CONTACT_INTENTS, CONTACT_INTENT_COPY, type ContactIntent } from '@/lib/contact';
 
 type Props = {
@@ -10,13 +11,14 @@ type Props = {
   email: string;
   linkedinUrl?: string;
   resumeUrl?: string;
+  privacy: NonNullable<SiteContent['site']>['privacy'];
   initialIntent?: ContactIntent | null;
   initialValues?: Record<string, string>;
   /** Option labels by intent id; defaults to the built-in labels. */
   topicLabels?: Record<ContactIntent, string>;
 };
 
-export default function ContactDialog({ sourcePage, email, linkedinUrl, resumeUrl, initialIntent = null, initialValues = {}, topicLabels }: Props) {
+export default function ContactDialog({ sourcePage, email, linkedinUrl, resumeUrl, privacy, initialIntent = null, initialValues = {}, topicLabels }: Props) {
   const uid = useId();
   const [intent, setIntent] = useState<ContactIntent | null>(initialIntent);
   const [drafts, setDrafts] = useState<Partial<Record<ContactIntent, Record<string, string>>>>(
@@ -139,6 +141,7 @@ export default function ContactDialog({ sourcePage, email, linkedinUrl, resumeUr
                 email={email}
                 linkedinUrl={linkedinUrl}
                 resumeUrl={resumeUrl}
+                privacy={privacy}
               />
             </div>
           </>
