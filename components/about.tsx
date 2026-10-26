@@ -23,9 +23,11 @@ export default async function About({ level = 2 }: { level?: 1 | 2 }) {
                 sizes="160px"
                 className="h-40 w-40 rounded-full object-cover"
               />
-              <blockquote className="mt-6 max-w-[34ch] text-[17px] italic leading-[1.5] text-ink-muted">
-                “I’ve never been satisfied with just understanding how something works. I want to know how to make it better.”
-              </blockquote>
+              {about.quote?.trim() && (
+                <blockquote className="mt-6 max-w-[34ch] text-[17px] italic leading-[1.5] text-ink-muted">
+                  “{about.quote}”
+                </blockquote>
+              )}
             </figure>
           )}
 

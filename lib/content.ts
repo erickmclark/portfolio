@@ -25,6 +25,9 @@ export function getRedis(): Redis | null {
   return new Redis({ url, token, automaticDeserialization: false });
 }
 
+const DEFAULT_ABOUT_QUOTE =
+  'I’ve never been satisfied with just understanding how something works. I want to know how to make it better.';
+
 /**
  * Reads live site content from Upstash Redis (or the local data.json fallback).
  * Always fresh: public pages use `export const dynamic = 'force-dynamic'`, so
@@ -48,6 +51,8 @@ export const getSiteContent = cache(async (): Promise<ResolvedSiteContent> => {
   content ??= readFile();
   // Legacy data saved before the experience field existed
   content.experience ??= [];
+  // Legacy data saved before the about quote field existed
+  content.about.quote ??= DEFAULT_ABOUT_QUOTE;
   // Legacy records predate visibility — treat them as public
   for (const p of content.projects) p.visibility ??= 'public';
   for (const x of content.experience) x.visibility ??= 'public';
