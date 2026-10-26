@@ -76,7 +76,7 @@ export const CONTACT_FIELDS: Record<ContactIntent, readonly ContactField[]> = {
     f('biggestChallenge', 'Biggest challenge today', 'textarea', true),
     f('desiredOutcome', 'Desired outcome', 'textarea', true),
     f('timeframe', 'Target timeframe', 'select', false, ['Immediately', '1–3 months', '3–6 months', 'Exploring']),
-    f('budgetRange', 'Budget range', 'text', false),
+    f('budgetRange', 'Budget range', 'select', false, ['Still defining', 'Under $10K', '$10K–$25K', '$25K–$50K', '$50K+']),
     f('preferredNextStep', 'Preferred next step', 'select', false, [
       'Discovery conversation',
       'Written response',
@@ -101,8 +101,8 @@ export const CONTACT_FIELDS: Record<ContactIntent, readonly ContactField[]> = {
     f('integrations', 'Integrations required', 'select', false, ['Yes', 'No', 'Not sure']),
     f('sensitiveData', 'Sensitive or regulated data', 'select', false, ['Yes', 'No', 'Not sure']),
     f('currentStage', 'Current stage', 'select', true, ['Idea', 'Requirements', 'Prototype', 'Existing Product']),
-    f('launchTimeframe', 'Target launch timeframe', 'text', false),
-    f('budget', 'Estimated budget', 'text', false),
+    f('launchTimeframe', 'Target launch timeframe', 'select', false, ['Immediately', '1–3 months', '3–6 months', 'Exploring']),
+    f('budget', 'Estimated budget', 'select', false, ['Not decided', 'Under $10K', '$10K–$25K', '$25K–$50K', '$50K–$100K', '$100K+']),
     f('requirementsUrl', 'Supporting requirements/design link', 'url', false),
   ],
   product: [
@@ -338,4 +338,78 @@ export function isTooFast(input: unknown): boolean {
 
 export function isSpam(input: unknown): boolean {
   return isHoneypotTripped(input) || isTooFast(input);
+}
+
+// Form copy per intent (content spec section 10, verbatim) and URL preselection. Client-safe.
+export const CONTACT_INTENT_COPY: Record<
+  ContactIntent,
+  { heading: string; supporting?: string; submit: string }
+> = {
+  leadership: {
+    heading: "Let's discuss the role.",
+    supporting:
+      "I'm interested in Director, Senior Director, and Vice President opportunities across technology strategy, enterprise transformation, AI strategy, and technology business operations.",
+    submit: 'Send Opportunity',
+  },
+  advisory: {
+    heading: "Tell me about the challenge you're trying to solve.",
+    supporting:
+      "Whether you're evaluating AI, transforming operations, or improving technology execution, the first step is understanding the business problem.",
+    submit: 'Request a Consultation',
+  },
+  build: {
+    heading: "Let's understand what you want to build.",
+    supporting:
+      "Share the problem, intended users, and essential workflows. You don't need a technical specification to start.",
+    submit: 'Discuss My Project',
+  },
+  product: {
+    heading: 'Which product would you like to explore?',
+    supporting: "Tell me what interested you and how you might use it. I'll follow up with the appropriate next step.",
+    submit: 'Request Product Information',
+  },
+  speaking: {
+    heading: "Let's discuss your event or learning program.",
+    supporting:
+      'I can discuss enterprise AI strategy, responsible AI adoption, technology transformation, and practical AI-assisted engineering from a leadership and builder perspective.',
+    submit: 'Send Invitation',
+  },
+  general: { heading: 'Have something else in mind?', submit: 'Send Message' },
+};
+
+export const GOVERNANCE_PLATFORM_PRODUCT = 'AI Strategy & Governance Platform';
+export const FACTORY_AREA_OF_SUPPORT = 'AI-Assisted Engineering';
+
+export function contactHref(intent: ContactIntent, preselect?: { name: string; value: string }): string {
+  const p = new URLSearchParams({ type: intent });
+  if (preselect) p.set(preselect.name, preselect.value);
+  return `/contact?${p.toString()}`;
+}
+
+type ParamValue = string | string[] | undefined;
+
+/**
+ * Resolve `?type=` plus the optional `area` (advisory) and `product` (product) preselects.
+ * Unknown values fall back safely: an unknown type gives the first intent, an unknown option is ignored.
+ */
+export function resolveContactPrefill(params: Record<string, ParamValue>): {
+  intent: ContactIntent;
+  values: Record<string, string>;
+} {
+  const one = (v: ParamValue) => (Array.isArray(v) ? v[0] : v);
+  const type = one(params.type);
+  const intent = (CONTACT_INTENT_IDS as readonly string[]).includes(type ?? '')
+    ? (type as ContactIntent)
+    : CONTACT_INTENT_IDS[0];
+  const values: Record<string, string> = {};
+  const preselects: [ContactIntent, string, string][] = [
+    ['advisory', 'area', 'areaOfSupport'],
+    ['product', 'product', 'product'],
+  ];
+  for (const [forIntent, param, field] of preselects) {
+    const v = one(params[param]);
+    const options = CONTACT_FIELDS[forIntent].find((x) => x.name === field)?.options;
+    if (intent === forIntent && v && options?.includes(v)) values[field] = v;
+  }
+  return { intent, values };
 }

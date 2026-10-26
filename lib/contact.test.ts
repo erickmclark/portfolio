@@ -14,7 +14,7 @@ const base = { name: 'Ada Lovelace', email: 'ada@example.com', privacyAcknowledg
 
 const valid: Record<ContactIntent, Record<string, unknown>> = {
   leadership: { organization: 'Acme', roleTitle: 'VP Strategy', workArrangement: 'Hybrid', employmentType: 'Permanent', jobPostingUrl: 'https://acme.com/job' },
-  advisory: { organization: 'Acme', areaOfSupport: 'AI-Assisted Engineering', biggestChallenge: 'x', desiredOutcome: 'y', timeframe: '1–3 months', budgetRange: '50k' },
+  advisory: { organization: 'Acme', areaOfSupport: 'AI-Assisted Engineering', biggestChallenge: 'x', desiredOutcome: 'y', timeframe: '1–3 months', budgetRange: '$25K–$50K' },
   build: { projectType: 'Website', problem: 'p', users: 'Customers', keyWorkflows: 'w', currentStage: 'Idea', integrations: 'Not sure' },
   product: { product: 'Prepera', inquiryType: 'Demo', useCase: 'u', followDevelopment: true },
   speaking: { organization: 'Acme', topic: 'AI Strategy', format: 'Keynote', learningObjective: 'l', proposedDate: '2027-02-28' },
@@ -29,6 +29,24 @@ const errors = (input: unknown) => {
 };
 
 describe('validateContactSubmission', () => {
+  const OPTIONAL_SELECTS: [ContactIntent, string, string[]][] = [
+    ['advisory', 'budgetRange', ['Still defining', 'Under $10K', '$10K–$25K', '$25K–$50K', '$50K+']],
+    ['build', 'launchTimeframe', ['Immediately', '1–3 months', '3–6 months', 'Exploring']],
+    ['build', 'budget', ['Not decided', 'Under $10K', '$10K–$25K', '$25K–$50K', '$50K–$100K', '$100K+']],
+  ];
+  describe.each(OPTIONAL_SELECTS)('%s %s select', (intent, field, options) => {
+    it.each(options)('accepts %s', (value) => {
+      expect(validateContactSubmission(payload(intent, { [field]: value })).ok).toBe(true);
+    });
+    it('accepts empty or absent', () => {
+      expect(validateContactSubmission(payload(intent, { [field]: '' })).ok).toBe(true);
+      expect(validateContactSubmission(payload(intent)).ok).toBe(true);
+    });
+    it.each(['50k', 'Around $20K', '$10K-$25K'])('rejects %s', (value) => {
+      expect(errors(payload(intent, { [field]: value }))[field]).toBeTruthy();
+    });
+  });
+
   it.each(CONTACT_INTENT_IDS)('accepts a valid %s payload', (intent) => {
     const r = validateContactSubmission(payload(intent));
     expect(r.ok).toBe(true);
