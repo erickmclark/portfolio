@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAuthenticated } from '@/lib/auth';
 import { getSiteContent, getRedis } from '@/lib/content';
 import { validateSiteContent } from '@/lib/validate';
+import { syncCover } from '@/lib/project-images';
 
 export async function GET() {
   if (!(await isAuthenticated())) {
@@ -32,7 +33,8 @@ export async function PUT(request: NextRequest) {
     if (!redis) {
       return NextResponse.json({ error: 'Content store (KV) is not configured' }, { status: 500 });
     }
-    await redis.set('data', JSON.stringify(result.content));
+    const synced = { ...result.content, projects: result.content.projects.map(syncCover) };
+    await redis.set('data', JSON.stringify(synced));
     return NextResponse.json({ ok: true });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

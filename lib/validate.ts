@@ -1,4 +1,5 @@
 import type { SiteContent } from './types';
+import { isAllowedImageUrl } from './image-url';
 import {
   CASE_STUDY_SECTIONS,
   IMAGE_KINDS,
@@ -89,6 +90,7 @@ export function validateSiteContent(input: unknown): ValidationResult {
       if (typeof p.description !== 'string') errors.push(`${where}.description must be a string.`);
       if (!isStringArray(p.tech)) errors.push(`${where}.tech must be an array of strings.`);
       if (p.image !== undefined && typeof p.image !== 'string') errors.push(`${where}.image must be a string when present.`);
+      else if (typeof p.image === 'string' && p.image !== '' && !isAllowedImageUrl(p.image)) errors.push(`${where}.image must be a same-origin path or an https URL.`);
       if (typeof p.featured !== 'boolean') errors.push(`${where}.featured must be a boolean.`);
       if (typeof p.order !== 'number') errors.push(`${where}.order must be a number.`);
       if (p.githubUrl !== undefined && typeof p.githubUrl !== 'string') errors.push(`${where}.githubUrl must be a string when present.`);
@@ -128,6 +130,7 @@ export function validateSiteContent(input: unknown): ValidationResult {
               return;
             }
             if (typeof img.url !== 'string' || img.url.trim() === '') errors.push(`${iw}.url must be a non-empty string.`);
+            else if (!isAllowedImageUrl(img.url)) errors.push(`${iw}.url must be a same-origin path or an https URL.`);
             if (typeof img.alt !== 'string' || img.alt.trim() === '') errors.push(`${iw}.alt must be a non-empty string.`);
             if (img.caption !== undefined && typeof img.caption !== 'string') errors.push(`${iw}.caption must be a string when present.`);
             if (!isOneOf(img.kind, IMAGE_KINDS)) errors.push(`${iw}.kind must be one of: ${IMAGE_KINDS.join(', ')}.`);

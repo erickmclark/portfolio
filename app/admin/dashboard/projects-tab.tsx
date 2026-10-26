@@ -19,7 +19,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, ChevronDown, ChevronUp, Trash2, Plus, GitBranch } from 'lucide-react';
-import type { Project } from '@/lib/types';
+import type { Project, ProjectImage } from '@/lib/types';
 
 // ── Tech tag chip editor ───────────────────────────────────────────────────
 function TechTagsEditor({
@@ -86,6 +86,9 @@ function SortableProject({
   const [fetching, setFetching] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [localPreview, setLocalPreview] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState(false);
   const [movingImage, setMovingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -119,25 +122,72 @@ function SortableProject({
 
   async function handleImageFile(file: File) {
     setUploading(true);
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const base64 = e.target?.result as string;
-      setLocalPreview(base64);
-      try {
-        const res = await fetch('/api/admin/image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ slug: project.slug, imageBase64: base64 }),
-        });
-        if (res.ok) {
-          const { imagePath } = (await res.json()) as { imagePath: string };
-          set('image', imagePath);
-        }
-      } finally {
-        setUploading(false);
+    setImageError(null);
+    const preview = URL.createObjectURL(file);
+    setLocalPreview(preview);
+    try {
+      const base = `/api/admin/projects/${project.id}/images`;
+      const form = new FormData();
+      form.append('file', file);
+      form.append('alt', project.title || 'Project image');
+      const res = await fetch(base, { method: 'POST', body: form });
+      const data = (await res.json().catch(() => ({}))) as {
+        images?: ProjectImage[];
+        image?: string;
+        error?: string;
+      };
+      if (!res.ok || !data.images) {
+        setImageError(data.error ?? 'Image upload failed.');
+        return;
       }
-    };
-    reader.readAsDataURL(file);
+      let { images, image } = data;
+      // Make the new upload (appended last) the cover, without deleting anything.
+      if (images.length > 1) {
+        const urls = [images[images.length - 1].url, ...images.slice(0, -1).map((i) => i.url)];
+        const reorder = await fetch(base, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ urls }),
+        });
+        const reordered = (await reorder.json().catch(() => ({}))) as {
+          images?: ProjectImage[];
+          image?: string;
+          error?: string;
+        };
+        if (!reorder.ok || !reordered.images) {
+          setImageError(reordered.error ?? 'Image uploaded, but setting it as the cover failed.');
+          return;
+        }
+        images = reordered.images;
+        image = reordered.image ?? image;
+      }
+      onUpdate({ ...project, images, image });
+    } catch {
+      setImageError('Image upload failed.');
+    } finally {
+      URL.revokeObjectURL(preview);
+      setLocalPreview(null);
+      setUploading(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!confirm(`Delete "${project.title || 'this project'}"? This removes the project and its uploaded images immediately.`)) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch(`/api/admin/projects/${project.id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        setDeleteError(data.error ?? 'Delete failed.');
+        return;
+      }
+      onDelete();
+    } catch {
+      setDeleteError('Delete failed.');
+    } finally {
+      setDeleting(false);
+    }
   }
 
   // When the slug changes, move the project image so its repo filename keeps
@@ -158,7 +208,13 @@ function SortableProject({
       });
       if (res.ok) {
         const { imagePath } = (await res.json()) as { imagePath: string };
-        set('image', imagePath);
+        const images = project.images?.map((img) =>
+          img.url === `/projects/${from}.png` ? { ...img, url: imagePath } : img
+        );
+        onUpdate({
+          ...project,
+          ...(images ? { images, image: images[0]?.url ?? '' } : { image: imagePath }),
+        });
       }
     } finally {
       setMovingImage(false);
@@ -318,7 +374,7 @@ function SortableProject({
                   />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <p className="text-sm text-white font-medium">
-                      {uploading ? 'Uploading…' : 'Click or drop to replace'}
+                      {uploading ? 'Uploading…' : 'Click or drop to set a new cover'}
                     </p>
                   </div>
                 </div>
@@ -351,6 +407,7 @@ function SortableProject({
                 Full preview ↗
               </button>
             )}
+            {imageError && <p className="mt-2 text-xs text-red-400">{imageError}</p>}
           </div>
 
           {/* Lightbox */}
@@ -380,14 +437,14 @@ function SortableProject({
           {/* Delete — kept at bottom */}
           <button
             type="button"
-            onClick={() => {
-              if (confirm(`Delete "${project.title || 'this project'}"?`)) onDelete();
-            }}
+            onClick={handleDelete}
+            disabled={deleting}
             className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors"
           >
             <Trash2 size={14} />
             Delete project
           </button>
+          {deleteError && <p className="text-xs text-red-400">{deleteError}</p>}
         </div>
       )}
     </div>
