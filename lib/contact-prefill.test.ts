@@ -5,6 +5,7 @@ import {
   FACTORY_AREA_OF_SUPPORT,
   GOVERNANCE_PLATFORM_PRODUCT,
   contactHref,
+  resolveContactOpen,
   resolveContactPrefill,
 } from './contact';
 
@@ -42,5 +43,20 @@ describe('resolveContactPrefill', () => {
   });
   it('has copy for every intent', () => {
     for (const id of CONTACT_INTENT_IDS) expect(CONTACT_INTENT_COPY[id].submit).toBeTruthy();
+  });
+});
+
+describe('resolveContactOpen', () => {
+  it('opens nothing without a valid type', () => {
+    expect(resolveContactOpen({})).toEqual({ intent: null, values: {} });
+    expect(resolveContactOpen({ type: 'nope' })).toEqual({ intent: null, values: {} });
+  });
+  it('opens the named intent with its prefill', () => {
+    expect(resolveContactOpen({ type: 'build' })).toEqual({ intent: 'build', values: {} });
+    expect(resolveContactOpen({ type: 'advisory', area: FACTORY_AREA_OF_SUPPORT })).toEqual({
+      intent: 'advisory',
+      values: { areaOfSupport: FACTORY_AREA_OF_SUPPORT },
+    });
+    expect(resolveContactOpen({ type: ['speaking', 'build'] }).intent).toBe('speaking');
   });
 });

@@ -1,9 +1,9 @@
 export const dynamic = "force-dynamic";
 
 import type { Metadata } from "next";
-import ContactForm from "@/components/contact-form";
+import ContactDialog from "@/components/contact-dialog";
 import { getSiteContent } from "@/lib/content";
-import { resolveContactPrefill } from "@/lib/contact";
+import { resolveContactOpen } from "@/lib/contact";
 import { CONTACT } from "@/lib/home-copy";
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default async function ContactPage({
     getSiteContent(),
     searchParams,
   ]);
-  const { intent, values } = resolveContactPrefill(sp);
+  const { intent, values } = resolveContactOpen(sp);
   return (
     <main id="main-content" className="public-shell">
       <div className="bg-white">
@@ -32,13 +32,25 @@ export default async function ContactPage({
           <p className="mt-5 max-w-[760px] text-lg font-medium leading-[1.35] sm:text-xl">
             {CONTACT.intro}
           </p>
-          <ContactForm
+          <div className="mt-10">
+          <ContactDialog
+            sourcePage="/contact"
             initialIntent={intent}
             initialValues={values}
             email={contact.email}
             linkedinUrl={contact.linkedinUrl}
             resumeUrl={about.resumeUrl}
           />
+          <div className="mt-8 border-t border-ink pt-6">
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">Or write directly</p>
+            <a
+              href={`mailto:${contact.email}`}
+              className="mt-3 inline-block break-all font-display text-2xl font-bold tracking-[-0.02em] underline underline-offset-4 sm:text-[28px]"
+            >
+              {contact.email}
+            </a>
+          </div>
+          </div>
         </div>
       </div>
     </main>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { GitHubIcon, LinkedInIcon } from "@/components/brand-icons";
 import { getSiteContent } from "@/lib/content";
 import { CLARK_STRATEGICS_URL, FOOTER } from "@/lib/home-copy";
 
@@ -23,12 +24,12 @@ export default async function SiteFooter() {
           <nav aria-label="Footer" className="flex flex-col items-start">
             {contact.linkedinUrl && (
               <a className={link} href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer">
-                LinkedIn <ArrowUpRight size={14} aria-hidden />
+                <LinkedInIcon size={16} /> LinkedIn
               </a>
             )}
             {contact.githubUrl && (
               <a className={link} href={contact.githubUrl} target="_blank" rel="noopener noreferrer">
-                GitHub <ArrowUpRight size={14} aria-hidden />
+                <GitHubIcon size={16} /> GitHub
               </a>
             )}
             {about.resumeUrl && (
