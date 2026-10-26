@@ -16,13 +16,23 @@ const SQUARE: Record<BrandColor, string> = {
   yellow: 'bg-brand-yellow',
 };
 
-export function Square({ color }: { color: BrandColor }) {
-  return <span aria-hidden="true" className={`inline-block size-2.5 shrink-0 ${SQUARE[color]}`} />;
+export function Square({ color, size = 10 }: { color: BrandColor; size?: 8 | 10 }) {
+  return <span aria-hidden="true" className={`inline-block shrink-0 ${size === 8 ? 'size-2' : 'size-2.5'} ${SQUARE[color]}`} />;
+}
+
+// Square status stamp: mono caps, ink outline. FEATURED carries an 8px yellow square.
+export function Stamp({ children, featured = false, solid = false }: { children: ReactNode; featured?: boolean; solid?: boolean }) {
+  return (
+    <span className={`inline-flex items-center gap-1.5 border border-ink px-1.5 py-0.5 font-mono text-[11px] uppercase leading-none tracking-wider ${solid ? 'bg-ink text-paper' : 'text-ink'}`}>
+      {featured && <Square color="yellow" size={8} />}
+      {children}
+    </span>
+  );
 }
 
 export const fieldClass =
-  'block min-h-11 w-full border border-ink bg-paper px-3.5 py-2 text-base text-ink aria-[invalid=true]:border-2 aria-[invalid=true]:border-red-700';
-export const errorTextClass = 'mt-1.5 text-sm text-red-700';
+  'block min-h-11 w-full border border-ink bg-paper px-3.5 py-2 text-base text-ink aria-[invalid=true]:border-2 aria-[invalid=true]:border-error';
+export const errorTextClass = 'mt-1.5 text-sm text-error';
 
 export function Field({ label, id, error, hint, 'aria-describedby': extraDescribedBy, ...props }: { label: string; id: string; error?: string; hint?: string } & InputHTMLAttributes<HTMLInputElement>) {
   const describedBy = mergeDescribedBy(error && `${id}-error`, hint && `${id}-hint`, extraDescribedBy);
@@ -48,7 +58,7 @@ const pill = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-ful
 const VARIANT = {
   primary: 'bg-ink text-paper border border-ink',
   ghost: 'border border-ink bg-transparent text-ink',
-  danger: 'border border-red-700 bg-transparent text-red-700',
+  danger: 'border border-error bg-transparent text-error',
 } as const;
 
 export function buttonClass(variant: keyof typeof VARIANT = 'primary') {
@@ -101,7 +111,7 @@ export function GroupHead({ title, note }: { title: string; note?: string }) {
 
 // One sentence, never a glyph. The live region stays mounted so changes are announced; the text crossfades.
 export function SaveStatus({ id, sentence, tone = 'default', onDark = false }: { id: string; sentence: string; tone?: 'default' | 'error'; onDark?: boolean }) {
-  const color = tone === 'error' ? (onDark ? 'text-brand-pink' : 'text-red-700') : onDark ? 'text-paper' : 'text-ink-muted';
+  const color = tone === 'error' ? (onDark ? 'text-brand-pink' : 'text-error') : onDark ? 'text-paper' : 'text-ink-muted';
   return (
     <p id={id} role="status" className={`min-w-0 text-sm ${color}`}>
       <span key={sentence} className="admin-fade inline-block">{sentence}</span>

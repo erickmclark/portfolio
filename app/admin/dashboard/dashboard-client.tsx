@@ -134,8 +134,8 @@ export default function DashboardClient() {
         <div className="px-4 py-16 md:px-10">
           <Eyebrow>Admin</Eyebrow>
           {loadFailed ? (
-            <div role="alert" className="mt-4 max-w-[500px] border border-red-700 px-4 py-3">
-              <p className="font-display text-xl font-semibold text-red-700">Failed to load content.</p>
+            <div role="alert" className="mt-4 max-w-[500px] border border-error px-4 py-3">
+              <p className="font-display text-xl font-semibold text-error">Failed to load content.</p>
               <p className="text-[15px]">Reload the page to try again. Nothing was changed.</p>
             </div>
           ) : (
@@ -150,24 +150,24 @@ export default function DashboardClient() {
             <p className="mt-2 text-ink-muted">This editor arrives with T-6.</p>
           </section>
         )}
+        {tab === 'projects' && (
+          <ProjectsTab
+            projects={content.projects}
+            onChange={(projects) => update({ ...content, projects })}
+            onRouteImages={(id, images) => updateFromLatest((latest) => applyRouteImages(latest, id, images))}
+            onDeleteProject={(id) => updateFromLatest((latest) => removeProject(latest, id))}
+            onSlugImageMoved={(id, from, imagePath) =>
+              updateFromLatest((latest) => applySlugImageMove(latest, id, from, imagePath))
+            }
+            onGitHubFill={(id, fill) => updateFromLatest((latest) => applyGitHubFill(latest, id, fill))}
+            onPendingChange={trackPending}
+            notice={deleteNotice}
+            setNotice={setDeleteNotice}
+          />
+        )}
         {/* Legacy tabs are still styled for a dark surface until their own redesign tasks land. */}
-        {tab !== 'home' && tab !== 'site' && (
+        {tab !== 'home' && tab !== 'site' && tab !== 'projects' && (
           <div className="rounded-2xl bg-background p-4 text-foreground md:p-6">
-            {tab === 'projects' && (
-              <ProjectsTab
-                projects={content.projects}
-                onChange={(projects) => update({ ...content, projects })}
-                onRouteImages={(id, images) => updateFromLatest((latest) => applyRouteImages(latest, id, images))}
-                onDeleteProject={(id) => updateFromLatest((latest) => removeProject(latest, id))}
-                onSlugImageMoved={(id, from, imagePath) =>
-                  updateFromLatest((latest) => applySlugImageMove(latest, id, from, imagePath))
-                }
-                onGitHubFill={(id, fill) => updateFromLatest((latest) => applyGitHubFill(latest, id, fill))}
-                onPendingChange={trackPending}
-                notice={deleteNotice}
-                setNotice={setDeleteNotice}
-              />
-            )}
             {tab === 'experience' && (
               <ExperienceTab
                 experience={content.experience}

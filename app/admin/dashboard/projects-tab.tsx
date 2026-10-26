@@ -18,7 +18,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, ChevronDown, ChevronUp, Trash2, Plus, GitBranch } from 'lucide-react';
+import { GripVertical, ChevronDown, ChevronUp, X } from 'lucide-react';
 import {
   PROJECT_CATEGORIES,
   PROJECT_RELATIONSHIPS,
@@ -34,6 +34,8 @@ import {
 import GalleryManager from './gallery-manager';
 import { deleteOutcome, nextNoticeAfterRetry, type DeleteNotice } from './project-updates';
 import { galleryImages } from './gallery-utils';
+import { caseStudyFilledCount, projectStamps, selectionAfterDelete } from './project-list';
+import { Button, buttonClass, Eyebrow, Field, fieldClass, GroupHead, Select, Square, Stamp, Textarea } from '../ui';
 
 // Human titles for case-study sections (content spec 6, required project page template).
 const CASE_STUDY_LABELS: Record<CaseStudySection, string> = {
@@ -50,17 +52,11 @@ const CASE_STUDY_LABELS: Record<CaseStudySection, string> = {
   learned: 'What I learned / would improve',
 };
 
-const fieldClass =
-  'w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors';
+const labelClass = 'mb-1.5 block text-sm font-semibold';
+const hintClass = 'mt-1.5 text-sm text-ink-muted';
 
 // ── Tech tag chip editor ───────────────────────────────────────────────────
-function TechTagsEditor({
-  tags,
-  onChange,
-}: {
-  tags: string[];
-  onChange: (tags: string[]) => void;
-}) {
+function TechTagsEditor({ id, tags, onChange }: { id: string; tags: string[]; onChange: (tags: string[]) => void }) {
   const [input, setInput] = useState('');
 
   function handleKey(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -73,35 +69,93 @@ function TechTagsEditor({
 
   return (
     <div>
-      <label className="text-xs text-muted uppercase tracking-widest mb-1 block">Tech Stack</label>
-      <div className="flex flex-wrap gap-2 mb-2 min-h-[2rem]">
+      <p id={`${id}-label`} className={labelClass}>Tech stack</p>
+      <ul aria-labelledby={`${id}-label`} className="mb-3 flex min-h-11 flex-wrap gap-2 empty:hidden">
         {tags.map((tag) => (
-          <span key={tag} className="flex items-center gap-1 text-xs px-2 py-1 bg-background border border-border rounded-md">
+          <li key={tag} className="inline-flex min-h-11 items-center rounded-full border border-ink pl-4 text-[15px]">
             {tag}
             <button
               type="button"
               onClick={() => onChange(tags.filter((t) => t !== tag))}
-              className="text-muted hover:text-white ml-1 leading-none"
+              aria-label={`Remove ${tag}`}
+              className="inline-flex size-11 items-center justify-center rounded-full"
             >
-              ×
+              <X aria-hidden="true" className="size-4" />
             </button>
-          </span>
+          </li>
         ))}
-      </div>
+      </ul>
+      <label htmlFor={id} className="sr-only">Add a technology</label>
       <input
+        id={id}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKey}
-        placeholder="Type a technology and press Enter"
-        className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors"
+        aria-describedby={`${id}-hint`}
+        placeholder="Add a technology"
+        className={fieldClass}
       />
+      <p id={`${id}-hint`} className={hintClass}>Press Enter to add.</p>
     </div>
   );
 }
 
-// ── Single sortable project row ────────────────────────────────────────────
-function SortableProject({
+// ── One index row: a select button beside a separate drag handle ───────────
+function IndexRow({ project, selected, slugBlocked, onSelect }: { project: Project; selected: boolean; slugBlocked: boolean; onSelect: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id });
+  const style = { transform: CSS.Transform.toString(transform), transition };
+  const cover = galleryImages(project)[0]?.url;
+  const stamps = projectStamps(project, slugBlocked);
+  const name = project.title || 'Untitled project';
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-stretch border-b border-ink border-l-4 ${selected ? 'border-l-ink bg-white' : 'border-l-transparent'} ${isDragging ? 'relative z-10 opacity-80' : ''}`}
+    >
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        aria-label={`Reorder ${name}`}
+        className="flex w-11 shrink-0 cursor-grab touch-none items-center justify-center active:cursor-grabbing"
+      >
+        <GripVertical aria-hidden="true" className="size-4" />
+      </button>
+      <button
+        type="button"
+        onClick={onSelect}
+        aria-current={selected ? 'true' : undefined}
+        className="flex min-h-[72px] min-w-0 flex-1 items-center gap-3 py-3 pr-3 text-left"
+      >
+        {cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={cover} alt="" className="h-10 w-16 shrink-0 border border-ink object-cover" />
+        ) : (
+          <span aria-hidden="true" className="flex h-10 w-16 shrink-0 items-center justify-center border border-ink font-mono text-[9px] uppercase tracking-wider text-ink-muted">No image</span>
+        )}
+        <span className="min-w-0 flex-1">
+          <span className={`block truncate font-display font-semibold ${project.title ? '' : 'italic text-ink-muted'}`}>{name}</span>
+          <span className="block truncate text-sm text-ink-muted">{project.tagline || 'No tagline'}</span>
+          {stamps.length > 0 && (
+            <span className="mt-1.5 flex flex-wrap gap-1.5">
+              {stamps.map((st) => (
+                <Stamp key={st} featured={st === 'FEATURED'}>{st}</Stamp>
+              ))}
+            </span>
+          )}
+        </span>
+      </button>
+    </li>
+  );
+}
+
+// ── The editor sheet for one project ───────────────────────────────────────
+function ProjectEditor({
   project,
+  position,
+  total,
   onUpdate,
   onRouteImages,
   onDelete,
@@ -110,10 +164,13 @@ function SortableProject({
   onSlugImageMoved,
   onGitHubFill,
   onPendingChange,
+  onBack,
   retrying,
   slugError,
 }: {
   project: Project;
+  position: number;
+  total: number;
   onUpdate: (updated: Project) => void;
   onRouteImages: (images: ProjectImage[]) => void;
   onDelete: () => void;
@@ -122,22 +179,19 @@ function SortableProject({
   onSlugImageMoved: (from: string, imagePath: string) => void;
   onGitHubFill: (fill: { title: string; tagline: string; tech: string[] }) => void;
   onPendingChange: (delta: 1 | -1) => void;
+  onBack: () => void;
   retrying: boolean;
   slugError?: string;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
-    id: project.id,
-  });
   const uid = useId();
-  const [expanded, setExpanded] = useState(false);
   const [fetching, setFetching] = useState(false);
+  const [githubError, setGithubError] = useState('');
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [caseStudyOpen, setCaseStudyOpen] = useState(false);
   const [movingImage, setMovingImage] = useState(false);
+  const [moveError, setMoveError] = useState('');
   const slugAtFocus = useRef<string | null>(null);
-
-  const style = { transform: CSS.Transform.toString(transform), transition };
 
   function set<K extends keyof Project>(key: K, value: Project[K]) {
     onUpdate({ ...project, [key]: value });
@@ -153,6 +207,7 @@ function SortableProject({
   async function fetchFromGitHub() {
     if (!project.githubUrl) return;
     setFetching(true);
+    setGithubError('');
     try {
       const res = await fetch(
         `/api/github/repo?url=${encodeURIComponent(project.githubUrl)}`
@@ -164,7 +219,12 @@ function SortableProject({
           tech: string[];
         };
         onGitHubFill({ title, tagline, tech });
+      } else {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        setGithubError(data.error ?? 'Auto-fill failed. Check the URL and try again.');
       }
+    } catch {
+      setGithubError('Auto-fill failed. Check the URL and try again.');
     } finally {
       setFetching(false);
     }
@@ -208,6 +268,7 @@ function SortableProject({
     // Only move images we own by convention (named after the previous slug).
     if (project.image !== `/projects/${from}.png`) return;
     setMovingImage(true);
+    setMoveError('');
     try {
       const res = await fetch('/api/admin/image', {
         method: 'PATCH',
@@ -217,265 +278,150 @@ function SortableProject({
       if (res.ok) {
         const { imagePath } = (await res.json()) as { imagePath: string };
         onSlugImageMoved(from, imagePath);
+      } else {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        setMoveError(data.error ?? 'The image could not be moved to match the new slug.');
       }
+    } catch {
+      setMoveError('The image could not be moved to match the new slug.');
     } finally {
       setMovingImage(false);
     }
   }
 
+  const filled = caseStudyFilledCount(project.caseStudy);
+
   return (
-    <div ref={setNodeRef} style={style} className="bg-surface border border-border rounded-xl overflow-hidden">
-      {/* Row header */}
-      <div className="flex items-center gap-3 p-4">
-        <button
-          type="button"
-          {...attributes}
-          {...listeners}
-          className="text-muted hover:text-white cursor-grab active:cursor-grabbing shrink-0"
-          aria-label="Drag to reorder"
-        >
-          <GripVertical size={16} />
-        </button>
-        <p className="flex-1 font-medium truncate min-w-0">
-          {project.title || <span className="text-muted italic">Untitled Project</span>}
-        </p>
-        {slugError && (
-          <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-red-400/20 text-red-400 border border-red-400/30">
-            Slug issue
-          </span>
-        )}
-        {project.visibility && project.visibility !== 'public' && (
-          <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-border text-muted border border-border capitalize">
-            {project.visibility}
-          </span>
-        )}
-        {project.featured && (
-          <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/30">
-            Featured
-          </span>
-        )}
-        <button
-          type="button"
-          onClick={() => setExpanded((v) => !v)}
-          className="shrink-0 text-muted hover:text-white"
-        >
-          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
+    <div className="border border-ink bg-white p-4 pb-10 md:p-8">
+      <button type="button" onClick={onBack} className="-ml-2 mb-3 inline-flex min-h-11 items-center px-2 text-[15px] font-semibold md:hidden">
+        ‹ All projects
+      </button>
+      <Eyebrow>Project {position} of {total} · /projects/{project.slug}</Eyebrow>
+      <h2 className="font-display mt-1 text-3xl font-bold leading-tight tracking-tight">{project.title || 'Untitled project'}</h2>
+
+      <div className="mt-8 space-y-4">
+        <GroupHead title="Basics" />
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field id={`${uid}-title`} label="Title" value={project.title} onChange={(e) => set('title', e.target.value)} />
+          <Field
+            id={`${uid}-slug`}
+            label="Slug (URL path)"
+            value={project.slug}
+            className={`${fieldClass} font-mono`}
+            onFocus={() => { slugAtFocus.current = project.slug; setMoveError(''); }}
+            onBlur={handleSlugBlur}
+            onChange={(e) => set('slug', e.target.value.toLowerCase().replace(/\s+/g, '-'))}
+            error={slugError ?? (moveError || undefined)}
+            hint={movingImage ? 'Moving image to match new slug…' : undefined}
+          />
+        </div>
+        <Field id={`${uid}-tagline`} label="Tagline" value={project.tagline} onChange={(e) => set('tagline', e.target.value)} placeholder="One-liner shown on project card" />
+        <div>
+          <label htmlFor={`${uid}-desc`} className={labelClass}>Description (Markdown)</label>
+          <Textarea id={`${uid}-desc`} value={project.description} onChange={(e) => set('description', e.target.value)} rows={6} className="resize-y font-mono" />
+        </div>
       </div>
 
-      {/* Expanded edit form */}
-      {expanded && (
-        <div className="border-t border-border p-4 space-y-4">
-          {/* GitHub URL + Auto-fill */}
-          <div>
-            <label className="text-xs text-muted uppercase tracking-widest mb-1 block">GitHub URL</label>
-            <div className="flex gap-2">
-              <input
-                value={project.githubUrl ?? ''}
-                onChange={(e) => set('githubUrl', e.target.value || undefined)}
-                placeholder="https://github.com/you/repo"
-                className="flex-1 min-w-0 px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors"
-              />
-              <button
-                type="button"
-                onClick={fetchFromGitHub}
-                disabled={fetching || !project.githubUrl}
-                className="shrink-0 px-3 py-2 border border-border hover:border-accent rounded-lg text-sm text-muted hover:text-white disabled:opacity-40 transition-colors flex items-center gap-1.5"
-              >
-                <GitBranch size={14} />
-                {fetching ? 'Fetching…' : 'Auto-fill'}
-              </button>
-            </div>
-            <p className="text-xs text-muted mt-1">Paste a GitHub URL then click Auto-fill to populate title, tagline, and tech stack.</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs text-muted uppercase tracking-widest mb-1 block">Title</label>
-              <input
-                value={project.title}
-                onChange={(e) => set('title', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-muted uppercase tracking-widest mb-1 block">Slug (URL path)</label>
-              <input
-                value={project.slug}
-                onFocus={() => { slugAtFocus.current = project.slug; }}
-                onBlur={handleSlugBlur}
-                onChange={(e) => set('slug', e.target.value.toLowerCase().replace(/\s+/g, '-'))}
-                className={`w-full px-3 py-2 bg-background border rounded-lg text-sm focus:outline-none transition-colors font-mono ${
-                  slugError ? 'border-red-400 focus:border-red-400' : 'border-border focus:border-accent'
-                }`}
-              />
-              {slugError && <p className="text-xs text-red-400 mt-1">{slugError}</p>}
-              {movingImage && <p className="text-xs text-muted mt-1 animate-pulse">Moving image to match new slug…</p>}
-            </div>
-          </div>
-
-          <div>
-            <label className="text-xs text-muted uppercase tracking-widest mb-1 block">Tagline</label>
-            <input
-              value={project.tagline}
-              onChange={(e) => set('tagline', e.target.value)}
-              placeholder="One-liner shown on project card"
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs text-muted uppercase tracking-widest mb-1 block">Description (Markdown)</label>
-            <textarea
-              value={project.description}
-              onChange={(e) => set('description', e.target.value)}
-              rows={6}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent font-mono resize-y transition-colors"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs text-muted uppercase tracking-widest mb-1 block">Live URL (optional)</label>
-            <input
-              value={project.liveUrl ?? ''}
-              onChange={(e) => set('liveUrl', e.target.value || undefined)}
-              placeholder="https://myproject.vercel.app"
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors"
-            />
-          </div>
-
-          <div>
-            <label htmlFor={`${uid}-ext`} className="text-xs text-muted uppercase tracking-widest mb-1 block">External URL (optional)</label>
-            <input
-              id={`${uid}-ext`}
-              value={project.externalUrl ?? ''}
-              onChange={(e) => set('externalUrl', e.target.value || undefined)}
-              placeholder="https://"
-              className={fieldClass}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor={`${uid}-cat`} className="text-xs text-muted uppercase tracking-widest mb-1 block">Category</label>
-              <select
-                id={`${uid}-cat`}
-                value={project.category ?? ''}
-                onChange={(e) => set('category', (e.target.value || undefined) as ProjectCategory | undefined)}
-                className={fieldClass}
-              >
-                <option value="">Not set</option>
-                {PROJECT_CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label htmlFor={`${uid}-rel`} className="text-xs text-muted uppercase tracking-widest mb-1 block">Relationship</label>
-              <select
-                id={`${uid}-rel`}
-                value={project.relationship ?? ''}
-                onChange={(e) => set('relationship', (e.target.value || undefined) as ProjectRelationship | undefined)}
-                className={fieldClass}
-              >
-                <option value="">Not set</option>
-                {PROJECT_RELATIONSHIPS.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label htmlFor={`${uid}-status`} className="text-xs text-muted uppercase tracking-widest mb-1 block">Status</label>
-              <input
-                id={`${uid}-status`}
-                value={project.status ?? ''}
-                onChange={(e) => set('status', e.target.value || undefined)}
-                placeholder="e.g. MVP, Live"
-                className={fieldClass}
-              />
-            </div>
-            <div>
-              <label htmlFor={`${uid}-vis`} className="text-xs text-muted uppercase tracking-widest mb-1 block">Visibility</label>
-              <select
-                id={`${uid}-vis`}
-                aria-describedby={`${uid}-vis-hint`}
-                value={project.visibility ?? 'public'}
-                onChange={(e) => set('visibility', e.target.value as Visibility)}
-                className={fieldClass}
-              >
-                {VISIBILITIES.map((v) => (
-                  <option key={v} value={v}>{v}</option>
-                ))}
-              </select>
-              <p id={`${uid}-vis-hint`} className="text-xs text-muted mt-1">Hidden and archived projects are kept in the admin but never shown publicly.</p>
-            </div>
-          </div>
-
-          <TechTagsEditor tags={project.tech} onChange={(tech) => set('tech', tech)} />
-
-          {/* Featured toggle */}
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => set('featured', !project.featured)}
-              className={`relative w-10 h-6 rounded-full transition-colors ${project.featured ? 'bg-accent' : 'bg-border'}`}
-            >
-              <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${project.featured ? 'translate-x-4' : 'translate-x-0'}`} />
-            </button>
-            <span className="text-sm">Featured <span className="text-muted">(shown first on the site)</span></span>
-          </div>
-
-          <GalleryManager
-            projectId={project.id}
-            projectTitle={project.title}
-            images={galleryImages(project)}
-            onChange={(images, image) => onUpdate({ ...project, images, image })}
-            onRouteImages={onRouteImages}
-            onPendingChange={onPendingChange}
+      <div className="mt-10 space-y-4">
+        <GroupHead title="Source and links" />
+        <div>
+          <Field
+            id={`${uid}-gh`}
+            label="GitHub URL"
+            value={project.githubUrl ?? ''}
+            onChange={(e) => { set('githubUrl', e.target.value || undefined); setGithubError(''); }}
+            placeholder="https://github.com/you/repo"
+            error={githubError || undefined}
+            hint="Paste a GitHub URL, then Auto-fill sets the title, tagline and tech stack."
           />
-
-          {/* Case study */}
-          <div>
-            <button
-              type="button"
-              onClick={() => setCaseStudyOpen((v) => !v)}
-              aria-expanded={caseStudyOpen}
-              className="flex items-center gap-2 text-xs text-muted hover:text-white uppercase tracking-widest transition-colors"
-            >
-              {caseStudyOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-              Case study
-            </button>
-            {caseStudyOpen && (
-              <div className="mt-3 space-y-4">
-                {CASE_STUDY_SECTIONS.map((key) => (
-                  <div key={key}>
-                    <label htmlFor={`${uid}-cs-${key}`} className="text-xs text-muted uppercase tracking-widest mb-1 block">{CASE_STUDY_LABELS[key]}</label>
-                    <textarea
-                      id={`${uid}-cs-${key}`}
-                      value={project.caseStudy?.[key] ?? ''}
-                      onChange={(e) => setCaseStudySection(key, e.target.value)}
-                      rows={4}
-                      className={`${fieldClass} resize-y`}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Delete — kept at bottom */}
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={deleting || retrying}
-            className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Trash2 size={14} />
-            {deleting ? 'Deleting…' : 'Delete project'}
-          </button>
-          {deleteError && <p role="alert" className="text-xs text-red-400">{deleteError}</p>}
+          <Button type="button" variant="ghost" onClick={fetchFromGitHub} disabled={fetching || !project.githubUrl} className="mt-3">
+            {fetching ? 'Fetching…' : 'Auto-fill from GitHub'}
+          </Button>
         </div>
-      )}
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field id={`${uid}-live`} label="Live URL (optional)" value={project.liveUrl ?? ''} onChange={(e) => set('liveUrl', e.target.value || undefined)} placeholder="https://myproject.vercel.app" />
+          <Field id={`${uid}-ext`} label="External URL (optional)" value={project.externalUrl ?? ''} onChange={(e) => set('externalUrl', e.target.value || undefined)} placeholder="https://" />
+        </div>
+      </div>
+
+      <div className="mt-10 space-y-4">
+        <GroupHead title="Classification" />
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <label htmlFor={`${uid}-cat`} className={labelClass}>Category</label>
+            <Select id={`${uid}-cat`} value={project.category ?? ''} onChange={(e) => set('category', (e.target.value || undefined) as ProjectCategory | undefined)}>
+              <option value="">Not set</option>
+              {PROJECT_CATEGORIES.map((c) => (<option key={c} value={c}>{c}</option>))}
+            </Select>
+          </div>
+          <div>
+            <label htmlFor={`${uid}-rel`} className={labelClass}>Relationship</label>
+            <Select id={`${uid}-rel`} value={project.relationship ?? ''} onChange={(e) => set('relationship', (e.target.value || undefined) as ProjectRelationship | undefined)}>
+              <option value="">Not set</option>
+              {PROJECT_RELATIONSHIPS.map((r) => (<option key={r} value={r}>{r}</option>))}
+            </Select>
+          </div>
+          <Field id={`${uid}-status`} label="Status" value={project.status ?? ''} onChange={(e) => set('status', e.target.value || undefined)} placeholder="e.g. MVP, Live" />
+          <div>
+            <label htmlFor={`${uid}-vis`} className={labelClass}>Visibility</label>
+            <Select id={`${uid}-vis`} aria-describedby={`${uid}-vis-hint`} value={project.visibility ?? 'public'} onChange={(e) => set('visibility', e.target.value as Visibility)}>
+              {VISIBILITIES.map((v) => (<option key={v} value={v}>{v}</option>))}
+            </Select>
+            <p id={`${uid}-vis-hint`} className={hintClass}>Hidden and archived projects are kept in the admin but never shown publicly.</p>
+          </div>
+        </div>
+        <label className="flex min-h-11 items-center gap-3 text-[15px]">
+          <input type="checkbox" checked={project.featured} onChange={(e) => set('featured', e.target.checked)} className="size-5 shrink-0 accent-ink" />
+          <span><span className="font-semibold">Featured</span> <span className="text-ink-muted">(shown first on the site)</span></span>
+        </label>
+        <TechTagsEditor id={`${uid}-tech`} tags={project.tech} onChange={(tech) => set('tech', tech)} />
+      </div>
+
+      <div className="mt-10 space-y-4">
+        <GroupHead title="Gallery" />
+        <GalleryManager
+          projectId={project.id}
+          projectTitle={project.title}
+          images={galleryImages(project)}
+          onChange={(images, image) => onUpdate({ ...project, images, image })}
+          onRouteImages={onRouteImages}
+          onPendingChange={onPendingChange}
+        />
+      </div>
+
+      <div className="mt-10">
+        <button
+          type="button"
+          onClick={() => setCaseStudyOpen((v) => !v)}
+          aria-expanded={caseStudyOpen}
+          aria-controls={`${uid}-cs`}
+          className="flex min-h-11 w-full items-center justify-between gap-3 border-y border-ink py-2 text-left"
+        >
+          <span className="font-display text-lg font-semibold">
+            Case study <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted">· {filled} of {CASE_STUDY_SECTIONS.length} sections filled</span>
+          </span>
+          {caseStudyOpen ? <ChevronUp aria-hidden="true" className="size-4 shrink-0" /> : <ChevronDown aria-hidden="true" className="size-4 shrink-0" />}
+        </button>
+        {caseStudyOpen && (
+          <div id={`${uid}-cs`} className="mt-4 space-y-4">
+            {CASE_STUDY_SECTIONS.map((key) => (
+              <div key={key}>
+                <label htmlFor={`${uid}-cs-${key}`} className={labelClass}>{CASE_STUDY_LABELS[key]}</label>
+                <Textarea id={`${uid}-cs-${key}`} value={project.caseStudy?.[key] ?? ''} onChange={(e) => setCaseStudySection(key, e.target.value)} rows={4} className="resize-y" />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Delete: last, ruled off in the error colour, with its consequence. */}
+      <div className="mt-12 border-t-2 border-error pt-6">
+        <p className="mb-3 text-[15px]">Deletes the project and its uploaded images now. Save cannot undo this.</p>
+        <button type="button" onClick={handleDelete} disabled={deleting || retrying} className={buttonClass('danger')}>
+          {deleting ? 'Deleting…' : 'Delete project'}
+        </button>
+        {deleteError && <p role="alert" className="mt-2 text-sm text-error">{deleteError}</p>}
+      </div>
     </div>
   );
 }
@@ -502,6 +448,14 @@ export default function ProjectsTab({
   notice: DeleteNotice;
   setNotice: React.Dispatch<React.SetStateAction<DeleteNotice>>;
 }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Below md the index and the editor are separate screens; this says which one shows.
+  const [mobileEditor, setMobileEditor] = useState(false);
+  const indexRef = useRef<HTMLDivElement>(null);
+  // Keep the selected row visible inside the sticky, internally scrolling index.
+  useEffect(() => {
+    indexRef.current?.querySelector('[aria-current]')?.scrollIntoView({ block: 'nearest' });
+  }, [selectedId, projects.length]);
   const [retrying, setRetrying] = useState(false);
   const [status, setStatus] = useState('');
   const noticeRef = useRef(notice);
@@ -600,83 +554,103 @@ export default function ProjectsTab({
       order: projects.length,
     };
     onChange([...projects, newProject]);
+    setSelectedId(newProject.id);
+    setMobileEditor(true);
   }
 
+  const selectedIndex = Math.max(0, projects.findIndex((p) => p.id === selectedId));
+  const selected = projects[selectedIndex];
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between mb-6">
-        <h2 ref={headingRef} tabIndex={-1} className="text-xl font-bold focus:outline-none">Projects</h2>
-        <p className="text-sm text-muted">
-          {projects.length} project{projects.length !== 1 ? 's' : ''}
-        </p>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3">
-        <p id={noticeId} role="alert" className="text-sm text-red-400 empty:hidden">{notice?.message ?? ''}</p>
-        {notice && (
-          <button
-            ref={retryRef}
-            type="button"
-            onClick={retryCleanup}
-            aria-disabled={retrying ? 'true' : undefined}
-            aria-describedby={noticeId}
-            className={`text-sm text-red-400 hover:text-red-300 underline transition-colors ${retrying ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {retrying ? 'Retrying…' : 'Retry cleanup'}
-          </button>
-        )}
-        <p role="status" aria-live="polite" className="sr-only">{status}</p>
-      </div>
-
-      {hasSlugErrors && (
-        <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-400">
-          Some projects have a missing or duplicate slug. Saving is blocked until each project has a unique URL path.
+    <div className="md:grid md:grid-cols-[400px_minmax(0,1fr)] md:items-start md:gap-10">
+      <div ref={indexRef} className={`${mobileEditor ? 'hidden md:block' : 'block'} md:sticky md:top-[88px] md:max-h-[calc(100vh-104px)] md:overflow-y-auto md:p-1`}>
+        <Eyebrow>Projects · {projects.length}</Eyebrow>
+        <div className="mt-1 flex items-center justify-between gap-3">
+          <h2 ref={headingRef} tabIndex={-1} className="font-display text-[40px] font-bold leading-tight tracking-tight focus:outline-none">Projects</h2>
+          <Button type="button" variant="ghost" onClick={addProject}>Add project</Button>
         </div>
-      )}
+        <p className="mb-4 mt-2 text-sm text-ink-muted">
+          Drag the grip, or focus it and use the arrow keys, to reorder. This is content order; the homepage reorders by view.
+        </p>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={projects.map((p) => p.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          <div className="space-y-3">
-            {projects.map((project) => (
-              <SortableProject
-                key={project.id}
-                project={project}
-                slugError={slugErrorFor(project)}
-                onUpdate={(updated) =>
-                  onChange(projects.map((p) => (p.id === updated.id ? updated : p)))
-                }
-                onRouteImages={(images) => onRouteImages(project.id, images)}
-                onDelete={() => onDeleteProject(project.id)}
-                onDeleteStart={() => setNotice(null)}
-                onDeletedWithWarning={(projectId, message) => {
-                  focusRetry.current = true;
-                  setNotice({ projectId, message });
-                }}
-                onSlugImageMoved={(from, imagePath) => onSlugImageMoved(project.id, from, imagePath)}
-                onGitHubFill={(fill) => onGitHubFill(project.id, fill)}
-                onPendingChange={onPendingChange}
-                retrying={retrying}
-              />
-            ))}
+        <div className="space-y-3 empty:hidden">
+          {hasSlugErrors && (
+            <div className="flex items-start gap-3 border border-ink bg-brand-cream px-4 py-3 text-sm">
+              <span className="mt-1"><Square color="yellow" /></span>
+              <p>Some projects have a missing or duplicate slug. Saving is blocked until each project has a unique URL path.</p>
+            </div>
+          )}
+          <div className={notice ? 'border border-error px-4 py-3' : 'hidden'}>
+            <p id={noticeId} role="alert" className="text-sm text-error empty:hidden">{notice?.message ?? ''}</p>
+            {notice && (
+              <button
+                ref={retryRef}
+                type="button"
+                onClick={retryCleanup}
+                aria-disabled={retrying ? 'true' : undefined}
+                aria-describedby={noticeId}
+                className={`${buttonClass('ghost')} mt-3 ${retrying ? 'cursor-not-allowed opacity-50' : ''}`}
+              >
+                {retrying ? 'Retrying…' : 'Retry cleanup'}
+              </button>
+            )}
           </div>
-        </SortableContext>
-      </DndContext>
+          <p role="status" aria-live="polite" className="sr-only">{status}</p>
+        </div>
 
-      <button
-        type="button"
-        onClick={addProject}
-        className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-border hover:border-accent text-muted hover:text-white rounded-xl transition-colors text-sm"
-      >
-        <Plus size={16} />
-        Add Project
-      </button>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={projects.map((p) => p.id)} strategy={verticalListSortingStrategy}>
+            <ul aria-label="Projects" className="mt-4 border-t border-ink">
+              {projects.map((project) => (
+                <IndexRow
+                  key={project.id}
+                  project={project}
+                  selected={project.id === selected?.id}
+                  slugBlocked={!!slugErrorFor(project)}
+                  onSelect={() => {
+                    setSelectedId(project.id);
+                    setMobileEditor(true);
+                  }}
+                />
+              ))}
+            </ul>
+          </SortableContext>
+        </DndContext>
+      </div>
+
+      <div className={`min-w-0 ${mobileEditor ? 'block' : 'hidden md:block'}`}>
+        {selected ? (
+          <ProjectEditor
+            key={selected.id}
+            project={selected}
+            position={selectedIndex + 1}
+            total={projects.length}
+            slugError={slugErrorFor(selected)}
+            onUpdate={(updated) => onChange(projects.map((p) => (p.id === updated.id ? updated : p)))}
+            onRouteImages={(images) => onRouteImages(selected.id, images)}
+            onDelete={() => {
+              setSelectedId(selectionAfterDelete(projects.map((p) => p.id), selected.id));
+              setMobileEditor(false);
+              onDeleteProject(selected.id);
+            }}
+            onDeleteStart={() => setNotice(null)}
+            onDeletedWithWarning={(projectId, message) => {
+              focusRetry.current = true;
+              setNotice({ projectId, message });
+            }}
+            onSlugImageMoved={(from, imagePath) => onSlugImageMoved(selected.id, from, imagePath)}
+            onGitHubFill={(fill) => onGitHubFill(selected.id, fill)}
+            onPendingChange={onPendingChange}
+            onBack={() => setMobileEditor(false)}
+            retrying={retrying}
+          />
+        ) : (
+          <div className="border border-ink bg-white p-8">
+            <p className="font-display text-xl font-semibold">No projects yet.</p>
+            <p className="mt-1 text-ink-muted">Use Add project to create the first one.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
