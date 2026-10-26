@@ -34,6 +34,9 @@ import {
 import GalleryManager from './gallery-manager';
 import { deleteOutcome, nextNoticeAfterRetry, type DeleteNotice } from './project-updates';
 import { galleryImages } from './gallery-utils';
+import { applyCardCtas, effectiveCardCtas, readable } from './content-edit';
+import { useDrillIn } from '../ui/use-drill-in';
+import { validateSiteContent } from '@/lib/validate';
 import { caseStudyFilledCount, projectStamps, selectionAfterDelete } from './project-list';
 import { Button, buttonClass, Eyebrow, Field, fieldClass, GroupHead, Select, Square, Stamp, Textarea } from '../ui';
 
@@ -101,7 +104,7 @@ function TechTagsEditor({ id, tags, onChange }: { id: string; tags: string[]; on
 }
 
 // ── One index row: a select button beside a separate drag handle ───────────
-function IndexRow({ project, selected, slugBlocked, onSelect }: { project: Project; selected: boolean; slugBlocked: boolean; onSelect: () => void }) {
+function IndexRow({ project, selected, slugBlocked, onSelect, buttonRef }: { project: Project; selected: boolean; slugBlocked: boolean; onSelect: () => void; buttonRef: (el: HTMLElement | null) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id });
   const style = { transform: CSS.Transform.toString(transform), transition };
   const cover = galleryImages(project)[0]?.url;
@@ -125,6 +128,7 @@ function IndexRow({ project, selected, slugBlocked, onSelect }: { project: Proje
       </button>
       <button
         type="button"
+        ref={buttonRef}
         onClick={onSelect}
         aria-current={selected ? 'true' : undefined}
         className="flex min-h-[72px] min-w-0 flex-1 items-center gap-3 py-3 pr-3 text-left"
@@ -133,7 +137,7 @@ function IndexRow({ project, selected, slugBlocked, onSelect }: { project: Proje
           // eslint-disable-next-line @next/next/no-img-element
           <img src={cover} alt="" className="h-10 w-16 shrink-0 border border-ink object-cover" />
         ) : (
-          <span aria-hidden="true" className="flex h-10 w-16 shrink-0 items-center justify-center border border-ink font-mono text-[9px] uppercase tracking-wider text-ink-muted">No image</span>
+          <span aria-hidden="true" className="flex h-10 w-16 shrink-0 items-center justify-center border border-ink font-mono text-[11px] uppercase tracking-wider text-ink-muted">No image</span>
         )}
         <span className="min-w-0 flex-1">
           <span className={`block truncate font-display font-semibold ${project.title ? '' : 'italic text-ink-muted'}`}>{name}</span>
@@ -151,6 +155,40 @@ function IndexRow({ project, selected, slugBlocked, onSelect }: { project: Proje
   );
 }
 
+// ── Homepage card buttons: both are written together so the second button is never dropped ──
+function CardButtons({ uid, project, onUpdate }: { uid: string; project: Project; onUpdate: (p: Project) => void }) {
+  const cur = effectiveCardCtas(project);
+  const errors = (() => {
+    const r = validateSiteContent({ projects: [applyCardCtas(project, cur)] });
+    return r.ok ? [] : r.errors.filter((m) => m.includes('.cardCta') || m.includes('.cardSecondaryCta'));
+  })();
+  const err = (suffix: string) => {
+    const m = errors.find((x) => x.includes(suffix) && x.includes(' must'));
+    return m ? readable(m) : undefined;
+  };
+  const write = (next: typeof cur) => onUpdate(applyCardCtas(project, next));
+  const sec = cur.secondary;
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field id={`${uid}-card-label`} label="Card button label" value={cur.label} onChange={(e) => write({ ...cur, label: e.target.value })} onBlur={(e) => write({ ...cur, label: e.target.value.trim() })} error={err('cardCta.label')} />
+        <Field id={`${uid}-card-href`} label="Card button goes to (optional)" className={`${fieldClass} font-mono`} value={cur.href} onChange={(e) => write({ ...cur, href: e.target.value.trim() })} error={err('cardCta.href')} hint="Leave empty to open the case study. Otherwise a #section, a /path or an https:// address." />
+      </div>
+      {sec ? (
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field id={`${uid}-card2-label`} label="Second button label" value={sec.label} onChange={(e) => write({ ...cur, secondary: { ...sec, label: e.target.value } })} onBlur={(e) => write({ ...cur, secondary: { ...sec, label: e.target.value.trim() } })} error={err('cardSecondaryCta.label')} />
+            <Field id={`${uid}-card2-href`} label="Second button goes to" className={`${fieldClass} font-mono`} value={sec.href} onChange={(e) => write({ ...cur, secondary: { ...sec, href: e.target.value.trim() } })} error={err('cardSecondaryCta.href')} />
+          </div>
+          <Button type="button" variant="ghost" onClick={() => write({ label: cur.label, href: cur.href })}>Remove second button</Button>
+        </div>
+      ) : (
+        <Button type="button" variant="ghost" onClick={() => write({ ...cur, secondary: { label: '', href: '' } })}>Add a second button</Button>
+      )}
+    </div>
+  );
+}
+
 // ── The editor sheet for one project ───────────────────────────────────────
 function ProjectEditor({
   project,
@@ -165,6 +203,7 @@ function ProjectEditor({
   onGitHubFill,
   onPendingChange,
   onBack,
+  headingRef,
   retrying,
   slugError,
 }: {
@@ -180,6 +219,7 @@ function ProjectEditor({
   onGitHubFill: (fill: { title: string; tagline: string; tech: string[] }) => void;
   onPendingChange: (delta: 1 | -1) => void;
   onBack: () => void;
+  headingRef: React.RefObject<HTMLHeadingElement | null>;
   retrying: boolean;
   slugError?: string;
 }) {
@@ -297,7 +337,7 @@ function ProjectEditor({
         ‹ All projects
       </button>
       <Eyebrow>Project {position} of {total} · /projects/{project.slug}</Eyebrow>
-      <h2 className="font-display mt-1 text-3xl font-bold leading-tight tracking-tight">{project.title || 'Untitled project'}</h2>
+      <h2 ref={headingRef} tabIndex={-1} className="font-display mt-1 text-3xl font-bold leading-tight tracking-tight focus:outline-none">{project.title || 'Untitled project'}</h2>
 
       <div className="mt-8 space-y-4">
         <GroupHead title="Basics" />
@@ -378,6 +418,11 @@ function ProjectEditor({
       </div>
 
       <div className="mt-10 space-y-4">
+        <GroupHead title="Homepage card" />
+        <CardButtons uid={uid} project={project} onUpdate={onUpdate} />
+      </div>
+
+      <div className="mt-10 space-y-4">
         <GroupHead title="Gallery" />
         <GalleryManager
           projectId={project.id}
@@ -450,7 +495,8 @@ export default function ProjectsTab({
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   // Below md the index and the editor are separate screens; this says which one shows.
-  const [mobileEditor, setMobileEditor] = useState(false);
+  const drill = useDrillIn();
+  const mobileEditor = drill.open;
   const indexRef = useRef<HTMLDivElement>(null);
   // Keep the selected row visible inside the sticky, internally scrolling index.
   useEffect(() => {
@@ -555,7 +601,7 @@ export default function ProjectsTab({
     };
     onChange([...projects, newProject]);
     setSelectedId(newProject.id);
-    setMobileEditor(true);
+    drill.enter(newProject.id);
   }
 
   const selectedIndex = Math.max(0, projects.findIndex((p) => p.id === selectedId));
@@ -607,9 +653,10 @@ export default function ProjectsTab({
                   project={project}
                   selected={project.id === selected?.id}
                   slugBlocked={!!slugErrorFor(project)}
+                  buttonRef={drill.rowRef(project.id)}
                   onSelect={() => {
                     setSelectedId(project.id);
-                    setMobileEditor(true);
+                    drill.enter(project.id);
                   }}
                 />
               ))}
@@ -630,7 +677,7 @@ export default function ProjectsTab({
             onRouteImages={(images) => onRouteImages(selected.id, images)}
             onDelete={() => {
               setSelectedId(selectionAfterDelete(projects.map((p) => p.id), selected.id));
-              setMobileEditor(false);
+              drill.close();
               onDeleteProject(selected.id);
             }}
             onDeleteStart={() => setNotice(null)}
@@ -641,7 +688,8 @@ export default function ProjectsTab({
             onSlugImageMoved={(from, imagePath) => onSlugImageMoved(selected.id, from, imagePath)}
             onGitHubFill={(fill) => onGitHubFill(selected.id, fill)}
             onPendingChange={onPendingChange}
-            onBack={() => setMobileEditor(false)}
+            onBack={drill.back}
+            headingRef={drill.headingRef}
             retrying={retrying}
           />
         ) : (
