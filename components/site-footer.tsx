@@ -4,6 +4,25 @@ import { GitHubIcon, LinkedInIcon } from "@/components/brand-icons";
 import PrivacyLink from "@/components/privacy-link";
 import { getSiteContent } from "@/lib/content";
 import { CLARK_STRATEGICS_URL } from "@/lib/home-copy";
+import { VIEWS, VIEW_LABELS } from "@/lib/home-view";
+
+/** Decorative brand-shape frieze standing on the copyright rule; two repeats, swapped blue/pink. */
+function Frieze() {
+  return (
+    <svg viewBox="0 0 670 62" aria-hidden="true" focusable="false" className="mt-12 block h-auto w-full">
+      {[0, 360].map((x, i) => (
+        <g key={x} transform={`translate(${x} 0)`}>
+          <rect x={i ? 58 : 0} y={29} width={78} height={33} className="fill-brand-pink" />
+          <rect x={i ? 0 : 78} y={5} width={58} height={57} className="fill-brand-blue" />
+          <rect x={136} y={0} width={17} height={62} className="fill-brand-green" />
+          <rect x={153} y={41} width={89} height={21} className="fill-brand-orange" />
+          <path d="M242 62V15a47 47 0 0 1 47 47Z" className="fill-brand-yellow" />
+          <circle cx={i ? 300 : 350} cy={52} r={10} className="fill-brand-sky" />
+        </g>
+      ))}
+    </svg>
+  );
+}
 
 export default async function SiteFooter() {
   const { contact, about, site } = await getSiteContent();
@@ -60,9 +79,11 @@ export default async function SiteFooter() {
             </div>
           </nav>
         </div>
-        <p className="mt-10 border-t border-white/80 pt-6 font-mono text-[11px] font-medium uppercase tracking-[0.12em]">
-          {FOOTER.copyright}
-        </p>
+        <Frieze />
+        <div className="flex flex-wrap justify-between gap-x-6 gap-y-2 border-t border-white/80 pt-6 font-mono text-[11px] font-medium uppercase tracking-[0.12em]">
+          <p>{FOOTER.copyright}</p>
+          <p>{VIEWS.map((v) => VIEW_LABELS[v]).join(" · ")}</p>
+        </div>
       </div>
     </footer>
   );
