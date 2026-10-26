@@ -104,12 +104,20 @@ function SortableProject({
   onUpdate,
   onRouteImages,
   onDelete,
+  onDeletedWithWarning,
+  onSlugImageMoved,
+  onGitHubFill,
+  onPendingChange,
   slugError,
 }: {
   project: Project;
   onUpdate: (updated: Project) => void;
   onRouteImages: (images: ProjectImage[]) => void;
   onDelete: () => void;
+  onDeletedWithWarning: (message: string) => void;
+  onSlugImageMoved: (from: string, imagePath: string) => void;
+  onGitHubFill: (fill: { title: string; tagline: string; tech: string[] }) => void;
+  onPendingChange: (delta: 1 | -1) => void;
   slugError?: string;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
@@ -150,7 +158,7 @@ function SortableProject({
           tagline: string;
           tech: string[];
         };
-        onUpdate({ ...project, title, tagline, tech });
+        onGitHubFill({ title, tagline, tech });
       }
     } finally {
       setFetching(false);
@@ -161,10 +169,17 @@ function SortableProject({
     if (!confirm(`Delete "${project.title || 'this project'}"? This removes the project and its uploaded images immediately.`)) return;
     setDeleting(true);
     setDeleteError(null);
+    onPendingChange(1);
     try {
       const res = await fetch(`/api/admin/projects/${project.id}`, { method: 'DELETE' });
       if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        const data = (await res.json().catch(() => ({}))) as { error?: string; deleted?: boolean };
+        if (data.deleted === true) {
+          // The project is gone from KV; drop it from dashboard state so a later Save cannot restore it.
+          onDeletedWithWarning(data.error ?? 'The project was deleted, but some image files may remain in storage.');
+          onDelete();
+          return;
+        }
         setDeleteError(data.error ?? 'Delete failed.');
         return;
       }
@@ -172,6 +187,7 @@ function SortableProject({
     } catch {
       setDeleteError('Delete failed.');
     } finally {
+      onPendingChange(-1);
       setDeleting(false);
     }
   }
@@ -194,13 +210,7 @@ function SortableProject({
       });
       if (res.ok) {
         const { imagePath } = (await res.json()) as { imagePath: string };
-        const images = project.images?.map((img) =>
-          img.url === `/projects/${from}.png` ? { ...img, url: imagePath } : img
-        );
-        onUpdate({
-          ...project,
-          ...(images ? { images, image: images[0]?.url ?? '' } : { image: imagePath }),
-        });
+        onSlugImageMoved(from, imagePath);
       }
     } finally {
       setMovingImage(false);
@@ -415,6 +425,7 @@ function SortableProject({
             images={galleryImages(project)}
             onChange={(images, image) => onUpdate({ ...project, images, image })}
             onRouteImages={onRouteImages}
+            onPendingChange={onPendingChange}
           />
 
           {/* Case study */}
@@ -468,11 +479,20 @@ export default function ProjectsTab({
   projects,
   onChange,
   onRouteImages,
+  onDeleteProject,
+  onSlugImageMoved,
+  onGitHubFill,
+  onPendingChange,
 }: {
   projects: Project[];
   onChange: (projects: Project[]) => void;
   onRouteImages: (projectId: string, images: ProjectImage[]) => void;
+  onDeleteProject: (projectId: string) => void;
+  onSlugImageMoved: (projectId: string, from: string, imagePath: string) => void;
+  onGitHubFill: (projectId: string, fill: { title: string; tagline: string; tech: string[] }) => void;
+  onPendingChange: (delta: 1 | -1) => void;
 }) {
+  const [notice, setNotice] = useState('');
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -528,6 +548,8 @@ export default function ProjectsTab({
         </p>
       </div>
 
+      <p role="alert" className="text-sm text-red-400 empty:hidden">{notice}</p>
+
       {hasSlugErrors && (
         <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-400">
           Some projects have a missing or duplicate slug. Saving is blocked until each project has a unique URL path.
@@ -553,7 +575,11 @@ export default function ProjectsTab({
                   onChange(projects.map((p) => (p.id === updated.id ? updated : p)))
                 }
                 onRouteImages={(images) => onRouteImages(project.id, images)}
-                onDelete={() => onChange(projects.filter((p) => p.id !== project.id))}
+                onDelete={() => onDeleteProject(project.id)}
+                onDeletedWithWarning={setNotice}
+                onSlugImageMoved={(from, imagePath) => onSlugImageMoved(project.id, from, imagePath)}
+                onGitHubFill={(fill) => onGitHubFill(project.id, fill)}
+                onPendingChange={onPendingChange}
               />
             ))}
           </div>

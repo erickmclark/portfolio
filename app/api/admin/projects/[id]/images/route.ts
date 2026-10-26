@@ -89,8 +89,6 @@ export async function POST(request: NextRequest, { params }: Ctx) {
 
     const loaded = await load(id);
     if ('response' in loaded) return loaded.response;
-    const { redis, content, index, project } = loaded;
-
     const altField = form.get('alt');
     const captionField = form.get('caption');
     const blob = await put(`${blobPrefix(id)}image.${type.ext}`, file, {
@@ -98,6 +96,20 @@ export async function POST(request: NextRequest, { params }: Ctx) {
       addRandomSuffix: true,
       contentType: type.contentType,
     });
+
+    // The upload is slow: commit against a fresh read so a Save that landed meanwhile survives.
+    let fresh: Loaded;
+    try {
+      fresh = await load(id);
+    } catch (e) {
+      await del(blob.url).catch(() => {});
+      throw e;
+    }
+    if ('response' in fresh) {
+      await del(blob.url).catch(() => {});
+      return fresh.response;
+    }
+    const { redis, content, index, project } = fresh;
 
     const seeded = ensureImages(project);
     const image: ProjectImage = {
@@ -184,9 +196,14 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
       try {
         await del(url);
       } catch {
-        return fail(
-          'The image was removed from the project, but deleting it from storage failed. Retry the delete to clear it.',
-          500,
+        return NextResponse.json(
+          {
+            error:
+              'The image was removed from the project, but its file could not be deleted from storage and may remain there.',
+            images: result.images ?? [],
+            image: result.image,
+          },
+          { status: 500 },
         );
       }
     }

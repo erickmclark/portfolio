@@ -125,6 +125,45 @@ describe('POST', () => {
   });
 });
 
+describe('POST re-read before commit', () => {
+  it('commits against fresh content so a change made during the upload survives', async () => {
+    const two = (title: string) => ({
+      ...content(),
+      projects: [
+        ...content().projects,
+        { id: 'p2', slug: 'two', title, tagline: '', description: '', tech: [], image: '', featured: false, order: 1 },
+      ],
+    });
+    m.get
+      .mockResolvedValueOnce(JSON.stringify(two('Before')))
+      .mockResolvedValueOnce(JSON.stringify(two('Edited during upload')));
+    const res = await POST(upload(PNG), ctx());
+    expect(res.status).toBe(200);
+    expect(m.get).toHaveBeenCalledTimes(2);
+    const saved = written();
+    expect(saved.projects[1].title).toBe('Edited during upload');
+    expect(saved.projects[0].images.map((i: { url: string }) => i.url)).toEqual([A]);
+  });
+
+  it('deletes the blob and returns 404 when the project is gone after the upload', async () => {
+    m.get
+      .mockResolvedValueOnce(JSON.stringify(content()))
+      .mockResolvedValueOnce(JSON.stringify({ ...content(), projects: [] }));
+    const res = await POST(upload(PNG), ctx());
+    expect(res.status).toBe(404);
+    expect(m.del).toHaveBeenCalledWith(A);
+    expect(m.set).not.toHaveBeenCalled();
+  });
+
+  it('deletes the blob when the re-read fails', async () => {
+    m.get.mockResolvedValueOnce(JSON.stringify(content())).mockRejectedValueOnce(new Error('kv down'));
+    const res = await POST(upload(PNG), ctx());
+    expect(res.status).toBe(500);
+    expect(m.del).toHaveBeenCalledWith(A);
+    expect(m.set).not.toHaveBeenCalled();
+  });
+});
+
 describe('PATCH', () => {
   beforeEach(() => {
     m.get.mockResolvedValue(JSON.stringify(content({ image: A, images: [img(A), img(B)] })));
@@ -186,6 +225,17 @@ describe('DELETE', () => {
     expect(res.status).toBe(500);
     expect(m.set).toHaveBeenCalled();
     expect((await res.json()).error).toMatch(/removed from the project/);
+  });
+
+  it('carries the committed images and cover in the storage-failure 500 body', async () => {
+    m.get.mockResolvedValue(JSON.stringify(content({ image: A, images: [img(A), img(B)] })));
+    m.del.mockRejectedValue(new Error('blob down'));
+    const res = await DELETE(json('DELETE', { url: A }), ctx());
+    expect(res.status).toBe(500);
+    const body = await res.json();
+    expect(body.images.map((i: { url: string }) => i.url)).toEqual([B]);
+    expect(body.image).toBe(B);
+    expect(body.error).toMatch(/removed from the project/);
   });
 });
 
