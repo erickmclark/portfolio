@@ -35,8 +35,9 @@ export default function Configuration({ view, className = "", labels = true }: {
         return (
           <div
             key={cap.title}
+            data-piece
             className={`relative isolate overflow-hidden p-2 sm:p-3 ${tone}`}
-            style={{ gridArea: slot.area }}
+            style={{ gridArea: slot.area, "--i": i } as React.CSSProperties}
           >
             {"quarter" in slot && <span className="absolute inset-0 rounded-tl-[100%] bg-brand-yellow" />}
             <span className="absolute right-2 top-2 z-10 sm:right-3 sm:top-3">
@@ -54,7 +55,7 @@ export default function Configuration({ view, className = "", labels = true }: {
           </div>
         );
       })}
-      <div className={`relative ${swap ? "bg-brand-pink text-ink" : "bg-ink text-white"}`} style={{ gridArea: "1 / 21 / 21 / 25" }}>
+      <div data-piece className={`relative ${swap ? "bg-brand-pink text-ink" : "bg-ink text-white"}`} style={{ gridArea: "1 / 21 / 21 / 25", "--i": 6 } as React.CSSProperties}>
         <span className="absolute left-1/2 top-2 -translate-x-1/2 sm:top-3">
           <CapabilityIcon name={band.icon} size={20} />
         </span>

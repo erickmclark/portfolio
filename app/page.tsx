@@ -9,6 +9,7 @@ import PointOfView from "@/components/point-of-view";
 import About from "@/components/about";
 import Experience from "@/components/experience";
 import Contact from "@/components/contact";
+import Reveal from "@/components/reveal";
 import { parseCategory, parseView } from "@/lib/home-view";
 
 export default async function Home({
@@ -23,14 +24,14 @@ export default async function Home({
   return (
     <main id="main-content" className="public-shell">
       <Hero view={view} />
-      <Capabilities view={view} />
+      <Reveal><Capabilities view={view} /></Reveal>
       <Approach view={view} />
-      <Perspectives />
-      <SelectedWork view={view} category={category} />
-      <PointOfView />
-      <About />
-      <Experience />
-      <Contact />
+      <Reveal><Perspectives /></Reveal>
+      <Reveal><SelectedWork view={view} category={category} /></Reveal>
+      <Reveal><PointOfView /></Reveal>
+      <Reveal><About /></Reveal>
+      <Reveal><Experience /></Reveal>
+      <Reveal><Contact /></Reveal>
     </main>
   );
 }
