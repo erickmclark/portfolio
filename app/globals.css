@@ -93,6 +93,10 @@ section[id] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  /* Bottom nav fades instead of sliding (transform is neutralised in the component) */
+  .bottom-nav {
+    transition-duration: 200ms !important;
+  }
 }
 
 /* Subtle dot grid pattern for hero background */
