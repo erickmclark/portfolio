@@ -168,7 +168,7 @@ export const CONTACT = {
 
 export const FOOTER = {
   name: 'Erick Clark',
-  descriptor: 'Technology Strategy & AI Transformation Executive',
+  descriptor: 'Technology Strategy & AI Transformation Professional',
   line: 'Enterprise leadership. Practical consulting. Working AI products.',
   location: 'Houston, Texas',
   availability: 'Open to senior technology leadership opportunities and select strategic advisory engagements.',
@@ -176,7 +176,7 @@ export const FOOTER = {
 };
 
 export const HOME_SEO = {
-  title: 'Erick Clark | Technology Strategy & AI Transformation Executive',
+  title: 'Erick Clark | Technology Strategy & AI Transformation Professional',
   description:
     'Former JPMorgan Chase VP and Chief of Staff specializing in technology strategy, enterprise transformation, AI strategy, governance, and AI product development.',
 };

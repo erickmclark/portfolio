@@ -3,7 +3,7 @@ import { getSiteContent } from "@/lib/content";
 import { cardSize, homeBlue, loadCardFonts, resolvePhoto, ShareCard } from "@/lib/share-card";
 
 export const dynamic = "force-dynamic";
-export const alt ="Erick Clark - Technology Strategy & AI Transformation Executive";
+export const alt = "Erick Clark - Technology Strategy & AI Transformation Professional";
 export const size = cardSize;
 export const contentType = "image/png";
 
