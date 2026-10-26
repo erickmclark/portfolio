@@ -131,7 +131,7 @@ section[id] {
 details > summary { list-style: none; }
 details > summary::-webkit-details-marker { display: none; }
 
-/* Motion (T-17): tokens, one-time reveal, Approach assembly. Hidden start states are set by JS only. */
+/* Motion (T-17): tokens, one-time reveal. Hidden start states are set by JS only. */
 :root {
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -159,13 +159,6 @@ details > summary::-webkit-details-marker { display: none; }
   /* Hero load settle starts at first paint (pure CSS); ConfigurationMotion removes data-settle on a view change. */
   [data-settle] [data-piece] {
     animation: piece-settle var(--dur-slow) var(--ease-out-expo) calc(var(--i, 0) * var(--stagger)) backwards;
-  }
-  /* Unlit steps dim only the large title (>= 3:1 needed; ~3.7:1 at .55). Number and body stay at full contrast. */
-  [data-assemble="on"] [data-step] h3 {
-    transition: opacity var(--dur-base) var(--ease-out-expo);
-  }
-  [data-assemble="on"] [data-step][data-lit="false"] h3 {
-    opacity: 0.55;
   }
   /* Contact popup: sheet slides up below sm, card fades in with a short rise from sm up. Backdrop uses literals (custom properties are unreliable on ::backdrop). */
   .contact-dialog[open] {
