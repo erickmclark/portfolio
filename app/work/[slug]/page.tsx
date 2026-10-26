@@ -9,6 +9,7 @@ import CaseStudyGallery from "@/components/case-study-gallery";
 import CaseStudySectionBlock from "@/components/case-study-section";
 import Configuration from "@/components/configuration";
 import CaseStudyFooter from "@/components/case-study-footer";
+import ScrollReset from "@/components/scroll-reset";
 
 export const dynamic = 'force-dynamic';
 
@@ -89,6 +90,7 @@ export default async function CaseStudyPage({ params }: Props) {
 
   return (
     <main id="main-content" className="public-shell">
+      <ScrollReset />
       <div className="mx-auto max-w-[1440px] px-4 pt-8 sm:px-10">
         <Link href="/work" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium underline-offset-4 hover:underline">
           <ArrowLeft size={14} aria-hidden /> All work

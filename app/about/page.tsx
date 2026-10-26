@@ -7,6 +7,7 @@ import Experience from "@/components/experience";
 import PointOfView from "@/components/point-of-view";
 import ContactBanner from "@/components/contact-banner";
 import HashScroll from "@/components/hash-scroll";
+import ScrollReset from "@/components/scroll-reset";
 import Reveal from "@/components/reveal";
 import { getSiteContent } from "@/lib/content";
 import { parseView } from "@/lib/home-view";
@@ -30,6 +31,7 @@ export default async function AboutPage({
 
   return (
     <main id="main-content" className="public-shell">
+      <ScrollReset />
       <HashScroll />
       <About level={1} />
       <Reveal><PointOfView /></Reveal>

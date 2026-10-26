@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import Hero from "@/components/hero";
+import ScrollReset from "@/components/scroll-reset";
 import Capabilities from "@/components/capabilities";
 import SelectedWork from "@/components/selected-work";
 import AboutPreview from "@/components/about-preview";
@@ -19,6 +20,7 @@ export default async function Home({
 
   return (
     <main id="main-content" className="public-shell">
+      <ScrollReset />
       <Hero view={view} />
       <Reveal><Capabilities view={view} /></Reveal>
       <Reveal><SelectedWork view={view} category={category} preview /></Reveal>
