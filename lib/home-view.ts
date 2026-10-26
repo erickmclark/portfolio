@@ -35,6 +35,15 @@ export function homeHref(view: View, category?: ProjectCategory | null, hash?: s
   return `/${s ? `?${s}` : ''}${hash ? `#${hash}` : ''}`;
 }
 
+/** Href for the full work index with a view and optional category, keeping the URL minimal. */
+export function workHref(view: View, category?: ProjectCategory | null): string {
+  const q = new URLSearchParams();
+  if (view !== DEFAULT_VIEW) q.set('view', view);
+  if (category) q.set('category', category);
+  const s = q.toString();
+  return `/work${s ? `?${s}` : ''}`;
+}
+
 /** Featured order per view (spec 16.2), by stable Project.id. */
 export const FEATURED_ORDER: Record<View, string[]> = {
   it: [

@@ -6,6 +6,7 @@ import {
   hasFactoryFeature,
   filterByCategory,
   homeHref,
+  workHref,
   orderProjects,
   parseCategory,
   parseView,
@@ -138,5 +139,14 @@ describe('custom featured order', () => {
     expect(orderProjects(projects, 'builder', order)[0].id).toBe('prj-ai-engineering-factory');
     expect(hasFactoryFeature('it', order)).toBe(false);
     expect(hasFactoryFeature('builder', order)).toBe(true);
+  });
+});
+
+describe('workHref', () => {
+  it('keeps the URL minimal and preserves view and category', () => {
+    expect(workHref('it')).toBe('/work');
+    expect(workHref('builder')).toBe('/work?view=builder');
+    expect(workHref('it', 'AI & SaaS Products')).toBe('/work?category=AI+%26+SaaS+Products');
+    expect(workHref('consultant', 'AI & SaaS Products')).toBe('/work?view=consultant&category=AI+%26+SaaS+Products');
   });
 });

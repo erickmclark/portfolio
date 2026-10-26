@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     if (kind !== 'photo' && kind !== 'resume') return fail('kind must be "photo" or "resume".', 400);
     if (!(file instanceof File)) return fail('A file is required.', 400);
     const max = kind === 'photo' ? MAX_IMAGE_BYTES : MAX_RESUME_BYTES;
-    const tooLarge = kind === 'photo' ? 'Image is too large (4 MB maximum).' : 'PDF is too large (10 MB maximum).';
+    const tooLarge = kind === 'photo' ? 'Image is too large (4 MB maximum).' : 'PDF is too large (4 MB maximum).';
     if (file.size > max) return fail(tooLarge, 400);
     const bytes = new Uint8Array(await file.arrayBuffer());
     if (bytes.length > max) return fail(tooLarge, 400);

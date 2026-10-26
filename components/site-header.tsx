@@ -8,10 +8,10 @@ import { Download, Menu, X } from "lucide-react";
 type Props = { name: string; resumeUrl?: string };
 
 const LINKS = [
-  { href: "/#work", label: "Work", dot: "bg-brand-blue" },
-  { href: "/#approach", label: "Approach", dot: "bg-brand-orange" },
-  { href: "/#experience", label: "Experience", dot: "bg-brand-green" },
-  { href: "/#about", label: "About", dot: "bg-brand-pink" },
+  { href: "/work", label: "Work", dot: "bg-brand-blue" },
+  { href: "/about#approach", label: "Approach", dot: "bg-brand-orange" },
+  { href: "/about#experience", label: "Experience", dot: "bg-brand-green" },
+  { href: "/about", label: "About", dot: "bg-brand-pink" },
 ];
 
 const link =
