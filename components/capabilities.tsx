@@ -27,27 +27,27 @@ export default async function Capabilities({ view }: { view: View }) {
   });
   return (
     <section id="capabilities" aria-labelledby="cap-title" className="public-shell border-t border-ink">
-      <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-10 sm:py-24">
+      <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-10 sm:py-24">
         <SectionHead
           eyebrow={home.capabilitiesHead.eyebrow}
           heading={home.capabilitiesHead.heading}
           lede={home.capabilitiesHead.lede}
           headingId="cap-title"
         />
-        <ol className="mt-12 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-8 grid grid-cols-2 gap-x-4 gap-y-6 sm:mt-12 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-4">
           {toned.map(({ c, i, cls, shape }) => (
             <li key={c.title} className="flex flex-col">
-              <div className="flex h-28 items-end">
-                <div className={`flex items-center justify-center ${cls} ${shape}`}>
+              <div className="flex h-14 items-end sm:h-28">
+                <div className={`flex origin-bottom-left scale-[0.5] items-center justify-center sm:scale-100 ${cls} ${shape}`}>
                   <CapabilityIcon name={c.icon} />
                 </div>
               </div>
-              <div className="mt-4 border-t border-ink pt-4">
+              <div className="mt-3 border-t border-ink pt-3 sm:mt-4 sm:pt-4">
                 <p className="font-mono text-[11px] font-medium uppercase tracking-[0.12em]">
                   {String(i + 1).padStart(2, "0")}
                 </p>
-                <h3 className="mt-3 font-display text-[22px] font-bold leading-[1.15] tracking-[-0.03em]">{c.title}</h3>
-                <p className="mt-2 text-[15px] leading-normal text-ink-muted">{c.body}</p>
+                <h3 className="mt-1.5 font-display text-base leading-tight sm:mt-3 sm:text-[22px] sm:leading-[1.15] font-bold tracking-[-0.03em]">{c.title}</h3>
+                <p className="mt-1.5 text-[13px] leading-snug text-ink-muted sm:mt-2 sm:text-[15px] sm:leading-normal">{c.body}</p>
               </div>
             </li>
           ))}

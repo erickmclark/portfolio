@@ -90,7 +90,7 @@ export default async function CaseStudyPage({ params }: Props) {
   return (
     <main id="main-content" className="public-shell">
       <div className="mx-auto max-w-[1440px] px-4 pt-8 sm:px-10">
-        <Link href="/#work" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium underline-offset-4 hover:underline">
+        <Link href="/work" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium underline-offset-4 hover:underline">
           <ArrowLeft size={14} aria-hidden /> All work
         </Link>
         <div className={configView ? "lg:grid lg:grid-cols-[1fr_440px] lg:items-start lg:gap-12" : ""}>
