@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getSiteContent, publicExperience } from "@/lib/content";
 import { experienceDates, splitAbout } from "@/lib/home-view";
+import AboutPortrait from "./about-portrait";
 import SectionHead, { Eyebrow } from "./section-head";
 
 export default async function AboutPreview() {
@@ -17,16 +17,7 @@ export default async function AboutPreview() {
         <SectionHead eyebrow={ABOUT.eyebrow} heading={ABOUT.heading} headingId="about-preview-title" />
         <div className="mt-14 grid gap-12 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-[72px]">
           <div>
-            {about.photo && (
-              <Image
-                src={about.photo}
-                alt={`Portrait of ${about.name}`}
-                width={160}
-                height={160}
-                sizes="160px"
-                className="h-40 w-40 rounded-full object-cover ring-[3px] ring-brand-blue ring-offset-4 ring-offset-paper"
-              />
-            )}
+            <AboutPortrait photo={about.photo} name={about.name} quote={about.quote} />
             {closing && (
               <div className="mt-8 border-t-[3px] border-ink pt-5">
                 <Eyebrow>{ABOUT.closingLabel}</Eyebrow>
