@@ -46,3 +46,25 @@ export function applyGitHubFill(
     tech: fill.tech,
   }));
 }
+
+/** Classify a DELETE /api/admin/projects/<id> response. `deleted === true` means KV committed but Blob cleanup failed. */
+export function deleteOutcome(ok: boolean, body: unknown): 'removed' | 'removed-with-warning' | 'error' {
+  if (ok) return 'removed';
+  if (typeof body === 'object' && body !== null && (body as { deleted?: unknown }).deleted === true) {
+    return 'removed-with-warning';
+  }
+  return 'error';
+}
+
+export type DeleteNotice = { projectId: string; message: string } | null;
+
+/** Next notice after a retry for `retryId`. A retry only touches the notice if it still names that project. */
+export function nextNoticeAfterRetry(
+  current: DeleteNotice,
+  retryId: string,
+  outcome: 'removed' | 'removed-with-warning' | 'error',
+  message: string,
+): DeleteNotice {
+  if (current?.projectId !== retryId) return current;
+  return outcome === 'removed' ? null : { projectId: retryId, message };
+}

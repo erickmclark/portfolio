@@ -8,7 +8,7 @@ import AboutTab from './about-tab';
 import ContactTab from './contact-tab';
 import ProjectsTab from './projects-tab';
 import { applyRouteImages } from './gallery-utils';
-import { applyGitHubFill, applySlugImageMove, removeProject } from './project-updates';
+import { applyGitHubFill, applySlugImageMove, removeProject, type DeleteNotice } from './project-updates';
 import ExperienceTab from './experience-tab';
 
 type Tab = 'projects' | 'experience' | 'about' | 'contact';
@@ -21,6 +21,7 @@ export default function DashboardClient() {
   const [dirty, setDirty] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [pending, setPending] = useState(0);
+  const [deleteNotice, setDeleteNotice] = useState<DeleteNotice>(null);
   const pendingId = useId();
 
   useEffect(() => {
@@ -140,6 +141,8 @@ export default function DashboardClient() {
             }
             onGitHubFill={(id, fill) => updateFromLatest((latest) => applyGitHubFill(latest, id, fill))}
             onPendingChange={trackPending}
+            notice={deleteNotice}
+            setNotice={setDeleteNotice}
           />
         )}
         {tab === 'experience' && (
