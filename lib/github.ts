@@ -44,40 +44,6 @@ export async function putRepoFile(
   return data.content.sha;
 }
 
-export async function putRepoImage(slug: string, imageBase64: string, sha?: string): Promise<string> {
-  const path = `public/projects/${slug}.png`;
-  const base64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
-
-  // If no sha provided, check if the file already exists on GitHub and fetch its sha
-  let fileSha = sha;
-  if (!fileSha) {
-    const check = await fetch(
-      `${BASE}/repos/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}/contents/${path}`,
-      { headers: ghHeaders(), cache: 'no-store' }
-    );
-    if (check.ok) {
-      const existing = await check.json() as { sha: string };
-      fileSha = existing.sha;
-    }
-  }
-
-  const body: Record<string, string> = {
-    message: `feat: update image for project ${slug}`,
-    content: base64,
-  };
-  if (fileSha) body.sha = fileSha;
-
-  const res = await fetch(
-    `${BASE}/repos/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}/contents/${path}`,
-    { method: 'PUT', headers: ghHeaders(), body: JSON.stringify(body) }
-  );
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`GitHub image upload failed: ${res.status} — ${err}`);
-  }
-  return `/projects/${slug}.png`;
-}
-
 /**
  * Move a project image when its slug changes: copy the file to the new
  * slug-derived path, then delete the old one. No-ops (without error) when the

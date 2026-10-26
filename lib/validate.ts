@@ -312,7 +312,9 @@ export function validateSiteContent(input: unknown): ValidationResult {
     if (typeof about.heroTagline !== 'string') errors.push('about.heroTagline must be a string.');
     if (typeof about.availableForWork !== 'boolean') errors.push('about.availableForWork must be a boolean.');
     if (about.photo !== undefined && typeof about.photo !== 'string') errors.push('about.photo must be a string when present.');
+    else if (about.photo !== undefined && about.photo !== '' && !isAllowedImageUrl(about.photo)) errors.push('about.photo must be a same-origin path or an https URL.');
     if (about.resumeUrl !== undefined && typeof about.resumeUrl !== 'string') errors.push('about.resumeUrl must be a string when present.');
+    else if (about.resumeUrl !== undefined && about.resumeUrl !== '' && !isAllowedImageUrl(about.resumeUrl)) errors.push('about.resumeUrl must be a same-origin path or an https URL.');
     if (!isStringArray(about.bio)) errors.push('about.bio must be an array of strings.');
     if (!isStringArray(about.skills)) errors.push('about.skills must be an array of strings.');
   }
