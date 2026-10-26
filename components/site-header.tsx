@@ -45,7 +45,7 @@ export default function SiteHeader({ name, resumeUrl }: Props) {
               href={resumeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="on-dark ml-2 inline-flex min-h-11 items-center gap-2 bg-ink px-4 text-[15px] font-semibold text-white"
+              className="on-dark ml-2 inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-4 text-[15px] font-semibold text-white"
             >
               Résumé <Download size={14} aria-hidden />
             </a>
@@ -61,14 +61,14 @@ export default function SiteHeader({ name, resumeUrl }: Props) {
               href={resumeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="on-dark inline-flex min-h-11 items-center gap-1 bg-ink px-4 text-[15px] font-semibold text-white"
+              className="on-dark inline-flex min-h-11 items-center gap-1 rounded-full bg-ink px-4 text-[15px] font-semibold text-white"
             >
               Résumé <Download size={14} aria-hidden />
             </a>
           )}
           <details ref={menu} className="group">
             <summary
-              className="on-dark inline-flex h-11 w-11 cursor-pointer items-center justify-center border border-ink bg-paper text-ink group-open:bg-ink group-open:text-white"
+              className="on-dark inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-ink bg-paper text-ink group-open:bg-ink group-open:text-white"
               aria-label="Menu"
             >
               <Menu size={20} aria-hidden className="group-open:hidden" />

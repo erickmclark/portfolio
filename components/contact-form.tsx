@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
-import { ArrowDown, ArrowUpRight } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
+import { LinkedInIcon } from '@/components/brand-icons';
 import {
   COMMON_FIELDS,
   CONTACT_FIELDS,
   CONTACT_HONEYPOT_FIELD,
-  CONTACT_INTENTS,
   CONTACT_INTENT_COPY,
   CONTACT_MIN_ELAPSED_MS,
   GOVERNANCE_PLATFORM_PRODUCT,
@@ -16,23 +16,17 @@ import {
 } from '@/lib/contact';
 
 type Props = {
-  initialIntent: ContactIntent;
+  intent: ContactIntent;
   initialValues: Record<string, string>;
+  sourcePage: string;
+  onValuesChange?: (values: Record<string, string>) => void;
+  onSent?: () => void;
   email: string;
   linkedinUrl?: string;
   resumeUrl?: string;
 };
 
 type Status = 'idle' | 'sending' | 'success' | 'disabled' | 'error' | 'rate';
-
-const DOT: Record<ContactIntent, string> = {
-  leadership: 'bg-brand-blue',
-  advisory: 'bg-brand-orange',
-  build: 'bg-brand-yellow',
-  product: 'bg-brand-green',
-  speaking: 'bg-brand-pink',
-  general: 'bg-brand-sky',
-};
 
 const SENSITIVE = "Please don't submit passwords, protected health information, government IDs, or confidential business documents through this form.";
 const PRODUCT_WARNING = 'Do not include patient information, credentials, or confidential records.';
@@ -69,13 +63,12 @@ const ROWS: Record<ContactIntent, string[][]> = {
 };
 
 const control =
-  'block min-h-11 w-full border border-ink bg-paper px-3.5 py-2 text-base text-ink aria-[invalid=true]:border-2 aria-[invalid=true]:border-red-700';
-const note = 'border border-ink bg-paper px-4 py-3 text-[15px] leading-[1.5]';
+  'block min-h-11 w-full rounded-xl border border-ink bg-paper px-3.5 py-2 text-base text-ink aria-[invalid=true]:border-2 aria-[invalid=true]:border-red-700';
+const note = 'rounded-2xl border border-ink bg-paper px-4 py-3 text-[15px] leading-[1.5]';
 const errText = 'mt-1.5 text-sm text-red-700';
 
-export default function ContactForm({ initialIntent, initialValues, email, linkedinUrl, resumeUrl }: Props) {
+export default function ContactForm({ intent, initialValues, sourcePage, onValuesChange, onSent, email, linkedinUrl, resumeUrl }: Props) {
   const uid = useId();
-  const [intent, setIntent] = useState<ContactIntent>(initialIntent);
   const [values, setValues] = useState<Record<string, string>>(initialValues);
   const [privacy, setPrivacy] = useState(false);
   const [follow, setFollow] = useState(false);
@@ -103,13 +96,9 @@ export default function ContactForm({ initialIntent, initialValues, email, linke
   const fid = (name: string) => `${uid}-${name}`;
 
   function set(name: string, v: string) {
-    setValues((s) => ({ ...s, [name]: v }));
-  }
-
-  function switchIntent(next: ContactIntent) {
-    setIntent(next);
-    setErrors({});
-    setStatus('idle');
+    const next = { ...values, [name]: v };
+    setValues(next);
+    onValuesChange?.(next);
   }
 
   function focusFirstError(errs: Record<string, string>) {
@@ -123,7 +112,7 @@ export default function ContactForm({ initialIntent, initialValues, email, linke
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (status === 'sending') return;
-    const body: Record<string, unknown> = { intent, privacyAcknowledged: privacy, sourcePage: '/contact' };
+    const body: Record<string, unknown> = { intent, privacyAcknowledged: privacy, sourcePage };
     for (const f of fields) {
       body[f.name] = values[f.name] ?? '';
     }
@@ -161,6 +150,7 @@ export default function ContactForm({ initialIntent, initialValues, email, linke
         .catch(() => ({}));
       if (res.ok && data.ok === true) {
         setStatus('success');
+        onSent?.();
       } else if (res.status === 503 && data.code === 'submissions_disabled') {
         setMessage(data.error ?? '');
         setStatus('disabled');
@@ -234,7 +224,7 @@ export default function ContactForm({ initialIntent, initialValues, email, linke
           </p>
         )}
         {intent === 'product' && f.name === 'useCase' && (
-          <p className="mt-3 border border-ink border-l-4 bg-white px-4 py-3 text-[15px]">{PRODUCT_WARNING}</p>
+          <p className="mt-3 rounded-2xl border border-ink border-l-4 bg-white px-4 py-3 text-[15px]">{PRODUCT_WARNING}</p>
         )}
       </div>
     );
@@ -250,42 +240,18 @@ export default function ContactForm({ initialIntent, initialValues, email, linke
   );
 
   return (
-    <div className="mt-12">
-      <fieldset>
-        <legend className="font-mono text-[11px] font-medium uppercase tracking-[0.2em]">What brings you here?</legend>
-        <div className="mt-4 flex flex-wrap gap-3">
-          {CONTACT_INTENTS.map((i) => {
-            const on = i.id === intent;
-            return (
-              <button
-                key={i.id}
-                type="button"
-                aria-pressed={on}
-                onClick={() => switchIntent(i.id)}
-                className={`inline-flex min-h-11 items-center gap-2.5 border border-ink px-4 text-[15px] font-semibold ${on ? 'on-dark bg-ink text-white' : 'bg-white hover:bg-paper'}`}
-              >
-                <span aria-hidden className={`size-2.5 ${DOT[i.id]}`} />
-                {i.label}
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
-
-      <div className="mt-8 border-t border-ink pt-8">
+    <div>
+      <div>
         {status === 'success' ? (
-          <div ref={resultRef} tabIndex={-1} role="status" className="border border-ink bg-paper p-6 outline-none">
-            <h2 className="font-display text-2xl font-bold tracking-[-0.02em]">Message received.</h2>
+          <div ref={resultRef} tabIndex={-1} role="status" className="rounded-2xl border border-ink bg-paper p-6 outline-none">
+            <h3 className="font-display text-2xl font-bold tracking-[-0.02em]">Message received.</h3>
             <p className="mt-2 text-base">
               Thank you for reaching out. Your message has been received. I&apos;ll review the details and follow up using the email you provided.
             </p>
           </div>
         ) : (
           <>
-            <h2 className="font-display text-[28px] font-bold leading-[1.1] tracking-[-0.02em] sm:text-[32px]">{copy.heading}</h2>
-            {copy.supporting && <p className="mt-3 max-w-[760px] text-base text-ink-muted">{copy.supporting}</p>}
-
-            <form ref={formRef} onSubmit={onSubmit} noValidate className="mt-6">
+            <form ref={formRef} onSubmit={onSubmit} noValidate>
               <div className="grid gap-y-5">
                 {rows.map((row) => (
                   <div key={row[0].name} className={`grid gap-x-6 gap-y-5 ${row.length > 1 ? 'sm:grid-cols-2' : ''}`}>
@@ -349,7 +315,7 @@ export default function ContactForm({ initialIntent, initialValues, email, linke
                   ref={resultRef}
                   tabIndex={-1}
                   role="alert"
-                  className="mt-5 border border-red-700 bg-paper p-5 outline-none"
+                  className="mt-5 rounded-2xl border border-red-700 bg-paper p-5 outline-none"
                 >
                   {status === 'error' && (
                     <p className="font-display text-xl font-bold tracking-[-0.02em] text-red-700">
@@ -366,13 +332,13 @@ export default function ContactForm({ initialIntent, initialValues, email, linke
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="on-dark inline-flex min-h-11 items-center bg-ink px-5 text-[15px] font-semibold text-white disabled:opacity-60"
+                  className="on-dark inline-flex min-h-11 items-center rounded-full bg-ink px-6 text-[15px] font-semibold text-white disabled:opacity-60"
                 >
                   {status === 'sending' ? 'Sending…' : copy.submit}
                 </button>
                 {intent === 'leadership' && resumeUrl && (
                   <a
-                    className="inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white"
                     href={resumeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -382,12 +348,12 @@ export default function ContactForm({ initialIntent, initialValues, email, linke
                 )}
                 {intent === 'leadership' && linkedinUrl && (
                   <a
-                    className="inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white"
                     href={linkedinUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    LinkedIn <ArrowUpRight size={14} aria-hidden />
+                    <LinkedInIcon size={16} /> LinkedIn
                   </a>
                 )}
                 {(status === 'error' || status === 'disabled' || status === 'rate') && (

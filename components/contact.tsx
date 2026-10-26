@@ -1,12 +1,12 @@
-import { ArrowUpRight, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+import ContactDialog from "@/components/contact-dialog";
+import { GitHubIcon, LinkedInIcon } from "@/components/brand-icons";
 import { getSiteContent } from "@/lib/content";
 import { CONTACT } from "@/lib/home-copy";
-import { CONTACT_INTENTS, contactHref } from "@/lib/contact";
-import Link from "next/link";
 
 export default async function Contact() {
-  const { contact } = await getSiteContent();
-  const btn = "inline-flex min-h-11 items-center gap-2 px-5 text-[15px] font-semibold";
+  const { contact, about } = await getSiteContent();
+  const btn = "inline-flex min-h-11 items-center gap-2 rounded-full px-5 text-[15px] font-semibold";
   return (
     <section id="contact" aria-labelledby="contact-title" className="public-shell border-t border-ink">
       <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-10 sm:py-24">
@@ -18,14 +18,7 @@ export default async function Contact() {
         </h2>
         <p className="mt-6 max-w-[760px] text-xl font-medium leading-[1.3] sm:text-[26px]">{CONTACT.intro}</p>
         <div className="mt-10">
-          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">What brings you here?</p>
-          <div className="mt-3 flex flex-wrap gap-3">
-            {CONTACT_INTENTS.map((i) => (
-              <Link key={i.id} href={contactHref(i.id)} className={`${btn} border-2 border-ink hover:bg-white`}>
-                {i.label} <ArrowUpRight size={14} aria-hidden />
-              </Link>
-            ))}
-          </div>
+          <ContactDialog sourcePage="/" email={contact.email} linkedinUrl={contact.linkedinUrl} resumeUrl={about.resumeUrl} />
         </div>
         <div className="mt-12 border-t border-ink pt-6">
           <p className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">Or write directly</p>
@@ -41,12 +34,12 @@ export default async function Contact() {
             </a>
             {contact.linkedinUrl && (
               <a href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" className={`${btn} border-2 border-ink hover:bg-white`}>
-                LinkedIn <ArrowUpRight size={14} aria-hidden />
+                <LinkedInIcon size={16} /> LinkedIn
               </a>
             )}
             {contact.githubUrl && (
               <a href={contact.githubUrl} target="_blank" rel="noopener noreferrer" className={`${btn} border-2 border-ink hover:bg-white`}>
-                GitHub <ArrowUpRight size={14} aria-hidden />
+                <GitHubIcon size={16} /> GitHub
               </a>
             )}
           </div>

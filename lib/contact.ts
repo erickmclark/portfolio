@@ -413,3 +413,16 @@ export function resolveContactPrefill(params: Record<string, ParamValue>): {
   }
   return { intent, values };
 }
+
+/**
+ * Like `resolveContactPrefill`, but the intent is null unless `?type=` names a valid intent,
+ * so a bare /contact opens nothing.
+ */
+export function resolveContactOpen(params: Record<string, ParamValue>): {
+  intent: ContactIntent | null;
+  values: Record<string, string>;
+} {
+  const t = Array.isArray(params.type) ? params.type[0] : params.type;
+  if (!(CONTACT_INTENT_IDS as readonly string[]).includes(t ?? '')) return { intent: null, values: {} };
+  return resolveContactPrefill(params);
+}
