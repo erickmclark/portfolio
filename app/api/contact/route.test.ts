@@ -9,10 +9,10 @@ import { POST } from './route';
 let counts: Map<string, number>;
 let fetchMock: ReturnType<typeof vi.fn>;
 
-function req(body: unknown, raw = false) {
+function req(body: unknown, raw = false, ip = '1.2.3.4') {
   return new NextRequest('http://localhost/api/contact', {
     method: 'POST',
-    headers: { 'x-forwarded-for': '1.2.3.4' },
+    headers: { 'x-forwarded-for': ip },
     body: raw ? (body as string) : JSON.stringify(body),
   });
 }
@@ -97,6 +97,50 @@ describe('POST /api/contact', () => {
     expect(res.headers.get('Retry-After')).toBe('120');
     expect((await res.json()).code).toBe('rate_limited');
     expect(fetchMock).toHaveBeenCalledTimes(5);
+  });
+
+  it('does not count spam or invalid requests against the global cap', async () => {
+    for (let i = 0; i < 20; i++) {
+      expect((await POST(req({ ...good, website: 'http://spam' }, false, `10.0.0.${i}`))).status).toBe(200);
+      expect((await POST(req({ ...good, elapsedMs: 500 }, false, `10.0.1.${i}`))).status).toBe(200);
+      expect((await POST(req({ ...good, email: 'bad' }, false, `10.0.2.${i}`))).status).toBe(400);
+    }
+    expect(counts.get('contact:rl:global')).toBeUndefined();
+    expect((await POST(req(good, false, '10.0.3.1'))).status).toBe(200);
+    expect(counts.get('contact:rl:global')).toBe(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns 429 for valid sends once the global cap is reached, but still answers spam', async () => {
+    counts.set('contact:rl:global', 50);
+    const res = await POST(req(good, false, '10.1.0.1'));
+    expect(res.status).toBe(429);
+    expect(res.headers.get('Retry-After')).toBe('120');
+    expect((await res.json()).code).toBe('rate_limited');
+    expect(fetchMock).not.toHaveBeenCalled();
+    const spam = await POST(req({ ...good, website: 'http://spam' }, false, '10.1.0.2'));
+    expect(spam.status).toBe(200);
+    expect(await spam.json()).toEqual({ ok: true });
+  });
+
+  it('applies the per-IP limit to spam and invalid requests', async () => {
+    for (let i = 0; i < 5; i++) expect((await POST(req({ ...good, website: 'x' }, false, '10.2.0.1'))).status).toBe(200);
+    expect((await POST(req({ ...good, website: 'x' }, false, '10.2.0.1'))).status).toBe(429);
+    expect((await POST(req({ ...good, email: 'bad' }, false, '10.2.0.1'))).status).toBe(429);
+  });
+
+  it('returns 500 and does not send when only the global limiter fails', async () => {
+    vi.mocked(getRedis).mockReturnValue({
+      incr: async (k: string) => {
+        if (k === 'contact:rl:global') throw new Error('boom');
+        return 1;
+      },
+      expire: async () => 1,
+      ttl: async () => 120,
+    } as unknown as ReturnType<typeof getRedis>);
+    const res = await POST(req(good));
+    expect(res.status).toBe(500);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('returns 500 when the limiter is unavailable (fails closed)', async () => {
