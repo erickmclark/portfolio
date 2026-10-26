@@ -1,3 +1,4 @@
+import { credentialsError } from './credentials';
 import type { SiteContent } from './types';
 import { isAbsoluteHttpsUrl, isAllowedImageUrl } from './image-url';
 import { CONTACT_INTENT_IDS } from './contact';
@@ -228,7 +229,10 @@ function validateSite(site: unknown, errors: string[]) {
   }
   const footer = site.footer;
   if (!isObject(footer)) errors.push('site.footer must be an object.');
-  else validateTexts(footer, ['name', 'descriptor', 'line', 'location', 'availability', 'copyright'], 'site.footer', errors);
+  else {
+    if (footer.name !== undefined && !isText(footer.name)) errors.push('site.footer.name must be a non-empty trimmed string when present.');
+    validateTexts(footer, ['descriptor', 'line', 'location', 'availability', 'copyright'], 'site.footer', errors);
+  }
 
   const privacy = site.privacy;
   if (!isObject(privacy)) {
@@ -308,6 +312,8 @@ export function validateSiteContent(input: unknown): ValidationResult {
     if (typeof about.name !== 'string' || about.name.trim() === '') {
       errors.push('about.name must be a non-empty string.');
     }
+    const credentialsErr = credentialsError(about.credentials);
+    if (credentialsErr) errors.push(credentialsErr);
     if (typeof about.title !== 'string') errors.push('about.title must be a string.');
     if (typeof about.heroTagline !== 'string') errors.push('about.heroTagline must be a string.');
     if (typeof about.availableForWork !== 'boolean') errors.push('about.availableForWork must be a boolean.');

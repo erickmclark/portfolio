@@ -381,3 +381,36 @@ describe("about photo and resumeUrl", () => {
     if (!result.ok) expect(result.errors.join(" ")).toContain(`about.${key}`);
   });
 });
+
+describe("about.credentials and optional site.footer.name", () => {
+  const withAbout = (patch: Record<string, unknown>) => {
+    const c = validContent();
+    return { ...c, about: { ...c.about, ...patch } };
+  };
+  it.each([[{}], [{ credentials: "" }], [{ credentials: "MBA, MS, PMP, PSM I" }], [{ credentials: "x".repeat(120) }]])("accepts %j", (patch) => {
+    expect(validateSiteContent(withAbout(patch)).ok).toBe(true);
+  });
+  it.each([[5], [" MBA"], ["MBA "], ["x".repeat(121)]])("rejects about.credentials = %j", (value) => {
+    const result = validateSiteContent(withAbout({ credentials: value }));
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toContain("about.credentials");
+  });
+  const withFooter = (mutate: (f: Record<string, unknown>) => void) => {
+    const c = { ...validContent(), site: structuredClone(DEFAULT_SITE) };
+    mutate(c.site.footer as Record<string, unknown>);
+    return validateSiteContent(c);
+  };
+  it("accepts footer.name present or absent", () => {
+    expect(withFooter(() => {}).ok).toBe(true);
+    expect(withFooter((f) => delete f.name).ok).toBe(true);
+  });
+  it.each([[""], [" "], [" Erick"], [3]])("rejects footer.name = %j", (value) => {
+    const r = withFooter((f) => (f.name = value));
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.errors.join(" ")).toContain("site.footer.name");
+  });
+  it("still requires the other footer fields", () => {
+    const r = withFooter((f) => delete f.descriptor);
+    expect(r.ok).toBe(false);
+  });
+});

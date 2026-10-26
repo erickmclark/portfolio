@@ -19,13 +19,13 @@ const SECTIONS: { id: SectionId; label: string; path: string }[] = [
 function Footer({ site, errors, setSite }: { site: SiteCopy; errors: string[]; setSite: (s: SiteCopy) => void }) {
   const f = site.footer;
   const field = (key: keyof SiteCopy['footer'], label: string, multiline = false) => (
-    <TextField label={label} multiline={multiline} rows={2} value={f[key]} onChange={(v) => setSite({ ...site, footer: { ...f, [key]: v } })} error={errorFor(errors, `site.footer.${key}`)} />
+    <TextField label={label} multiline={multiline} rows={2} value={f[key] ?? ''} onChange={(v) => setSite({ ...site, footer: { ...f, [key]: v } })} error={errorFor(errors, `site.footer.${key}`)} />
   );
   return (
     <div className="space-y-4">
       <GroupHead title="Footer" />
+      <p className="text-sm text-ink-muted">The footer uses your name from About.</p>
       <div className="grid gap-4 md:grid-cols-2">
-        {field('name', 'Name')}
         {field('descriptor', 'Descriptor')}
       </div>
       {field('line', 'Line', true)}

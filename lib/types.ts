@@ -114,7 +114,7 @@ export type SeoCopy = { title: string; description: string };
 
 export type SiteCopy = {
   footer: {
-    name: string;
+    name?: string;
     descriptor: string;
     line: string;
     location: string;
@@ -159,6 +159,7 @@ export type Project = {
 
 export type AboutContent = {
   name: string;
+  credentials?: string;    // e.g. "MBA, MS, PMP"; shown under the name in the hero
   title: string;           // e.g. "Software Engineer"
   heroTagline: string;     // Subtitle paragraph shown in hero
   availableForWork: boolean;
