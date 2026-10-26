@@ -8,6 +8,7 @@ import {
   deleteProjectBlobs,
   ensureImages,
   aboutAssetPath,
+  resumeAssetPath,
   sniffPdf,
   isAllowedImageUrl,
   isProjectBlobUrl,
@@ -107,6 +108,16 @@ describe('about assets', () => {
   it('builds paths under the reserved _about folder', () => {
     expect(aboutAssetPath('photo', 'jpg')).toBe('projects/_about/photo.jpg');
     expect(aboutAssetPath('resume')).toBe('projects/_about/resume.pdf');
+  });
+  it('resumeAssetPath builds a readable, sanitized filename in a unique folder', () => {
+    expect(resumeAssetPath('Erick Clark', 'u1')).toBe('projects/_about/resume/u1/Erick-Clark-Resume.pdf');
+    expect(resumeAssetPath('José  Núñez-O\'Brien!', 'u2')).toBe('projects/_about/resume/u2/Jose-Nunez-O-Brien-Resume.pdf');
+    expect(resumeAssetPath('../../x/y', 'u3')).toBe('projects/_about/resume/u3/x-y-Resume.pdf');
+    expect(resumeAssetPath('', 'u4')).toBe('projects/_about/resume/u4/Resume.pdf');
+    expect(resumeAssetPath(undefined, 'u5')).toBe('projects/_about/resume/u5/Resume.pdf');
+    expect(resumeAssetPath('日本語', 'u6')).toBe('projects/_about/resume/u6/Resume.pdf');
+    const long = resumeAssetPath('a'.repeat(59) + ' ' + 'b'.repeat(30), 'u7');
+    expect(long.split('/').pop()).toBe('a'.repeat(59) + '-Resume.pdf');
   });
   it('never treats _about as a project id', () => {
     expect(isValidProjectId('_about')).toBe(false);
