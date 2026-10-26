@@ -14,7 +14,7 @@ export default async function About({ level = 2 }: { level?: 1 | 2 }) {
         <SectionHead eyebrow={ABOUT.eyebrow} heading={ABOUT.heading} headingId="about-title" level={level} />
         <div className="mt-14 grid gap-12 lg:grid-cols-[420px_minmax(0,1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-[72px] lg:gap-y-0">
           {about.photo && (
-            <div className="lg:col-start-1 lg:row-start-1">
+            <figure className="flex flex-col items-center text-center lg:col-start-1 lg:row-start-1 lg:items-start lg:text-left">
               <Image
                 src={about.photo}
                 alt={`Portrait of ${about.name}`}
@@ -23,7 +23,10 @@ export default async function About({ level = 2 }: { level?: 1 | 2 }) {
                 sizes="160px"
                 className="h-40 w-40 rounded-full object-cover"
               />
-            </div>
+              <blockquote className="mt-6 max-w-[34ch] text-[17px] italic leading-[1.5] text-ink-muted">
+                “I’ve never been satisfied with just understanding how something works. I want to know how to make it better.”
+              </blockquote>
+            </figure>
           )}
 
           <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
