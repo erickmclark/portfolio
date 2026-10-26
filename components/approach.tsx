@@ -16,9 +16,9 @@ export default async function Approach({ view }: { view: View }) {
             {APPROACH.steps.map((s, i) => (
               <li key={s.title} data-step className="border-t border-ink py-6">
                 <p className="font-mono text-[11px] font-medium">{String(i + 1).padStart(2, "0")}</p>
-                <h3 className="mt-3 font-display text-[32px] font-bold leading-[1.1] tracking-[-0.03em] sm:text-[40px]">
+                <h2 className="mt-3 font-display text-[32px] font-bold leading-[1.1] tracking-[-0.03em] sm:text-[40px]">
                   {s.title}
-                </h3>
+                </h2>
                 <p className="mt-3 text-[15px] leading-normal text-ink-muted">{s.body}</p>
               </li>
             ))}
