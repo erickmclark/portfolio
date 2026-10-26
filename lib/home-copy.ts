@@ -114,17 +114,6 @@ export const APPROACH = {
   cta: 'See the Work',
 };
 
-export const PERSPECTIVES = {
-  eyebrow: 'Three perspectives',
-  heading: 'Enterprise leader. Strategic advisor. Product builder.',
-  sub: "These aren't separate careers. They're connected parts of how I approach difficult problems.",
-  cards: [
-    { view: 'it' as View, title: 'IT Professional', line: 'Built for organizational scale.', detail: 'Strategy, transformation, portfolio governance, technology business operations, AI prioritization, and executive decision support.', cta: 'See Leadership Work' },
-    { view: 'consultant' as View, title: 'Consultant', line: 'Built around your business problem.', detail: 'Discovery, technology and AI planning, process improvement, delivery guidance, and adoption.', cta: 'See Advisory Work' },
-    { view: 'builder' as View, title: 'Builder', line: 'Built to be used.', detail: 'AI applications, business software, automation, data integrations, and governed AI-assisted engineering.', cta: 'See Product Work' },
-  ],
-};
-
 export const WORK = {
   eyebrow: 'Selected Work',
   heading: 'Experience that connects strategy to execution.',
