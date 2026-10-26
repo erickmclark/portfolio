@@ -3,7 +3,7 @@ import { getSiteContent } from "@/lib/content";
 import { splitAbout } from "@/lib/home-view";
 import SectionHead, { Eyebrow } from "./section-head";
 
-export default async function About() {
+export default async function About({ level = 2 }: { level?: 1 | 2 }) {
   const { about, home } = await getSiteContent();
   const ABOUT = home.about;
   const { paragraphs, credentials, closing } = splitAbout(about.bio);
@@ -11,10 +11,10 @@ export default async function About() {
   return (
     <section id="about" aria-labelledby="about-title" className="public-shell border-t border-ink">
       <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-10 sm:py-24">
-        <SectionHead eyebrow={ABOUT.eyebrow} heading={ABOUT.heading} headingId="about-title" />
-        <div className="mt-14 grid gap-12 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-[72px]">
-          <div>
-            {about.photo && (
+        <SectionHead eyebrow={ABOUT.eyebrow} heading={ABOUT.heading} headingId="about-title" level={level} />
+        <div className="mt-14 grid gap-12 lg:grid-cols-[420px_minmax(0,1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-[72px] lg:gap-y-0">
+          {about.photo && (
+            <div className="lg:col-start-1 lg:row-start-1">
               <Image
                 src={about.photo}
                 alt={`Portrait of ${about.name}`}
@@ -23,22 +23,23 @@ export default async function About() {
                 sizes="160px"
                 className="h-40 w-40 rounded-full object-cover"
               />
-            )}
-            {closing && (
-              <div className="mt-8 border-t-[3px] border-ink pt-5">
-                <Eyebrow>{ABOUT.closingLabel}</Eyebrow>
-                <p className="mt-4 font-display text-[32px] font-bold leading-[1.1] tracking-[-0.03em]">{closing}</p>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
 
-          <div>
+          <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
             <div className="space-y-5 text-[17px] leading-[1.5]">
               {paragraphs.map((p, i) => (
                 <p key={i}>{p}</p>
               ))}
             </div>
           </div>
+
+          {closing && (
+            <div className="border-t-[3px] border-ink pt-5 lg:col-start-1 lg:row-start-2 lg:mt-8">
+              <Eyebrow>{ABOUT.closingLabel}</Eyebrow>
+              <p className="mt-4 font-display text-[32px] font-bold leading-[1.1] tracking-[-0.03em]">{closing}</p>
+            </div>
+          )}
         </div>
 
         <div className="mt-16 grid gap-12 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-[72px]">

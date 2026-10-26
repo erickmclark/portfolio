@@ -10,7 +10,7 @@ export default async function Approach({ view }: { view: View }) {
   return (
     <section id="approach" aria-labelledby="approach-title" className="public-shell border-t border-ink">
       <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-10 sm:py-24">
-        <SectionHead eyebrow={APPROACH.eyebrow} heading={APPROACH.heading} lede={APPROACH.intro} headingId="approach-title" level={1} />
+        <SectionHead eyebrow={APPROACH.eyebrow} heading={APPROACH.heading} lede={APPROACH.intro} headingId="approach-title" />
         <div className="mt-12 max-w-[602px] lg:max-w-none">
           <ol className="lg:grid lg:grid-cols-3 lg:gap-10">
             {APPROACH.steps.map((s, i) => (

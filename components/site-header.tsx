@@ -1,17 +1,18 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Download, Menu, X } from "lucide-react";
+import { Download } from "lucide-react";
+import { hashTargetId, sameDocumentHashId } from "@/lib/hash-link";
+import { shouldSetPending } from "@/lib/bottom-nav-current";
 
 type Props = { name: string; resumeUrl?: string };
 
 const LINKS = [
-  { href: "/work", label: "Work", dot: "bg-brand-blue" },
-  { href: "/about#approach", label: "Approach", dot: "bg-brand-orange" },
-  { href: "/about#experience", label: "Experience", dot: "bg-brand-green" },
-  { href: "/about", label: "About", dot: "bg-brand-pink" },
+  { href: "/work", label: "Work" },
+  { href: "/about#approach", label: "Approach" },
+  { href: "/about#experience", label: "Experience" },
+  { href: "/about", label: "About" },
 ];
 
 const link =
@@ -19,10 +20,18 @@ const link =
 
 export default function SiteHeader({ name, resumeUrl }: Props) {
   const pathname = usePathname();
-  const menu = useRef<HTMLDetailsElement>(null);
   if (pathname.startsWith("/admin")) return null;
 
-  const close = () => menu.current?.removeAttribute("open");
+  function onLinkClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
+    const hashId = sameDocumentHashId(href, pathname);
+    const id = hashId && hashTargetId(`#${hashId}`);
+    const el = id && shouldSetPending(e) ? document.getElementById(id) : null;
+    if (!hashId || !el) return;
+    e.preventDefault();
+    if (window.location.hash !== `#${hashId}`) window.history.pushState(null, "", href);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  }
 
   return (
     <header className="public-shell sticky top-0 z-50 border-b border-ink">
@@ -33,7 +42,7 @@ export default function SiteHeader({ name, resumeUrl }: Props) {
 
         <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
           {LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className={link}>
+            <Link key={l.href} href={l.href} className={link} onClick={(e) => onLinkClick(e, l.href)}>
               {l.label}
             </Link>
           ))}
@@ -53,9 +62,6 @@ export default function SiteHeader({ name, resumeUrl }: Props) {
         </nav>
 
         <div className="flex items-center gap-1 md:hidden">
-          <Link href="/contact" onClick={close} className={link}>
-            Contact
-          </Link>
           {resumeUrl && (
             <a
               href={resumeUrl}
@@ -66,37 +72,6 @@ export default function SiteHeader({ name, resumeUrl }: Props) {
               Résumé <Download size={14} aria-hidden />
             </a>
           )}
-          <details ref={menu} className="group">
-            <summary
-              className="on-dark inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-paper text-ink group-open:bg-ink group-open:text-white"
-              aria-label="Menu"
-            >
-              <Menu size={20} aria-hidden className="group-open:hidden" />
-              <X size={20} aria-hidden className="hidden group-open:block" />
-            </summary>
-            <nav
-              aria-label="Menu"
-              className="public-shell absolute inset-x-0 top-16 border-b border-ink px-4 pb-6"
-            >
-              <ul>
-                {LINKS.map((l) => (
-                  <li key={l.href} className="border-b border-ink">
-                    <Link
-                      href={l.href}
-                      onClick={close}
-                      className="flex min-h-14 items-center gap-3 font-display text-2xl font-bold tracking-[-0.03em]"
-                    >
-                      <span className={`h-2.5 w-2.5 ${l.dot}`} aria-hidden />
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-5 font-mono text-xs tracking-wide text-ink-muted">
-                Technology Strategy &amp; AI Transformation Executive
-              </p>
-            </nav>
-          </details>
         </div>
       </div>
     </header>

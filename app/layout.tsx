@@ -104,7 +104,7 @@ export default async function RootLayout({
         <HideOnAdmin>
           <SiteFooter />
         </HideOnAdmin>
-        <MobileBottomNav resumeUrl={about.resumeUrl} />
+        <MobileBottomNav />
         <Analytics />
         <SpeedInsights />
       </body>
