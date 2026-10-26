@@ -37,7 +37,7 @@ export default function SiteHeader({ name, resumeUrl }: Props) {
               {l.label}
             </Link>
           ))}
-          <Link href="/#contact" className={link}>
+          <Link href="/contact" className={link}>
             Contact
           </Link>
           {resumeUrl && (
@@ -53,7 +53,7 @@ export default function SiteHeader({ name, resumeUrl }: Props) {
         </nav>
 
         <div className="flex items-center gap-1 md:hidden">
-          <Link href="/#contact" onClick={close} className={link}>
+          <Link href="/contact" onClick={close} className={link}>
             Contact
           </Link>
           {resumeUrl && (

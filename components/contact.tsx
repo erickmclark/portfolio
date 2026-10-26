@@ -1,6 +1,8 @@
 import { ArrowUpRight, Mail } from "lucide-react";
 import { getSiteContent } from "@/lib/content";
 import { CONTACT } from "@/lib/home-copy";
+import { CONTACT_INTENTS, contactHref } from "@/lib/contact";
+import Link from "next/link";
 
 export default async function Contact() {
   const { contact } = await getSiteContent();
@@ -15,6 +17,16 @@ export default async function Contact() {
           {CONTACT.heading}
         </h2>
         <p className="mt-6 max-w-[760px] text-xl font-medium leading-[1.3] sm:text-[26px]">{CONTACT.intro}</p>
+        <div className="mt-10">
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">What brings you here?</p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            {CONTACT_INTENTS.map((i) => (
+              <Link key={i.id} href={contactHref(i.id)} className={`${btn} border-2 border-ink hover:bg-white`}>
+                {i.label} <ArrowUpRight size={14} aria-hidden />
+              </Link>
+            ))}
+          </div>
+        </div>
         <div className="mt-12 border-t border-ink pt-6">
           <p className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">Or write directly</p>
           <a

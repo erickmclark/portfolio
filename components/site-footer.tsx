@@ -39,7 +39,7 @@ export default async function SiteFooter() {
             <a className={link} href={CLARK_STRATEGICS_URL} target="_blank" rel="noopener noreferrer">
               Clark Strategics <ArrowUpRight size={14} aria-hidden />
             </a>
-            <Link className={link} href="/#contact">
+            <Link className={link} href="/contact">
               Contact
             </Link>
           </nav>

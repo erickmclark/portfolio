@@ -2,14 +2,14 @@ import type { View } from './home-view';
 
 /**
  * In-code homepage copy (content spec v1.1, section 16.5). Verbatim from the spec.
- * Eventual destinations live here so T-10 can switch them in one place.
+ * Contact destinations live here in one place.
  */
 export const CONTACT_HREFS = {
-  leadership: '#contact', // eventual: /contact?type=leadership
-  advisory: '#contact', // eventual: /contact?type=advisory
-  build: '#contact', // eventual: /contact?type=build
-  speaking: '#contact', // eventual: /contact?type=speaking
-  general: '#contact',
+  leadership: '/contact?type=leadership',
+  advisory: '/contact?type=advisory',
+  build: '/contact?type=build',
+  speaking: '/contact?type=speaking',
+  general: '/contact?type=general',
 } as const;
 
 export const CLARK_STRATEGICS_URL = 'https://clarkstrategics.com';
@@ -142,11 +142,11 @@ export const WORK_CTA: Record<string, string> = {
   'prj-gen4me': 'Explore Gen4Me',
 };
 export const WORK_CTA_DEFAULT = 'View case study';
-/** Projects whose CTA goes to the contact section until a case study is the right destination. */
+/** Projects whose CTA goes to the contact flow (governance platform preselected, D23). */
 export const WORK_CTA_CONTACT: Record<string, { label: string; href: string }> = {
-  'prj-ai-governance-platform': { label: 'Request an Overview', href: '#contact' },
+  'prj-ai-governance-platform': { label: 'Request an Overview', href: '/contact?type=product&product=AI+Strategy+%26+Governance+Platform' },
 };
-export const FACTORY_SECOND_CTA = { label: 'Discuss AI-assisted engineering', href: CONTACT_HREFS.advisory };
+export const FACTORY_SECOND_CTA = { label: 'Discuss AI-assisted engineering', href: '/contact?type=advisory&area=AI-Assisted+Engineering' };
 
 export const POV = {
   eyebrow: 'Point of View',
