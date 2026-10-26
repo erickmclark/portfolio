@@ -155,7 +155,7 @@ details > summary::-webkit-details-marker { display: none; }
     transform: translateY(16px);
   }
   [data-reveal="shown"] {
-    transition: opacity var(--dur-slow) var(--ease-out-expo);
+    transition: opacity var(--dur-base) var(--ease-out-expo);
   }
   [data-reveal="shown"] > section > * {
     transition: transform var(--dur-slow) var(--ease-out-expo);
