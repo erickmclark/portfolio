@@ -173,7 +173,12 @@ export default function DashboardClient() {
               />
             )}
             {tab === 'about' && (
-              <AboutTab about={content.about} onChange={(about) => update({ ...content, about })} />
+              <AboutTab
+                about={content.about}
+                onChange={(about) => update({ ...content, about })}
+                onAssetUploaded={(about) => updateFromLatest((latest) => ({ ...latest, about: { ...latest.about, photo: about.photo, resumeUrl: about.resumeUrl } }))}
+                onPendingChange={trackPending}
+              />
             )}
             {tab === 'contact' && (
               <ContactTab contact={content.contact} onChange={(contact) => update({ ...content, contact })} />

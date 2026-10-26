@@ -7,14 +7,22 @@ import type { AboutContent } from '@/lib/types';
 export default function AboutTab({
   about,
   onChange,
+  onAssetUploaded,
+  onPendingChange,
 }: {
   about: AboutContent;
   onChange: (about: AboutContent) => void;
+  onAssetUploaded?: (about: AboutContent) => void;
+  onPendingChange?: (delta: 1 | -1) => void;
 }) {
   const [skillInput, setSkillInput] = useState('');
   const [uploading, setUploading] = useState(false);
   const [localPhotoPreview, setLocalPhotoPreview] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState('');
+  const [resumeUploading, setResumeUploading] = useState(false);
+  const [resumeError, setResumeError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resumeInputRef = useRef<HTMLInputElement>(null);
 
   function update<K extends keyof AboutContent>(key: K, value: AboutContent[K]) {
     onChange({ ...about, [key]: value });
@@ -44,27 +52,35 @@ export default function AboutTab({
     update('bio', about.bio.filter((_, i) => i !== index));
   }
 
-  async function handlePhotoFile(file: File) {
-    setUploading(true);
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const base64 = e.target?.result as string;
-      setLocalPhotoPreview(base64);
-      try {
-        const res = await fetch('/api/admin/image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ slug: 'about-profile', imageBase64: base64 }),
-        });
-        if (res.ok) {
-          const { imagePath } = (await res.json()) as { imagePath: string };
-          update('photo', imagePath);
-        }
-      } finally {
-        setUploading(false);
+  async function uploadAsset(kind: 'photo' | 'resume', file: File) {
+    const setBusy = kind === 'photo' ? setUploading : setResumeUploading;
+    const setErr = kind === 'photo' ? setPhotoError : setResumeError;
+    setBusy(true);
+    setErr('');
+    onPendingChange?.(1);
+    try {
+      const form = new FormData();
+      form.append('kind', kind);
+      form.append('file', file);
+      const res = await fetch('/api/admin/about/assets', { method: 'POST', body: form });
+      const data = (await res.json().catch(() => ({}))) as { about?: AboutContent; error?: string };
+      if (!res.ok || !data.about) {
+        setErr(data.error || 'Upload failed.');
+        return;
       }
-    };
-    reader.readAsDataURL(file);
+      onAssetUploaded?.(data.about);
+    } catch {
+      setErr('Upload failed. Check your connection and try again.');
+    } finally {
+      if (kind === 'photo') setLocalPhotoPreview(null);
+      setBusy(false);
+      onPendingChange?.(-1);
+    }
+  }
+
+  function handlePhotoFile(file: File) {
+    setLocalPhotoPreview(URL.createObjectURL(file));
+    void uploadAsset('photo', file);
   }
 
   const photoSrc = localPhotoPreview ?? (about.photo || null);
@@ -123,23 +139,56 @@ export default function AboutTab({
       {/* ── Résumé ────────────────────────────────────────────────────── */}
       <div>
         <label className="text-xs text-muted uppercase tracking-widest mb-1 block">
-          Résumé URL <span className="text-muted normal-case tracking-normal">(optional)</span>
+          Résumé PDF <span className="text-muted normal-case tracking-normal">(optional)</span>
         </label>
+        <div className="flex items-center gap-3 flex-wrap">
+          {about.resumeUrl ? (
+            <a href={about.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-sm underline text-accent">
+              View current résumé
+            </a>
+          ) : (
+            <span className="text-sm text-muted">No résumé uploaded</span>
+          )}
+          <button
+            type="button"
+            onClick={() => resumeInputRef.current?.click()}
+            disabled={resumeUploading}
+            className="px-3 py-2 text-sm border border-border rounded-lg hover:border-accent transition-colors disabled:opacity-50"
+          >
+            {resumeUploading ? 'Uploading…' : 'Upload PDF'}
+          </button>
+          {about.resumeUrl && (
+            <button
+              type="button"
+              onClick={() => update('resumeUrl', '')}
+              className="text-sm text-muted hover:text-white transition-colors"
+            >
+              Remove
+            </button>
+          )}
+        </div>
         <input
-          value={about.resumeUrl ?? ''}
-          onChange={(e) => update('resumeUrl', e.target.value)}
-          placeholder="/resume.pdf"
-          className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors"
+          ref={resumeInputRef}
+          type="file"
+          accept="application/pdf"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            e.target.value = '';
+            if (file) void uploadAsset('resume', file);
+          }}
         />
+        {resumeError && <p role="alert" className="text-xs text-red-400 mt-1">{resumeError}</p>}
         <p className="text-xs text-muted mt-1">
-          Place the PDF in the <code>/public</code> folder (e.g. <code>/resume.pdf</code>) and enter its path here. Shows a Resume button in the hero — leave blank to hide.
+          Goes live immediately, no deploy needed. Shows a Resume button in the hero. Remove it to hide the button.
         </p>
       </div>
 
       {/* ── Profile photo ─────────────────────────────────────────────── */}
       <div>
         <label className="text-xs text-muted uppercase tracking-widest mb-1 block">Profile Photo</label>
-        <div
+        <button
+          type="button"
           onDrop={(e) => {
             e.preventDefault();
             const file = e.dataTransfer.files[0];
@@ -147,7 +196,9 @@ export default function AboutTab({
           }}
           onDragOver={(e) => e.preventDefault()}
           onClick={() => fileInputRef.current?.click()}
-          className="relative border-2 border-dashed border-border hover:border-accent rounded-xl overflow-hidden cursor-pointer transition-colors group"
+          disabled={uploading}
+          aria-label={photoSrc ? 'Replace profile photo' : 'Upload profile photo'}
+          className="relative block w-full border-2 border-dashed border-border hover:border-accent focus-visible:border-accent rounded-xl overflow-hidden cursor-pointer transition-colors group"
         >
           {photoSrc ? (
             <div className="relative">
@@ -157,7 +208,7 @@ export default function AboutTab({
                 alt="Profile preview"
                 className="w-full h-48 object-cover object-top"
               />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity flex items-center justify-center">
                 <p className="text-sm text-white font-medium">
                   {uploading ? 'Uploading…' : 'Click or drop to replace'}
                 </p>
@@ -172,7 +223,7 @@ export default function AboutTab({
               )}
             </div>
           )}
-        </div>
+        </button>
         <input
           ref={fileInputRef}
           type="file"
@@ -180,9 +231,11 @@ export default function AboutTab({
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
+            e.target.value = '';
             if (file) handlePhotoFile(file);
           }}
         />
+        {photoError && <p role="alert" className="text-xs text-red-400 mt-1">{photoError}</p>}
       </div>
 
       {/* ── Bio paragraphs ────────────────────────────────────────────── */}
