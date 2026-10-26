@@ -21,18 +21,21 @@ export default function Configuration({ view, className = "", labels = true }: {
   const caps = CAPABILITIES[view];
   const band = caps.find((c) => c.band)!;
   const rest = caps.filter((c) => !c.band);
+  // Figma 99:359 / 126:2276: in the Consultant view the pink and ink parts swap roles.
+  const swap = view === "consultant";
   return (
     <div
       aria-hidden
-      className={`grid aspect-[6/5] w-full gap-[2px] bg-paper ${className}`}
+      className={`grid aspect-square w-full sm:aspect-[6/5] gap-[2px] bg-paper ${className}`}
       style={{ gridTemplateColumns: "repeat(24, 1fr)", gridTemplateRows: "repeat(20, 1fr)" }}
     >
       {SLOTS.map((slot, i) => {
         const cap = rest[i];
+        const tone = swap && slot.tone.startsWith("bg-brand-pink") ? "bg-ink text-white" : slot.tone;
         return (
           <div
             key={cap.title}
-            className={`relative isolate overflow-hidden p-2 sm:p-3 ${slot.tone}`}
+            className={`relative isolate overflow-hidden p-2 sm:p-3 ${tone}`}
             style={{ gridArea: slot.area }}
           >
             {"quarter" in slot && <span className="absolute inset-0 rounded-tl-[100%] bg-brand-yellow" />}
@@ -41,8 +44,8 @@ export default function Configuration({ view, className = "", labels = true }: {
             </span>
             {labels && (
               <span
-                className={`absolute z-10 bottom-2 left-2 font-mono font-bold uppercase leading-tight tracking-[0.06em] sm:bottom-3 sm:left-3 ${
-                  "big" in slot ? "right-2 text-[13px] sm:right-3 sm:text-xl" : "right-9 text-[9px] sm:right-11 sm:text-xs"
+                className={`absolute z-10 bottom-2 left-2 font-mono font-bold uppercase leading-[1.12] tracking-[0.06em] sm:bottom-3 sm:left-3 sm:leading-tight ${
+                  "big" in slot ? "right-2 text-[13px] sm:right-3 sm:text-xl" : "right-9 text-[11px] sm:right-11 sm:text-xs"
                 }`}
               >
                 {cap.title}
@@ -51,13 +54,13 @@ export default function Configuration({ view, className = "", labels = true }: {
           </div>
         );
       })}
-      <div className="relative bg-ink text-white" style={{ gridArea: "1 / 21 / 21 / 25" }}>
+      <div className={`relative ${swap ? "bg-brand-pink text-ink" : "bg-ink text-white"}`} style={{ gridArea: "1 / 21 / 21 / 25" }}>
         <span className="absolute left-1/2 top-2 -translate-x-1/2 sm:top-3">
           <CapabilityIcon name={band.icon} size={20} />
         </span>
         {labels && (
           <span
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-[9px] font-bold uppercase tracking-[0.06em] sm:bottom-3 sm:text-xs"
+            className="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-[11px] font-bold uppercase tracking-[0.06em] sm:bottom-3 sm:text-xs"
             style={{ writingMode: "vertical-rl", transform: "translateX(-50%) rotate(180deg)" }}
           >
             {band.title}

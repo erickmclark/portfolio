@@ -90,18 +90,7 @@ export default async function Hero({ view }: { view: View }) {
                 {copy.secondary.href === "resume" && <Download size={14} aria-hidden />}
               </a>
             )}
-            {copy.tertiary === "resume" ? (
-              about.resumeUrl && (
-                <a
-                  href={about.resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${btn} gap-1 px-1 underline underline-offset-4`}
-                >
-                  Download Résumé <Download size={14} aria-hidden />
-                </a>
-              )
-            ) : (
+            {copy.tertiary && (
               <a
                 href={copy.tertiary.href}
                 className={`${btn} gap-1 px-1 underline underline-offset-4`}
