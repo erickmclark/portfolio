@@ -1,19 +1,12 @@
 import { ImageResponse } from "next/og";
-import { getSiteContent } from "@/lib/content";
+import { loadCardFonts } from "@/lib/share-card";
 
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
 export default async function AppleIcon() {
-  const { about } = await getSiteContent();
-
-  const initials = about.name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-
+  const [display] = await loadCardFonts();
+  const k = size.width / 64;
   return new ImageResponse(
     (
       <div
@@ -21,20 +14,43 @@ export default async function AppleIcon() {
           width: "100%",
           height: "100%",
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#0a0a0a",
-          backgroundImage:
-            "radial-gradient(circle at 20% 0%, rgba(37,99,235,0.35), transparent 60%)",
-          color: "#f5f5f5",
-          fontSize: 84,
-          fontWeight: 800,
-          letterSpacing: "-0.04em",
+          position: "relative",
+          background: "#e8e4dd",
+          border: `${3 * k}px solid #141414`,
+          borderRadius: 14 * k,
         }}
       >
-        {initials}
+        <div
+          style={{
+            position: "absolute",
+            left: (28 - 28) * k - 3 * k,
+            top: (48 - 50 * 0.78) * k - 3 * k - 4 * k,
+            width: 56 * k,
+            display: "flex",
+            justifyContent: "center",
+            fontFamily: "Funnel Display",
+            fontWeight: 700,
+            fontSize: 50 * k,
+            lineHeight: 1,
+            letterSpacing: -2 * k,
+            color: "#141414",
+          }}
+        >
+          e
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: (48.5 - 6.5) * k - 3 * k,
+            top: (44 - 6.5) * k - 3 * k,
+            width: 13 * k,
+            height: 13 * k,
+            borderRadius: 6.5 * k,
+            background: "#ff5a1f",
+          }}
+        />
       </div>
     ),
-    { ...size }
+    { ...size, fonts: [display] }
   );
 }
