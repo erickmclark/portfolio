@@ -1,13 +1,21 @@
 import { ImageResponse } from "next/og";
 import { loadCardFonts } from "@/lib/share-card";
 
-export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
-export default async function Icon() {
+// Drawn per size on whole pixels: a 32px mark scaled to 16 blurs its border, letter and dot.
+const MARKS = {
+  small: { size: 16, border: 1, radius: 4, font: 15, eLeft: 1, eTop: -2, dot: 4, dotLeft: 10, dotTop: 8 },
+  medium: { size: 32, border: 2, radius: 7, font: 26, eLeft: 3, eTop: -1, dot: 7, dotLeft: 20, dotTop: 17 },
+};
+
+export function generateImageMetadata() {
+  return Object.entries(MARKS).map(([id, m]) => ({ id, size: { width: m.size, height: m.size }, contentType }));
+}
+
+export default async function Icon({ id }: { id: Promise<string> }) {
+  const m = MARKS[(await id) as keyof typeof MARKS] ?? MARKS.medium;
   const [display] = await loadCardFonts();
-  const k = size.width / 64;
-  // 16px browser tab renders from 32px; the 3/64 border is kept at 32px (1.5px) and reads fine.
   return new ImageResponse(
     (
       <div
@@ -17,23 +25,20 @@ export default async function Icon() {
           display: "flex",
           position: "relative",
           background: "#e8e4dd",
-          border: `${3 * k}px solid #141414`,
-          borderRadius: 14 * k,
+          border: `${m.border}px solid #141414`,
+          borderRadius: m.radius,
         }}
       >
         <div
           style={{
             position: "absolute",
-            left: (28 - 28) * k - 3 * k,
-            top: (48 - 50 * 0.78) * k - 3 * k - 4 * k,
-            width: 56 * k,
+            left: m.eLeft,
+            top: m.eTop,
             display: "flex",
-            justifyContent: "center",
             fontFamily: "Funnel Display",
             fontWeight: 700,
-            fontSize: 50 * k,
+            fontSize: m.font,
             lineHeight: 1,
-            letterSpacing: -2 * k,
             color: "#141414",
           }}
         >
@@ -42,16 +47,16 @@ export default async function Icon() {
         <div
           style={{
             position: "absolute",
-            left: (48.5 - 6.5) * k - 3 * k,
-            top: (44 - 6.5) * k - 3 * k,
-            width: 13 * k,
-            height: 13 * k,
-            borderRadius: 6.5 * k,
+            left: m.dotLeft,
+            top: m.dotTop,
+            width: m.dot,
+            height: m.dot,
+            borderRadius: m.dot / 2,
             background: "#ff5a1f",
           }}
         />
       </div>
     ),
-    { ...size, fonts: [display] }
+    { width: m.size, height: m.size, fonts: [display] }
   );
 }
