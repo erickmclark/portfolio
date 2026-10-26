@@ -14,7 +14,7 @@ type BlockId = 'identity' | 'photo' | 'resume' | 'text' | 'hidden';
 
 const BLOCKS: { id: BlockId; title: string; note: string }[] = [
   { id: 'identity', title: 'Identity', note: 'Name and professional title' },
-  { id: 'photo', title: 'Photo', note: 'Profile photo' },
+  { id: 'photo', title: 'Photo and quote', note: 'Profile photo and the quote under it' },
   { id: 'resume', title: 'Résumé file', note: 'PDF for the Resume button' },
   { id: 'text', title: 'About text', note: 'The bio paragraphs' },
   { id: 'hidden', title: 'Not shown on the site', note: 'Stored, but not displayed' },
@@ -165,6 +165,8 @@ export default function AboutTab({
                   }}
                 />
                 {uploadStatus(photo)}
+                <GroupHead title="Quote" />
+                <TextField label="Quote" multiline rows={3} value={about.quote ?? ''} onChange={(v) => update('quote', v)} hint="Shown in italics under your photo on the About page. Quotation marks are added automatically. Leave empty to hide it." />
               </>
             )}
 

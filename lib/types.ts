@@ -165,6 +165,7 @@ export type AboutContent = {
   availableForWork: boolean;
   photo?: string;          // Path to profile photo, e.g. /profile.png
   resumeUrl?: string;      // Path to a downloadable résumé PDF, e.g. /resume.pdf
+  quote?: string;          // Italic quote shown under the profile photo, without quotation marks
   bio: string[];           // Array of paragraph strings
   skills: string[];
 };

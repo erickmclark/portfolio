@@ -149,6 +149,22 @@ describe("validateSiteContent", () => {
     expect(result.ok).toBe(true);
   });
 
+  it("accepts about.quote absent or a string, and rejects a non-string", () => {
+    const absent = validContent();
+    delete absent.about.quote;
+    expect(validateSiteContent(absent).ok).toBe(true);
+
+    const withQuote = validContent();
+    withQuote.about.quote = "A quote.";
+    expect(validateSiteContent(withQuote).ok).toBe(true);
+
+    const bad = validContent();
+    (bad.about as unknown as Record<string, unknown>).quote = 42;
+    const result = validateSiteContent(bad);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.errors.join(" ")).toMatch(/about\.quote/);
+  });
+
   it("accepts legacy content with no experience field and defaults it to []", () => {
     const c = validContent() as unknown as Record<string, unknown>;
     delete c.experience;
