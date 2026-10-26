@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button, Eyebrow, Field, Square } from './ui';
 
 export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [errorTitle, setErrorTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -13,6 +15,7 @@ export default function AdminPage() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setErrorTitle('');
     try {
       const res = await fetch('/api/admin/auth', {
         method: 'POST',
@@ -22,39 +25,49 @@ export default function AdminPage() {
       if (res.ok) {
         router.push('/admin/dashboard');
       } else {
+        setErrorTitle('');
         setError('Incorrect password. Try again.');
         setLoading(false);
       }
     } catch {
+      setErrorTitle("Couldn't sign in");
       setError('Something went wrong. Try again.');
       setLoading(false);
     }
   }
 
+  const network = errorTitle !== '';
   return (
-    <main className="min-h-screen flex items-center justify-center px-6">
+    <main className="public-shell flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-black tracking-tighter mb-2">Admin</h1>
-        <p className="text-muted text-sm mb-8">Enter your password to manage content.</p>
+        <div className="mb-6 flex gap-1.5">
+          <Square color="blue" /><Square color="orange" /><Square color="yellow" /><Square color="green" /><Square color="pink" /><Square color="navy" /><Square color="sky" />
+        </div>
+        <Eyebrow>Admin</Eyebrow>
+        <h1 className="font-display mt-1 text-3xl font-bold tracking-tight">Erick Clark</h1>
+        <p className="mb-8 mt-1 text-ink-muted">Sign in to edit the site.</p>
+        {network && (
+          <div id="admin-password-error" role="alert" className="mb-6 border border-red-700 px-4 py-3">
+            <p className="font-display text-lg font-semibold text-red-700">{errorTitle}</p>
+            <p className="text-sm">{error}</p>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
+          <Field
+            id="admin-password"
+            label="Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            aria-label="Password"
-            className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-white placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
+            autoComplete="current-password"
             autoFocus
             disabled={loading}
+            error={network ? undefined : error || undefined}
+            {...(network ? { 'aria-describedby': 'admin-password-error' } : {})}
           />
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading || !password}
-            className="w-full px-4 py-3 bg-accent hover:bg-accent-hover disabled:opacity-50 text-white font-semibold rounded-lg transition-colors duration-200"
-          >
-            {loading ? 'Signing in…' : 'Enter'}
-          </button>
+          <Button type="submit" disabled={loading || !password} className="w-full">
+            {loading ? 'Signing in…' : 'Sign in'}
+          </Button>
         </form>
       </div>
     </main>

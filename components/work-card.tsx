@@ -92,7 +92,7 @@ export default function WorkCard({ project, feature = false, priority = false }:
               {contactCta.label} <ArrowRight size={14} aria-hidden />
             </a>
           ) : (
-            <Link href={`/projects/${project.slug}`} className="inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4">
+            <Link href={`/work/${project.slug}`} className="inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4">
               {cta}
               <span className="sr-only">: {project.title}</span> <ArrowRight size={14} aria-hidden />
             </Link>
