@@ -24,7 +24,7 @@ export default async function Home({
     <main id="main-content" className="public-shell">
       <Hero view={view} />
       <Reveal><Capabilities view={view} /></Reveal>
-      <Approach view={view} />
+      <Approach />
       <Reveal><SelectedWork view={view} category={category} /></Reveal>
       <Reveal><PointOfView /></Reveal>
       <Reveal><About /></Reveal>
