@@ -1,86 +1,128 @@
-import { getSiteContent } from '@/lib/content';
-import { ArrowRight, Mail, FileText } from 'lucide-react';
-import AnimateIn from './animate-in';
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, Download } from "lucide-react";
+import { getSiteContent } from "@/lib/content";
+import { HERO, PROFILE_LINE, SELECTOR_LABEL, CAPABILITIES } from "@/lib/home-copy";
+import { VIEWS, VIEW_LABELS, homeHref, type View } from "@/lib/home-view";
+import Configuration from "./configuration";
+import { Eyebrow } from "./section-head";
 
-export default async function Hero() {
+const VIEW_TOWER: Record<View, string> = {
+  it: "IT Professional (tower)",
+  consultant: "Consultant (tower)",
+  builder: "Builder (tower)",
+};
+
+export default async function Hero({ view }: { view: View }) {
   const { about } = await getSiteContent();
+  const copy = HERO[view];
+  const btn =
+    "inline-flex min-h-11 items-center justify-center px-5 text-[15px] font-semibold";
+
+  const resolve = (href: string) => (href === "resume" ? about.resumeUrl ?? null : href);
+  const primary = resolve(copy.primary.href);
+  const secondary = resolve(copy.secondary.href);
 
   return (
-    <section
-      id="hero"
-      className="relative min-h-screen flex flex-col justify-center px-6 pt-[72px] overflow-hidden hero-grid"
-    >
-      <div className="pointer-events-none absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-accent/5 blur-[120px]" />
-
-      <div className="relative max-w-site mx-auto w-full">
-        {about.availableForWork && (
-          <AnimateIn delay={0} direction="none">
-            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-accent/30 bg-accent/10 text-accent text-sm font-medium">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
-              </span>
-              Open to advisory &amp; consulting
+    <section id="top" aria-labelledby="hero-title" className="public-shell">
+      <div className="mx-auto grid max-w-[1440px] gap-x-24 gap-y-8 px-4 pb-14 pt-8 sm:px-10 sm:pt-14 lg:grid-cols-[minmax(0,652px)_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
+        <div className="lg:col-start-1 lg:row-start-1">
+          <div className="flex items-center gap-4">
+            {about.photo && (
+              <Image
+                src={about.photo}
+                alt={`Portrait of ${about.name}`}
+                width={64}
+                height={64}
+                priority
+                className="h-16 w-16 rounded-full object-cover"
+              />
+            )}
+            <div>
+              <p className="font-display text-lg font-bold tracking-[-0.02em]">{about.name}</p>
+              <p className="text-sm text-ink-muted">{PROFILE_LINE}</p>
             </div>
-          </AnimateIn>
-        )}
+          </div>
 
-        <AnimateIn delay={100} direction="up">
-          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6">
-            {about.name}.
-            <br />
-            <span className="text-muted">{about.title}.</span>
-          </h1>
-        </AnimateIn>
-
-        <AnimateIn delay={220} direction="up">
-          <p className="text-xl text-muted max-w-lg mb-10 leading-relaxed">
-            {about.heroTagline}
-          </p>
-        </AnimateIn>
-
-        <AnimateIn delay={340} direction="up">
-          <div className="flex flex-wrap items-center gap-3">
-            <a
-              href="#projects"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-accent/20 hover:shadow-accent/30 hover:-translate-y-0.5"
-            >
-              View My Work
-              <ArrowRight size={16} />
-            </a>
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-border hover:border-accent/60 hover:bg-accent/5 text-white font-semibold rounded-lg transition-all duration-200"
-            >
-              <Mail size={16} className="text-muted" />
-              Contact Me
-            </a>
-            {about.resumeUrl && (
-              <a
-                href={about.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 border border-border hover:border-accent/60 hover:bg-accent/5 text-white font-semibold rounded-lg transition-all duration-200"
+          <Eyebrow className="mt-8">{SELECTOR_LABEL}</Eyebrow>
+          <nav aria-label="Audience view" className="mt-2.5 inline-flex border-2 border-ink">
+            {VIEWS.map((v, i) => (
+              <Link
+                key={v}
+                href={homeHref(v)}
+                scroll={false}
+                aria-current={v === view ? "true" : undefined}
+                className={`on-dark inline-flex min-h-11 items-center px-4 text-sm font-semibold ${
+                  i > 0 ? "border-l-2 border-ink" : ""
+                } ${v === view ? "bg-ink text-white" : "bg-paper text-ink hover:bg-white"}`}
               >
-                <FileText size={16} className="text-muted" />
-                Resume
+                {VIEW_LABELS[v]}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
+          {/* The H1 is the page's only H1 and is server-rendered for every view. */}
+          <h1
+            id="hero-title"
+            className="mt-0 max-w-[640px] font-display text-4xl font-bold leading-[1.05] tracking-[-0.045em] text-ink sm:text-[56px] sm:tracking-[-0.03em]"
+          >
+            {copy.h1}
+          </h1>
+          <p className="mt-5 max-w-[600px] text-[17px] leading-[1.55] text-ink-muted">{copy.body}</p>
+
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <a
+              href={primary ?? "#work"}
+              className={`on-dark ${btn} bg-ink text-white`}
+              {...(copy.primary.href === "resume" ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            >
+              {copy.primary.label}
+            </a>
+            {secondary && (
+              <a
+                href={secondary}
+                className={`${btn} gap-2 border-2 border-ink text-ink hover:bg-white`}
+                {...(copy.secondary.href === "resume" ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              >
+                {copy.secondary.label}
+                {copy.secondary.href === "resume" && <Download size={14} aria-hidden />}
+              </a>
+            )}
+            {copy.tertiary === "resume" ? (
+              about.resumeUrl && (
+                <a
+                  href={about.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${btn} gap-1 px-1 underline underline-offset-4`}
+                >
+                  Download Résumé <Download size={14} aria-hidden />
+                </a>
+              )
+            ) : (
+              <a
+                href={copy.tertiary.href}
+                className={`${btn} gap-1 px-1 underline underline-offset-4`}
+                {...(copy.tertiaryExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              >
+                {copy.tertiary.label}
+                {copy.tertiaryExternal ? <ArrowUpRight size={14} aria-hidden /> : <ArrowRight size={14} aria-hidden />}
               </a>
             )}
           </div>
-        </AnimateIn>
+        </div>
 
-        <AnimateIn delay={460} direction="up">
-          <div className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
-            {['JPMorgan Chase', 'MBA', 'M.S. MIS', 'PMP', 'PSM I', 'AWS Certified', 'U.S. Army Veteran'].map(
-              (credential, i) => (
-                <span key={credential} className="flex items-center gap-x-3">
-                  {i > 0 && <span aria-hidden className="text-muted/50">·</span>}
-                  {credential}
-                </span>
-              )
-            )}
-          </div>
-        </AnimateIn>
+        <div className="order-2 lg:order-none lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:pt-14">
+          <Configuration view={view} className="mx-auto max-w-[600px] lg:ml-auto" />
+          <p className="mx-auto mt-3 max-w-[600px] text-right font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-ink-muted lg:ml-auto">
+            Configuration: {VIEW_TOWER[view]}
+          </p>
+          <span className="sr-only">
+            Seven capabilities in priority order: {CAPABILITIES[view].map((c) => c.title).join(", ")}.
+          </span>
+        </div>
       </div>
     </section>
   );

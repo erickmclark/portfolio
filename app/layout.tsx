@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Geist_Mono, Funnel_Display, Funnel_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
-import Nav from "@/components/nav";
-import Footer from "@/components/footer";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
+import { HOME_SEO } from "@/lib/home-copy";
 import { getSiteContent } from "@/lib/content";
 import { SITE_URL } from "@/lib/site";
 
@@ -18,10 +19,29 @@ const geist = Geist({
   display: "swap",
 });
 
+const funnelDisplay = Funnel_Display({
+  subsets: ["latin"],
+  variable: "--font-funnel-display",
+  weight: ["700"],
+  display: "swap",
+});
+
+const funnelSans = Funnel_Sans({
+  subsets: ["latin"],
+  variable: "--font-funnel-sans",
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  display: "swap",
+});
+
 export async function generateMetadata(): Promise<Metadata> {
   const { about } = await getSiteContent();
-  const title = `${about.name} — ${about.title}`;
-  const description = about.heroTagline;
+  const title = HOME_SEO.title;
+  const description = HOME_SEO.description;
   return {
     metadataBase: new URL(SITE_URL),
     title: {
@@ -59,7 +79,7 @@ export default async function RootLayout({
     "@type": "Person",
     name: about.name,
     jobTitle: about.title,
-    description: about.heroTagline,
+    description: HOME_SEO.description,
     url: SITE_URL,
     email: `mailto:${contact.email}`,
     ...(about.photo ? { image: `${SITE_URL}${about.photo}` } : {}),
@@ -67,7 +87,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang="en" className={geist.variable} data-scroll-behavior="smooth">
+    <html lang="en" className={`${geist.variable} ${funnelDisplay.variable} ${funnelSans.variable} ${geistMono.variable}`} data-scroll-behavior="smooth">
       <body className="bg-background text-foreground antialiased">
         <a href="#main-content" className="skip-link">
           Skip to content
@@ -76,9 +96,9 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
-        <Nav name={about.name} />
+        <SiteHeader name={about.name} resumeUrl={about.resumeUrl} />
         {children}
-        <Footer />
+        <SiteFooter />
         <Analytics />
         <SpeedInsights />
       </body>
