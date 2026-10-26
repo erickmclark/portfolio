@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assemblyPiece, docBox, flipDelta, pieceProgress, scrollProgress, staggerDelay, stepLit } from "./motion";
+import { docBox, flipDelta, pieceProgress, scrollProgress, staggerDelay } from "./motion";
 
 const box = (left: number, top: number, width: number, height: number) => ({ left, top, width, height });
 
@@ -34,15 +34,5 @@ describe("motion helpers", () => {
   it("pieces complete by t=1 and later pieces start later", () => {
     for (let i = 0; i < 7; i++) expect(pieceProgress(1, i, 7)).toBe(1);
     expect(pieceProgress(0.1, 0, 7)).toBeGreaterThan(pieceProgress(0.1, 5, 7));
-    expect(assemblyPiece(0, 0, 7)).toEqual({ x: -48, y: 0, opacity: 0 });
-    expect(assemblyPiece(1, 3, 7)).toEqual({ x: 0, y: 0, opacity: 1 });
-  });
-
-  it("steps light in order and all are lit at the end", () => {
-    const at = (t: number) => [0, 1, 2].map((i) => stepLit(t, i, 3));
-    expect(at(0)).toEqual([false, false, false]);
-    expect(at(0.3)).toEqual([true, false, false]);
-    expect(at(0.6)).toEqual([true, true, false]);
-    expect(at(1)).toEqual([true, true, true]);
   });
 });

@@ -47,26 +47,3 @@ export function pieceProgress(t: number, i: number, n: number): number {
   const delay = i * SPREAD;
   return clamp01((t - delay) / (1 - SPREAD * (n - 1)));
 }
-
-/** Entry offsets (px) pieces fly in from, cycling so neighbours come from different sides. */
-const OFFSETS = [
-  [-48, 0],
-  [0, -40],
-  [48, 0],
-  [0, 40],
-  [-40, 32],
-  [40, -32],
-  [0, 48],
-] as const;
-
-export function assemblyPiece(t: number, i: number, n: number): { x: number; y: number; opacity: number } {
-  const p = pieceProgress(t, i, n);
-  const [ox, oy] = OFFSETS[i % OFFSETS.length];
-  const k = 1 - p;
-  return { x: ox * k, y: oy * k, opacity: p };
-}
-
-/** Step `i` (0-based) of `count` is lit once progress passes its threshold, in order. */
-export function stepLit(t: number, i: number, count: number): boolean {
-  return t >= 0.3 + (0.6 * i) / Math.max(1, count - 1);
-}
