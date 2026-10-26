@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState } from 'react';
 import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 import type { SiteContent } from '@/lib/types';
 import { validateSiteContent } from '@/lib/validate';
 import AboutTab from './about-tab';
@@ -10,12 +11,15 @@ import ProjectsTab from './projects-tab';
 import { applyRouteImages } from './gallery-utils';
 import { applyGitHubFill, applySlugImageMove, removeProject, type DeleteNotice } from './project-updates';
 import ExperienceTab from './experience-tab';
+import { Button, Eyebrow, SaveStatus, SectionChip, type BrandColor } from '../ui';
+import { countBlockedSlugs, deriveSaveState, saveDisabled, saveSentence } from '../ui/save-state';
 
-type Tab = 'projects' | 'experience' | 'about' | 'contact';
+type Tab = 'home' | 'projects' | 'experience' | 'about' | 'contact' | 'site';
 
 export default function DashboardClient() {
   const [content, setContent] = useState<SiteContent | null>(null);
-  const [tab, setTab] = useState<Tab>('projects');
+  const [tab, setTab] = useState<Tab>('projects')
+  const [loadFailed, setLoadFailed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [dirty, setDirty] = useState(false);
@@ -38,7 +42,7 @@ export default function DashboardClient() {
           experience: content.experience ?? [],
         });
       })
-      .catch(() => setSaveError('Failed to load content.'));
+      .catch(() => setLoadFailed(true));
   }, []);
 
   function update(updated: SiteContent) {
@@ -60,7 +64,7 @@ export default function DashboardClient() {
   }
 
   async function save() {
-    if (!content || pending > 0) return;
+    if (!content || pending > 0 || countBlockedSlugs(content.projects) > 0) return;
     const check = validateSiteContent(content);
     if (!check.ok) {
       setSaveError(check.errors[0]);
@@ -84,107 +88,114 @@ export default function DashboardClient() {
     }
   }
 
-  if (!content) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        {saveError ? (
-          <p className="text-red-400">{saveError}</p>
-        ) : (
-          <p className="text-muted animate-pulse">Loading content…</p>
-        )}
-      </div>
-    );
-  }
-
-  const tabs: { id: Tab; label: string }[] = [
-    { id: 'projects', label: 'Projects' },
-    { id: 'experience', label: 'Experience' },
-    { id: 'about', label: 'About' },
-    { id: 'contact', label: 'Contact' },
+  const tabs: { id: Tab; label: string; color: BrandColor; count?: number }[] = [
+    { id: 'home', label: 'Home page', color: 'navy' },
+    { id: 'projects', label: 'Projects', color: 'blue', count: content?.projects.length },
+    { id: 'experience', label: 'Experience', color: 'green', count: content?.experience.length },
+    { id: 'about', label: 'About', color: 'pink' },
+    { id: 'contact', label: 'Contact', color: 'sky' },
+    { id: 'site', label: 'Site', color: 'cream' },
   ];
 
+  const inputs = { saving, saveError, pending, dirty, saved, blockedSlugs: content ? countBlockedSlugs(content.projects) : 0 };
+  const state = deriveSaveState(inputs);
+  const sentence = saveSentence(state, inputs);
+  const tone = state === 'failed' || state === 'blocked' ? 'error' : 'default';
+  const disabled = !content || saveDisabled(inputs);
+  const label = saving ? 'Saving…' : 'Save';
+
   return (
-    <div className="min-h-screen pb-24">
-      {/* Sticky header */}
-      <div className="border-b border-border sticky top-0 bg-background/95 backdrop-blur-md z-40">
-        <div className="max-w-4xl mx-auto px-6 h-[60px] flex items-center gap-6">
-          <span className="font-bold text-sm shrink-0">Admin</span>
-          <div className="flex items-center gap-1">
+    <div className="public-shell min-h-screen pb-28 md:pb-0">
+      <header className="sticky top-0 z-40 border-b border-ink bg-paper">
+        <div className="flex min-h-[72px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 md:px-10">
+          <div className="shrink-0">
+            <p className="font-display font-bold leading-tight">Erick Clark</p>
+            <Eyebrow>Admin</Eyebrow>
+          </div>
+          <nav aria-label="Sections" className="order-last flex w-full gap-2 overflow-x-auto py-1 md:order-none md:w-auto md:flex-1 md:overflow-visible">
             {tabs.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                className={`px-4 py-1.5 text-sm rounded-md transition-colors ${
-                  tab === t.id ? 'bg-surface text-white' : 'text-muted hover:text-white'
-                }`}
-              >
-                {t.label}
-              </button>
+              <SectionChip key={t.id} label={t.label} color={t.color} count={t.count} current={tab === t.id} onClick={() => setTab(t.id)} />
             ))}
+          </nav>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="hidden items-center gap-4 md:flex">
+              <SaveStatus id={pendingId} sentence={sentence} tone={tone} />
+              <Button onClick={save} disabled={disabled} aria-describedby={pendingId}>{label}</Button>
+            </div>
+            <Link href="/" target="_blank" rel="noopener" className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold underline-offset-4 hover:underline">
+              View site<ArrowUpRight aria-hidden="true" className="size-4" />
+              <span className="sr-only"> (opens in a new tab)</span>
+            </Link>
           </div>
-          <Link href="/" className="ml-auto text-xs text-muted hover:text-white transition-colors">
-            ← View site
-          </Link>
         </div>
-      </div>
+      </header>
 
-      {/* Tab content */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        {tab === 'projects' && (
-          <ProjectsTab
-            projects={content.projects}
-            onChange={(projects) => update({ ...content, projects })}
-            onRouteImages={(id, images) => updateFromLatest((latest) => applyRouteImages(latest, id, images))}
-            onDeleteProject={(id) => updateFromLatest((latest) => removeProject(latest, id))}
-            onSlugImageMoved={(id, from, imagePath) =>
-              updateFromLatest((latest) => applySlugImageMove(latest, id, from, imagePath))
-            }
-            onGitHubFill={(id, fill) => updateFromLatest((latest) => applyGitHubFill(latest, id, fill))}
-            onPendingChange={trackPending}
-            notice={deleteNotice}
-            setNotice={setDeleteNotice}
-          />
+      {!content ? (
+        <div className="px-4 py-16 md:px-10">
+          <Eyebrow>Admin</Eyebrow>
+          {loadFailed ? (
+            <div role="alert" className="mt-4 max-w-[500px] border border-red-700 px-4 py-3">
+              <p className="font-display text-xl font-semibold text-red-700">Failed to load content.</p>
+              <p className="text-[15px]">Reload the page to try again. Nothing was changed.</p>
+            </div>
+          ) : (
+            <p role="status" className="font-display mt-4 text-[40px] font-bold leading-tight tracking-tight">Loading content…</p>
+          )}
+        </div>
+      ) : (
+      <div className="px-4 py-8 md:px-10">
+        {(tab === 'home' || tab === 'site') && (
+          <section aria-labelledby="placeholder-title" className="border border-ink p-6">
+            <h1 id="placeholder-title" className="font-display text-2xl font-bold">{tab === 'home' ? 'Home page' : 'Site'}</h1>
+            <p className="mt-2 text-ink-muted">This editor arrives with T-6.</p>
+          </section>
         )}
-        {tab === 'experience' && (
-          <ExperienceTab
-            experience={content.experience}
-            onChange={(experience) => update({ ...content, experience })}
-          />
-        )}
-        {tab === 'about' && (
-          <AboutTab
-            about={content.about}
-            onChange={(about) => update({ ...content, about })}
-          />
-        )}
-        {tab === 'contact' && (
-          <ContactTab
-            contact={content.contact}
-            onChange={(contact) => update({ ...content, contact })}
-          />
-        )}
-      </div>
-
-      {/* Save bar */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-background/95 backdrop-blur-md p-4 z-40">
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-          <div className="min-w-0 text-sm">
-            {saved && !dirty && <span className="text-green-400">✓ Saved — changes are live</span>}
-            {dirty && !saveError && pending === 0 && <span className="text-muted">Unsaved changes</span>}
-            {saveError && <span className="text-red-400">{saveError}</span>}
-            <span id={pendingId} role="status" className="text-muted empty:hidden ml-3">
-              {pending > 0 ? 'Waiting for changes to finish…' : ''}
-            </span>
+        {/* Legacy tabs are still styled for a dark surface until their own redesign tasks land. */}
+        {tab !== 'home' && tab !== 'site' && (
+          <div className="rounded-2xl bg-background p-4 text-foreground md:p-6">
+            {tab === 'projects' && (
+              <ProjectsTab
+                projects={content.projects}
+                onChange={(projects) => update({ ...content, projects })}
+                onRouteImages={(id, images) => updateFromLatest((latest) => applyRouteImages(latest, id, images))}
+                onDeleteProject={(id) => updateFromLatest((latest) => removeProject(latest, id))}
+                onSlugImageMoved={(id, from, imagePath) =>
+                  updateFromLatest((latest) => applySlugImageMove(latest, id, from, imagePath))
+                }
+                onGitHubFill={(id, fill) => updateFromLatest((latest) => applyGitHubFill(latest, id, fill))}
+                onPendingChange={trackPending}
+                notice={deleteNotice}
+                setNotice={setDeleteNotice}
+              />
+            )}
+            {tab === 'experience' && (
+              <ExperienceTab
+                experience={content.experience}
+                onChange={(experience) => update({ ...content, experience })}
+              />
+            )}
+            {tab === 'about' && (
+              <AboutTab about={content.about} onChange={(about) => update({ ...content, about })} />
+            )}
+            {tab === 'contact' && (
+              <ContactTab contact={content.contact} onChange={(contact) => update({ ...content, contact })} />
+            )}
           </div>
-          <button
-            onClick={save}
-            disabled={saving || !dirty || pending > 0}
-            aria-describedby={pendingId}
-            className="shrink-0 flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-hover disabled:opacity-50 text-white font-semibold rounded-lg transition-colors duration-200 text-sm"
-          >
-            {saving ? 'Saving…' : `Save${dirty ? ' ●' : ''}`}
-          </button>
-        </div>
+        )}
+      </div>
+      )}
+
+      {/* Mobile save bar: fixed ink pill inset 12px. */}
+      <div className="fixed inset-x-3 bottom-3 z-40 flex items-center justify-between gap-3 rounded-full bg-ink py-2 pl-5 pr-2 md:hidden">
+        <SaveStatus id={`${pendingId}-m`} sentence={sentence} tone={tone} onDark />
+        <button
+          onClick={save}
+          disabled={disabled}
+          aria-describedby={`${pendingId}-m`}
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-paper px-6 text-[15px] font-semibold text-ink focus-visible:!outline-brand-sky disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {label}
+        </button>
       </div>
     </div>
   );

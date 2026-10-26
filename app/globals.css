@@ -184,3 +184,12 @@ details > summary::-webkit-details-marker { display: none; }
     transform: none;
   }
 }
+
+/* Admin save sentence: opacity crossfade only. Reduced motion collapses the duration above. */
+@keyframes admin-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.admin-fade {
+  animation: admin-fade var(--dur-base) var(--ease-out-expo);
+}
