@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from 'react';
+import { credentialsError } from '@/lib/credentials';
 import type { AboutContent } from '@/lib/types';
 import { Button, buttonClass, GroupHead, Stamp } from '../ui';
 import { Checkbox, ItemControls, LedgerLayout, SheetHead, TextField, type LedgerRow } from '../ui/edit';
@@ -117,6 +118,7 @@ export default function AboutTab({
               <>
                 <GroupHead title="Identity" />
                 <TextField label="Name" value={about.name} onChange={(v) => update('name', v)} placeholder="Jane Doe" error={about.name.trim() === '' ? 'Name is required.' : undefined} />
+                <TextField label="Credentials" value={about.credentials ?? ''} onChange={(v) => update('credentials', v)} placeholder="MBA, MS, PMP" hint="Shown once, under your name at the top of the home page. Keep Name to just your name." error={credentialsError(about.credentials)} />
                 <TextField label="Professional title" value={about.title} onChange={(v) => update('title', v)} placeholder="Technology Strategy Executive" hint="Also used in search results." />
               </>
             )}

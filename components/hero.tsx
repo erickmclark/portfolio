@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Download } from "lucide-react";
 import { getSiteContent } from "@/lib/content";
+import { formatCredentials } from "@/lib/credentials";
 import { VIEWS, homeHref, type View } from "@/lib/home-view";
 import Configuration from "./configuration";
 import { ConfigurationMotion, ViewFade } from "./hero-motion";
@@ -15,6 +16,7 @@ const VIEW_TOWER: Record<View, string> = {
 
 export default async function Hero({ view }: { view: View }) {
   const { about, home } = await getSiteContent();
+  const credentials = formatCredentials(about.credentials);
   const copy = home.hero[view];
   const btn =
     "inline-flex min-h-11 items-center justify-center px-5 text-[15px] font-semibold";
@@ -40,6 +42,9 @@ export default async function Hero({ view }: { view: View }) {
             )}
             <div>
               <p className="font-display text-lg font-bold tracking-[-0.02em]">{about.name}</p>
+              {credentials && (
+                <p className="mt-0.5 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-ink-muted">{credentials}</p>
+              )}
               <p className="text-sm text-ink-muted">{home.profileLine}</p>
             </div>
           </div>

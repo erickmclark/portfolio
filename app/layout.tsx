@@ -80,6 +80,7 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "Person",
     name: about.name,
+    ...(about.credentials ? { honorificSuffix: about.credentials } : {}),
     jobTitle: about.title,
     description: site.seo.home.description,
     url: SITE_URL,

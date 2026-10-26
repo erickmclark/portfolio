@@ -14,7 +14,7 @@ export default async function SiteFooter() {
       <div className="mx-auto max-w-[1440px] px-4 pb-8 pt-12 sm:px-10">
         <div className="grid gap-10 md:grid-cols-[1.2fr_1.2fr_0.6fr]">
           <div>
-            <p className="font-display text-[28px] font-bold tracking-[-0.03em]">{FOOTER.name}</p>
+            <p className="font-display text-[28px] font-bold tracking-[-0.03em]">{about.name}</p>
             <p className="mt-1 font-mono text-[11px] font-medium uppercase tracking-[0.12em]">{FOOTER.descriptor}</p>
             <p className="mt-4 text-white/80">{FOOTER.line}</p>
           </div>
