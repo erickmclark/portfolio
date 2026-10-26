@@ -37,7 +37,7 @@ export default async function Experience() {
             href={about.resumeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex min-h-11 items-center gap-2 border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white"
+            className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white"
           >
             {EXPERIENCE.cta} <Download size={14} aria-hidden />
           </a>

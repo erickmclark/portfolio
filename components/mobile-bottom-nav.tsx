@@ -9,7 +9,7 @@ import { nextBottomNavVisible } from "@/lib/bottom-nav-visibility";
 type Props = { resumeUrl?: string };
 
 const item =
-  "inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap px-2 text-[15px] font-semibold";
+  "inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full focus-visible:rounded-full! px-2 text-[15px] font-semibold";
 
 export default function MobileBottomNav({ resumeUrl }: Props) {
   const pathname = usePathname();
@@ -94,7 +94,7 @@ export default function MobileBottomNav({ resumeUrl }: Props) {
       aria-label="Quick navigation"
       inert={!visible}
       style={{ bottom: "calc(12px + env(safe-area-inset-bottom))" }}
-      className={`bottom-nav font-body [&_a]:focus-visible:outline-brand-sky [&_button]:focus-visible:outline-brand-sky fixed inset-x-3 z-40 mx-auto flex max-w-sm items-center justify-between bg-ink px-1 py-1 text-white shadow-lg transition-[opacity,transform] duration-300 md:hidden motion-reduce:translate-y-0 motion-reduce:transition-opacity ${
+      className={`bottom-nav font-body [&_a]:focus-visible:outline-brand-sky! [&_button]:focus-visible:outline-brand-sky! fixed inset-x-3 z-40 mx-auto flex max-w-sm items-center justify-between rounded-full bg-ink px-1 py-1 text-white shadow-lg transition-[opacity,transform] duration-300 md:hidden motion-reduce:translate-y-0 motion-reduce:transition-opacity ${
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-[140%] opacity-0"
       }`}
     >
@@ -104,7 +104,7 @@ export default function MobileBottomNav({ resumeUrl }: Props) {
       <Link href="/#approach" className={item}>
         Approach
       </Link>
-      <Link href="/#contact" className={`${item} bg-brand-orange text-ink`}>
+      <Link href="/#contact" className={`${item} bg-brand-orange px-2.5 text-ink`}>
         Contact
       </Link>
       {resumeUrl && (
@@ -117,7 +117,7 @@ export default function MobileBottomNav({ resumeUrl }: Props) {
         aria-label="Menu"
         aria-expanded={menuOpen}
         onClick={openMenu}
-        className="inline-flex h-11 w-11 shrink-0 items-center justify-center"
+        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full focus-visible:rounded-full!"
       >
         <Menu size={20} aria-hidden />
       </button>

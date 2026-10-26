@@ -76,7 +76,7 @@ export default async function Hero({ view }: { view: View }) {
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href={primary ?? "#work"}
-              className={`on-dark ${btn} bg-ink text-white`}
+              className={`on-dark ${btn} rounded-full bg-ink text-white`}
               {...(copy.primary.href === "resume" ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             >
               {copy.primary.label}
@@ -84,7 +84,7 @@ export default async function Hero({ view }: { view: View }) {
             {secondary && (
               <a
                 href={secondary}
-                className={`${btn} gap-2 border-2 border-ink text-ink hover:bg-white`}
+                className={`${btn} gap-2 rounded-full border-2 border-ink text-ink hover:bg-white`}
                 {...(copy.secondary.href === "resume" ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               >
                 {copy.secondary.label}

@@ -58,7 +58,6 @@ section[id] {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-  border-radius: 2px;
 }
 
 /* Skip-to-content link — off-screen until focused via keyboard */
@@ -127,7 +126,6 @@ section[id] {
 .public-shell :focus-visible {
   outline: 3px solid var(--color-brand-blue);
   outline-offset: 2px;
-  border-radius: 0;
 }
 .public-shell .on-dark:focus-visible {
   outline-color: var(--color-brand-sky);
