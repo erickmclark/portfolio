@@ -73,7 +73,7 @@ describe('POST /api/admin/about/assets', () => {
     const bigPhoto = new Uint8Array(4 * 1024 * 1024 + 1);
     bigPhoto.set(PNG);
     expect((await POST(req({ kind: 'photo', bytes: bigPhoto }))).status).toBe(400);
-    const bigPdf = new Uint8Array(10 * 1024 * 1024 + 1);
+    const bigPdf = new Uint8Array(4 * 1024 * 1024 + 1);
     bigPdf.set(PDF);
     expect((await POST(req({ kind: 'resume', bytes: bigPdf, type: 'application/pdf' }))).status).toBe(400);
     expect(m.put).not.toHaveBeenCalled();

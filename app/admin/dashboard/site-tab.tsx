@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 import type { SeoCopy, SiteContent, SiteCopy } from '@/lib/types';
 import { validateSiteContent } from '@/lib/validate';
-import { Button, Eyebrow, GroupHead } from '../ui';
-import { ErrorSummary, ItemControls, ListTextField, TextField, useItemKeys } from '../ui/edit';
+import { Button, GroupHead } from '../ui';
+import { ErrorSummary, ItemControls, LedgerLayout, ListTextField, SheetHead, TextField, useItemKeys, type LedgerRow } from '../ui/edit';
 import { errorFor, errorsUnder, moveItem, nextSectionId, parseParagraphs, readable, removeAt, replaceAt } from './content-edit';
 
 type SectionId = 'footer' | 'privacy' | 'seo' | 'notfound';
@@ -140,34 +140,33 @@ export default function SiteTab({ content, onChange }: { content: SiteContent; o
   }
   const setSite = (s: SiteCopy) => onChange({ ...content, site: s });
   const props = { site, errors, setSite };
+  const rows: LedgerRow[] = SECTIONS.map((s) => ({
+    id: s.id,
+    title: s.label,
+    stamp: errorsUnder(errors, s.path).length > 0 ? 'Fix' : undefined,
+  }));
+  const current = SECTIONS.find((s) => s.id === section) ?? SECTIONS[0];
+  const position = SECTIONS.indexOf(current) + 1;
   return (
-    <div className="md:grid md:grid-cols-[400px_minmax(0,1fr)] md:items-start md:gap-10">
-      <nav aria-label="On this page" className="md:sticky md:top-[88px]">
-        <Eyebrow>Site · on this page</Eyebrow>
-        <h2 className="font-display mt-1 text-[40px] font-bold leading-tight tracking-tight">Site</h2>
-        <p className="mb-4 mt-2 text-sm text-ink-muted">Footer, privacy policy, search and sharing, and the not-found page.</p>
-        <ul className="mt-4 border-t border-ink">
-          {SECTIONS.map((s, i) => {
-            const current = s.id === section;
-            const bad = errorsUnder(errors, s.path).length > 0;
-            return (
-              <li key={s.id} className={`border-b border-ink border-l-4 ${current ? 'border-l-ink bg-white' : 'border-l-transparent'}`}>
-                <button type="button" aria-current={current ? 'true' : undefined} onClick={() => setSection(s.id)} className="flex min-h-[56px] w-full items-center gap-3 px-3 text-left">
-                  <span aria-hidden="true" className="w-6 shrink-0 font-mono text-xs text-ink-muted">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="flex-1 font-display font-semibold">{s.label}</span>
-                  {bad && <span className="border border-ink px-1.5 py-0.5 font-mono text-[11px] uppercase leading-none tracking-wider">Fix</span>}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-      <div className="mt-8 min-w-0 border border-ink bg-white p-4 pb-10 md:mt-0 md:p-8">
-        {section === 'footer' && <Footer {...props} />}
-        {section === 'privacy' && <Privacy {...props} />}
-        {section === 'seo' && <Seo {...props} />}
-        {section === 'notfound' && <NotFound {...props} />}
-      </div>
-    </div>
+    <LedgerLayout
+      eyebrow="Site · on this page"
+      title="Site"
+      intro="Footer, privacy policy, search and sharing, and the not-found page."
+      listLabel="Site sections"
+      rows={rows}
+      selectedId={current.id}
+      onSelect={(id) => setSection(id as SectionId)}
+      sheet={({ headingRef, onBack }) => (
+        <div className="border border-ink bg-white p-4 pb-10 md:p-8">
+          <SheetHead eyebrow={`Section ${position} of ${SECTIONS.length}`} title={current.label} headingRef={headingRef} onBack={onBack} backLabel="All sections" />
+          <div className="mt-8">
+            {section === 'footer' && <Footer {...props} />}
+            {section === 'privacy' && <Privacy {...props} />}
+            {section === 'seo' && <Seo {...props} />}
+            {section === 'notfound' && <NotFound {...props} />}
+          </div>
+        </div>
+      )}
+    />
   );
 }

@@ -7,3 +7,9 @@
  */
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.iamerickclark.com';
+
+/** Absolute URL for a stored image: an https URL (Blob) is used as-is, a same-origin path gets the site origin. */
+export function absoluteImageUrl(photo: string, siteUrl: string = SITE_URL): string {
+  if (/^https:\/\//i.test(photo)) return photo;
+  return `${siteUrl.replace(/\/$/, '')}${photo.startsWith('/') ? '' : '/'}${photo}`;
+}
