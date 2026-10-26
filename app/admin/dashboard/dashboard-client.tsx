@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import Link from 'next/link';
 import type { SiteContent } from '@/lib/types';
 import { validateSiteContent } from '@/lib/validate';
@@ -8,6 +8,7 @@ import AboutTab from './about-tab';
 import ContactTab from './contact-tab';
 import ProjectsTab from './projects-tab';
 import { applyRouteImages } from './gallery-utils';
+import { applyGitHubFill, applySlugImageMove, removeProject } from './project-updates';
 import ExperienceTab from './experience-tab';
 
 type Tab = 'projects' | 'experience' | 'about' | 'contact';
@@ -19,6 +20,8 @@ export default function DashboardClient() {
   const [saved, setSaved] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [pending, setPending] = useState(0);
+  const pendingId = useId();
 
   useEffect(() => {
     fetch('/api/admin/content')
@@ -51,8 +54,12 @@ export default function DashboardClient() {
     setSaveError('');
   }
 
+  function trackPending(delta: 1 | -1) {
+    setPending((n) => Math.max(0, n + delta));
+  }
+
   async function save() {
-    if (!content) return;
+    if (!content || pending > 0) return;
     const check = validateSiteContent(content);
     if (!check.ok) {
       setSaveError(check.errors[0]);
@@ -127,6 +134,12 @@ export default function DashboardClient() {
             projects={content.projects}
             onChange={(projects) => update({ ...content, projects })}
             onRouteImages={(id, images) => updateFromLatest((latest) => applyRouteImages(latest, id, images))}
+            onDeleteProject={(id) => updateFromLatest((latest) => removeProject(latest, id))}
+            onSlugImageMoved={(id, from, imagePath) =>
+              updateFromLatest((latest) => applySlugImageMove(latest, id, from, imagePath))
+            }
+            onGitHubFill={(id, fill) => updateFromLatest((latest) => applyGitHubFill(latest, id, fill))}
+            onPendingChange={trackPending}
           />
         )}
         {tab === 'experience' && (
@@ -152,14 +165,18 @@ export default function DashboardClient() {
       {/* Save bar */}
       <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-background/95 backdrop-blur-md p-4 z-40">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-          <div className="text-sm">
+          <div className="min-w-0 text-sm">
             {saved && !dirty && <span className="text-green-400">✓ Saved — changes are live</span>}
-            {dirty && !saveError && <span className="text-muted">Unsaved changes</span>}
-            {saveError && <span className="text-red-400 text-xs">{saveError}</span>}
+            {dirty && !saveError && pending === 0 && <span className="text-muted">Unsaved changes</span>}
+            {saveError && <span className="text-red-400">{saveError}</span>}
+            <span id={pendingId} role="status" className="text-muted empty:hidden ml-3">
+              {pending > 0 ? 'Waiting for changes to finish…' : ''}
+            </span>
           </div>
           <button
             onClick={save}
-            disabled={saving || !dirty}
+            disabled={saving || !dirty || pending > 0}
+            aria-describedby={pendingId}
             className="shrink-0 flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-hover disabled:opacity-50 text-white font-semibold rounded-lg transition-colors duration-200 text-sm"
           >
             {saving ? 'Saving…' : `Save${dirty ? ' ●' : ''}`}

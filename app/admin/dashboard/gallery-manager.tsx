@@ -23,6 +23,7 @@ export default function GalleryManager({
   images,
   onChange,
   onRouteImages,
+  onPendingChange,
 }: {
   projectId: string;
   projectTitle: string;
@@ -30,6 +31,8 @@ export default function GalleryManager({
   onChange: (images: ProjectImage[], image: string) => void;
   /** Route responses go through here so the parent merges them into its latest state, never a render snapshot. */
   onRouteImages: (images: ProjectImage[]) => void;
+  /** +1 when a server-side write starts, -1 when it settles, so the parent can lock Save. */
+  onPendingChange: (delta: 1 | -1) => void;
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -72,17 +75,20 @@ export default function GalleryManager({
     if (busy) return;
     setBusy(label);
     setError(null);
+    onPendingChange(1);
     try {
       const res = await request();
       const data = (await res.json().catch(() => ({}))) as RouteResponse;
+      // A non-ok body can still carry the committed images (e.g. delete committed, blob cleanup failed).
+      if (Array.isArray(data.images)) apply(data);
       if (!res.ok || !data.images) {
         setError(data.error ?? failure);
         return;
       }
-      apply(data);
     } catch {
       setError(failure);
     } finally {
+      onPendingChange(-1);
       setBusy(null);
     }
   }

@@ -89,6 +89,18 @@ describe('DELETE /api/admin/projects/[id]', () => {
     const res = await DELETE(req(), ctx());
     expect(res.status).toBe(500);
     expect(m.set).toHaveBeenCalled();
-    expect((await res.json()).error).toMatch(/project was deleted, but removing its images failed/);
+    expect((await res.json()).error).toMatch(/project was deleted, but some of its image files could not be removed/);
+  });
+
+  it('flags deleted: true when blob deletion fails after the KV write committed', async () => {
+    m.del.mockRejectedValue(new Error('blob down'));
+    const res = await DELETE(req(), ctx());
+    expect(res.status).toBe(500);
+    const body = await res.json();
+    expect(body.deleted).toBe(true);
+    expect(body.error).not.toMatch(/retry/i);
+    expect(m.set).toHaveBeenCalledTimes(1);
+    const saved = JSON.parse(m.set.mock.calls[0][1]);
+    expect(saved.projects.map((p: { id: string }) => p.id)).toEqual(['p2']);
   });
 });

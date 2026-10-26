@@ -34,7 +34,13 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
     try {
       await deleteProjectBlobs(id);
     } catch {
-      return fail('The project was deleted, but removing its images failed. Retry the delete to clear them.', 500);
+      return NextResponse.json(
+        {
+          error: 'The project was deleted, but some of its image files could not be removed from storage and may remain there.',
+          deleted: true,
+        },
+        { status: 500 },
+      );
     }
     return NextResponse.json({ ok: true });
   } catch (e) {
