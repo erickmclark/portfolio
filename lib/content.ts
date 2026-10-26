@@ -60,3 +60,7 @@ export function publicProjects(projects: Project[]): Project[] {
 export function publicExperience(experience: ExperienceItem[]): ExperienceItem[] {
   return experience.filter((x) => (x.visibility ?? 'public') === 'public');
 }
+
+export function publicProjectBySlug(projects: Project[], slug: string): Project | undefined {
+  return publicProjects(projects).find((p) => p.slug === slug);
+}
