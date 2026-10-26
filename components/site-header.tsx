@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Download } from "lucide-react";
 import { parseView, viewHref, type View } from "@/lib/home-view";
+import { resumeDownloadHref } from "@/lib/resume";
 
 type Props = { name: string; resumeUrl?: string };
 
@@ -36,9 +37,8 @@ function Header({ name, resumeUrl, view }: Props & { view: View }) {
           ))}
           {resumeUrl && (
             <a
-              href={resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={resumeDownloadHref(resumeUrl)}
+              download
               className="on-dark ml-2 inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-4 text-[15px] font-semibold text-white"
             >
               Résumé <Download size={14} aria-hidden />
@@ -49,9 +49,8 @@ function Header({ name, resumeUrl, view }: Props & { view: View }) {
         <div className="flex items-center gap-1 md:hidden">
           {resumeUrl && (
             <a
-              href={resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={resumeDownloadHref(resumeUrl)}
+              download
               className="on-dark inline-flex min-h-11 items-center gap-1 rounded-full bg-ink px-4 text-[15px] font-semibold text-white"
             >
               Résumé <Download size={14} aria-hidden />

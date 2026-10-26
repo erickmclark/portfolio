@@ -1,6 +1,7 @@
 import { Download } from "lucide-react";
 import { getSiteContent, publicExperience } from "@/lib/content";
 import { experienceDates } from "@/lib/home-view";
+import { resumeDownloadHref } from "@/lib/resume";
 import SectionHead from "./section-head";
 
 const MARKS = ["bg-brand-blue", "bg-brand-orange", "bg-brand-yellow", "bg-brand-green", "bg-brand-pink", "bg-ink", "bg-brand-sky"];
@@ -34,9 +35,8 @@ export default async function Experience() {
         </ol>
         {about.resumeUrl && (
           <a
-            href={about.resumeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={resumeDownloadHref(about.resumeUrl)}
+            download
             className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white"
           >
             {EXPERIENCE.cta} <Download size={14} aria-hidden />
