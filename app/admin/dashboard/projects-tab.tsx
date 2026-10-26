@@ -505,7 +505,9 @@ export default function ProjectsTab({
   const [retrying, setRetrying] = useState(false);
   const [status, setStatus] = useState('');
   const noticeRef = useRef(notice);
-  noticeRef.current = notice;
+  useEffect(() => {
+    noticeRef.current = notice;
+  }, [notice]);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const noticeId = useId();
   const retryRef = useRef<HTMLButtonElement>(null);
