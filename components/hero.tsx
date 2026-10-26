@@ -3,6 +3,7 @@ import { ArrowRight, ArrowUpRight, Download } from "lucide-react";
 import { getSiteContent } from "@/lib/content";
 import { formatCredentials } from "@/lib/credentials";
 import { VIEWS, homeHref, type View } from "@/lib/home-view";
+import { resumeDownloadHref } from "@/lib/resume";
 import Configuration from "./configuration";
 import { ConfigurationMotion, ViewFade } from "./hero-motion";
 import { Eyebrow } from "./section-head";
@@ -21,7 +22,7 @@ export default async function Hero({ view }: { view: View }) {
   const btn =
     "inline-flex min-h-11 items-center justify-center px-5 text-[15px] font-semibold";
 
-  const resolve = (href: string) => (href === "resume" ? about.resumeUrl ?? null : href);
+  const resolve = (href: string) => (href === "resume" ? about.resumeUrl ? resumeDownloadHref(about.resumeUrl) : null : href);
   const primary = resolve(copy.primary.href);
   const secondary = resolve(copy.secondary.href);
 
@@ -67,7 +68,7 @@ export default async function Hero({ view }: { view: View }) {
             <a
               href={primary ?? "#work"}
               className={`on-dark ${btn} rounded-full bg-ink text-white`}
-              {...(copy.primary.href === "resume" ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              {...(copy.primary.href === "resume" ? { download: true } : {})}
             >
               {copy.primary.label}
             </a>
@@ -75,7 +76,7 @@ export default async function Hero({ view }: { view: View }) {
               <a
                 href={secondary}
                 className={`${btn} gap-2 rounded-full border-2 border-ink text-ink hover:bg-white`}
-                {...(copy.secondary.href === "resume" ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                {...(copy.secondary.href === "resume" ? { download: true } : {})}
               >
                 {copy.secondary.label}
                 {copy.secondary.href === "resume" && <Download size={14} aria-hidden />}

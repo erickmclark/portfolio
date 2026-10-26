@@ -5,6 +5,7 @@ import PrivacyLink from "@/components/privacy-link";
 import { getSiteContent } from "@/lib/content";
 import { CLARK_STRATEGICS_URL } from "@/lib/home-copy";
 import { VIEWS, VIEW_LABELS } from "@/lib/home-view";
+import { resumeDownloadHref } from "@/lib/resume";
 
 /** Decorative brand-shape frieze standing on the copyright rule; two repeats, swapped blue/pink. */
 function Frieze() {
@@ -63,7 +64,7 @@ export default async function SiteFooter() {
             <div className="flex flex-col items-start">
               <p className={heading}>More</p>
               {about.resumeUrl && (
-                <a className={link} href={about.resumeUrl} target="_blank" rel="noopener noreferrer">
+                <a className={link} href={resumeDownloadHref(about.resumeUrl)} download>
                   Résumé <ArrowDown size={14} aria-hidden />
                 </a>
               )}

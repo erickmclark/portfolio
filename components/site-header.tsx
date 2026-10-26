@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Download } from "lucide-react";
 import { hashTargetId, sameDocumentHashId } from "@/lib/hash-link";
 import { shouldSetPending } from "@/lib/bottom-nav-current";
+import { resumeDownloadHref } from "@/lib/resume";
 
 type Props = { name: string; resumeUrl?: string };
 
@@ -51,9 +52,8 @@ export default function SiteHeader({ name, resumeUrl }: Props) {
           </Link>
           {resumeUrl && (
             <a
-              href={resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={resumeDownloadHref(resumeUrl)}
+              download
               className="on-dark ml-2 inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-4 text-[15px] font-semibold text-white"
             >
               Résumé <Download size={14} aria-hidden />
@@ -64,9 +64,8 @@ export default function SiteHeader({ name, resumeUrl }: Props) {
         <div className="flex items-center gap-1 md:hidden">
           {resumeUrl && (
             <a
-              href={resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={resumeDownloadHref(resumeUrl)}
+              download
               className="on-dark inline-flex min-h-11 items-center gap-1 rounded-full bg-ink px-4 text-[15px] font-semibold text-white"
             >
               Résumé <Download size={14} aria-hidden />

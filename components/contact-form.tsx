@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { LinkedInIcon } from '@/components/brand-icons';
 import PrivacyDialog, { type PrivacyContent } from '@/components/privacy-dialog';
+import { resumeDownloadHref } from '@/lib/resume';
 import {
   COMMON_FIELDS,
   CONTACT_FIELDS,
@@ -366,9 +367,8 @@ export default function ContactForm({ intent, initialValues, sourcePage, onValue
                 {intent === 'leadership' && resumeUrl && (
                   <a
                     className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white"
-                    href={resumeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={resumeDownloadHref(resumeUrl)}
+                    download
                   >
                     Download Résumé <ArrowDown size={14} aria-hidden />
                   </a>
