@@ -26,8 +26,8 @@ export default function Configuration({ view, className = "", labels = true }: {
   return (
     <div
       aria-hidden
-      className={`grid aspect-square w-full sm:aspect-[6/5] gap-[2px] bg-paper ${className}`}
-      style={{ gridTemplateColumns: "repeat(24, 1fr)", gridTemplateRows: "repeat(20, 1fr)" }}
+      className={`grid aspect-[6/5] w-full grid-rows-[repeat(13,1fr)_repeat(3,1.2fr)_repeat(4,0.9fr)] sm:grid-rows-[repeat(20,1fr)] gap-[2px] bg-paper ${className}`}
+      style={{ gridTemplateColumns: "repeat(24, 1fr)" }}
     >
       {SLOTS.map((slot, i) => {
         const cap = rest[i];
