@@ -32,12 +32,13 @@ export default function ApproachAssembly({ view, children }: { view: string; chi
       const figure = pieces[0]?.parentElement;
       if (!figure) return;
       // Complete (t = 1) once the figure reaches where it sits when the section top is at the anchor-landing
-      // position (header 64px + scroll-margin 72px), so landing on #approach shows the finished state.
+      // position (header 64px + scroll-margin 72px), so landing on #approach shows the finished state. It finishes 0.1 x viewport height earlier
+      // so the finished state is reached while scrolling in, not only on landing.
       const vh = window.innerHeight;
       const top = figure.getBoundingClientRect().top;
       const sectionTop = (el.closest("section") ?? el).getBoundingClientRect().top;
-      const end = 72 + (top - sectionTop) + 8;
-      const start = Math.max(vh * 0.9, end + vh * 0.3);
+      const end = 72 + (top - sectionTop) + 8 + vh * 0.1;
+      const start = Math.max(vh, end + vh * 0.2);
       const t = scrollProgress(top, vh, start / vh, end / vh);
       pieces.forEach((p, i) => {
         const s = assemblyPiece(t, i, pieces.length);

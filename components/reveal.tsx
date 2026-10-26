@@ -22,7 +22,7 @@ export default function Reveal({ children }: { children: React.ReactNode }) {
         el.dataset.reveal = "shown";
         io.disconnect();
       },
-      { rootMargin: "0px 0px -10% 0px" },
+      { rootMargin: "0px 0px 15% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
