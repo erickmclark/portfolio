@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useId } from 'react';
+import { useState, useRef, useId, useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -32,6 +32,7 @@ import {
   type CaseStudySection,
 } from '@/lib/types';
 import GalleryManager from './gallery-manager';
+import { deleteOutcome, nextNoticeAfterRetry, type DeleteNotice } from './project-updates';
 import { galleryImages } from './gallery-utils';
 
 // Human titles for case-study sections (content spec 6, required project page template).
@@ -104,20 +105,24 @@ function SortableProject({
   onUpdate,
   onRouteImages,
   onDelete,
+  onDeleteStart,
   onDeletedWithWarning,
   onSlugImageMoved,
   onGitHubFill,
   onPendingChange,
+  retrying,
   slugError,
 }: {
   project: Project;
   onUpdate: (updated: Project) => void;
   onRouteImages: (images: ProjectImage[]) => void;
   onDelete: () => void;
-  onDeletedWithWarning: (message: string) => void;
+  onDeleteStart: () => void;
+  onDeletedWithWarning: (projectId: string, message: string) => void;
   onSlugImageMoved: (from: string, imagePath: string) => void;
   onGitHubFill: (fill: { title: string; tagline: string; tech: string[] }) => void;
   onPendingChange: (delta: 1 | -1) => void;
+  retrying: boolean;
   slugError?: string;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
@@ -167,6 +172,7 @@ function SortableProject({
 
   async function handleDelete() {
     if (!confirm(`Delete "${project.title || 'this project'}"? This removes the project and its uploaded images immediately.`)) return;
+    onDeleteStart();
     setDeleting(true);
     setDeleteError(null);
     onPendingChange(1);
@@ -174,9 +180,9 @@ function SortableProject({
       const res = await fetch(`/api/admin/projects/${project.id}`, { method: 'DELETE' });
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string; deleted?: boolean };
-        if (data.deleted === true) {
+        if (deleteOutcome(false, data) === 'removed-with-warning') {
           // The project is gone from KV; drop it from dashboard state so a later Save cannot restore it.
-          onDeletedWithWarning(data.error ?? 'The project was deleted, but some image files may remain in storage.');
+          onDeletedWithWarning(project.id, data.error ?? 'The project was deleted, but some image files may remain in storage.');
           onDelete();
           return;
         }
@@ -461,7 +467,7 @@ function SortableProject({
           <button
             type="button"
             onClick={handleDelete}
-            disabled={deleting}
+            disabled={deleting || retrying}
             className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Trash2 size={14} />
@@ -483,6 +489,8 @@ export default function ProjectsTab({
   onSlugImageMoved,
   onGitHubFill,
   onPendingChange,
+  notice,
+  setNotice,
 }: {
   projects: Project[];
   onChange: (projects: Project[]) => void;
@@ -491,8 +499,61 @@ export default function ProjectsTab({
   onSlugImageMoved: (projectId: string, from: string, imagePath: string) => void;
   onGitHubFill: (projectId: string, fill: { title: string; tagline: string; tech: string[] }) => void;
   onPendingChange: (delta: 1 | -1) => void;
+  notice: DeleteNotice;
+  setNotice: React.Dispatch<React.SetStateAction<DeleteNotice>>;
 }) {
-  const [notice, setNotice] = useState('');
+  const [retrying, setRetrying] = useState(false);
+  const [status, setStatus] = useState('');
+  const noticeRef = useRef(notice);
+  noticeRef.current = notice;
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const noticeId = useId();
+  const retryRef = useRef<HTMLButtonElement>(null);
+  const focusRetry = useRef(false);
+
+  useEffect(() => {
+    if (notice && focusRetry.current) {
+      focusRetry.current = false;
+      retryRef.current?.scrollIntoView({ block: 'nearest' });
+      retryRef.current?.focus();
+    }
+  }, [notice]);
+
+  async function retryCleanup() {
+    if (!notice || retrying) return;
+    const { projectId } = notice;
+    setRetrying(true);
+    setStatus('Retrying cleanup…');
+    onPendingChange(1);
+    let outcome: 'removed' | 'removed-with-warning' | 'error' = 'error';
+    let message = 'Retry failed.';
+    try {
+      const res = await fetch(`/api/admin/projects/${projectId}`, { method: 'DELETE' });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      outcome = deleteOutcome(res.ok, data);
+      if (outcome === 'removed-with-warning')
+        message = data.error ?? 'The project was deleted, but some image files may remain in storage.';
+      else if (outcome === 'error') message = data.error ?? 'Retry failed.';
+    } catch {
+      // keep the default failure outcome
+    } finally {
+      // Apply only if the notice still names this project; a newer or cleared notice is left alone.
+      const stillCurrent = noticeRef.current?.projectId === projectId;
+      setNotice((prev) => nextNoticeAfterRetry(prev, projectId, outcome, message));
+      if (!stillCurrent) {
+        setStatus('');
+      } else if (outcome === 'removed') {
+        setStatus('Cleanup finished.');
+        headingRef.current?.focus();
+      } else {
+        // Clear first so an identical repeat failure still changes the live-region text.
+        setStatus('');
+        setTimeout(() => setStatus('Cleanup failed again.'), 50);
+      }
+      onPendingChange(-1);
+      setRetrying(false);
+    }
+  }
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -542,13 +603,28 @@ export default function ProjectsTab({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold">Projects</h2>
+        <h2 ref={headingRef} tabIndex={-1} className="text-xl font-bold focus:outline-none">Projects</h2>
         <p className="text-sm text-muted">
           {projects.length} project{projects.length !== 1 ? 's' : ''}
         </p>
       </div>
 
-      <p role="alert" className="text-sm text-red-400 empty:hidden">{notice}</p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p id={noticeId} role="alert" className="text-sm text-red-400 empty:hidden">{notice?.message ?? ''}</p>
+        {notice && (
+          <button
+            ref={retryRef}
+            type="button"
+            onClick={retryCleanup}
+            aria-disabled={retrying ? 'true' : undefined}
+            aria-describedby={noticeId}
+            className={`text-sm text-red-400 hover:text-red-300 underline transition-colors ${retrying ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            {retrying ? 'Retrying…' : 'Retry cleanup'}
+          </button>
+        )}
+        <p role="status" aria-live="polite" className="sr-only">{status}</p>
+      </div>
 
       {hasSlugErrors && (
         <div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-400">
@@ -576,10 +652,15 @@ export default function ProjectsTab({
                 }
                 onRouteImages={(images) => onRouteImages(project.id, images)}
                 onDelete={() => onDeleteProject(project.id)}
-                onDeletedWithWarning={setNotice}
+                onDeleteStart={() => setNotice(null)}
+                onDeletedWithWarning={(projectId, message) => {
+                  focusRetry.current = true;
+                  setNotice({ projectId, message });
+                }}
                 onSlugImageMoved={(from, imagePath) => onSlugImageMoved(project.id, from, imagePath)}
                 onGitHubFill={(fill) => onGitHubFill(project.id, fill)}
                 onPendingChange={onPendingChange}
+                retrying={retrying}
               />
             ))}
           </div>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Project, SiteContent } from '@/lib/types';
-import { applyGitHubFill, applySlugImageMove, removeProject } from './project-updates';
+import { applyGitHubFill, applySlugImageMove, deleteOutcome, nextNoticeAfterRetry, removeProject } from './project-updates';
 
 const proj = (id: string, extra: Partial<Project> = {}): Project => ({
   id,
@@ -86,5 +86,45 @@ describe('applyGitHubFill', () => {
   it('returns latest unchanged when the project is gone', () => {
     const latest = site([proj('b')]);
     expect(applyGitHubFill(latest, 'a', { title: 'T', tagline: 'G', tech: [] })).toBe(latest);
+  });
+});
+
+describe('deleteOutcome', () => {
+  it('returns removed when ok', () => {
+    expect(deleteOutcome(true, { ok: true })).toBe('removed');
+  });
+  it('returns removed-with-warning when not ok and deleted is true', () => {
+    expect(deleteOutcome(false, { error: 'cleanup failed', deleted: true })).toBe('removed-with-warning');
+  });
+  it('returns error for a 500 body without the deleted flag', () => {
+    expect(deleteOutcome(false, { error: 'boom' })).toBe('error');
+  });
+  it('returns error when deleted is the string "true"', () => {
+    expect(deleteOutcome(false, { deleted: 'true' })).toBe('error');
+  });
+  it('returns error for a 401 body', () => {
+    expect(deleteOutcome(false, { error: 'Unauthorized' })).toBe('error');
+  });
+  it('returns error for the empty object produced by a failed JSON parse', () => {
+    expect(deleteOutcome(false, {})).toBe('error');
+  });
+});
+
+describe('nextNoticeAfterRetry', () => {
+  const cur = { projectId: 'a', message: 'old' };
+  it('clears the notice when the retry succeeded for the same project', () => {
+    expect(nextNoticeAfterRetry(cur, 'a', 'removed', '')).toBeNull();
+  });
+  it('replaces the message when the retry failed for the same project', () => {
+    expect(nextNoticeAfterRetry(cur, 'a', 'error', 'again')).toEqual({ projectId: 'a', message: 'again' });
+    expect(nextNoticeAfterRetry(cur, 'a', 'removed-with-warning', 'warn')).toEqual({ projectId: 'a', message: 'warn' });
+  });
+  it('leaves a newer notice for another project untouched', () => {
+    const newer = { projectId: 'b', message: 'newer' };
+    expect(nextNoticeAfterRetry(newer, 'a', 'removed', '')).toBe(newer);
+    expect(nextNoticeAfterRetry(newer, 'a', 'error', 'x')).toBe(newer);
+  });
+  it('does not re-show an older notice after it was cleared', () => {
+    expect(nextNoticeAfterRetry(null, 'a', 'error', 'x')).toBeNull();
   });
 });
