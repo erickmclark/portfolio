@@ -55,18 +55,25 @@ async function hit(
   return { allowed: false, retryAfter: ttl > 0 ? ttl : windowSeconds };
 }
 
-/** Fails closed: throws RateLimiterUnavailableError when Redis is missing or errors. */
-export async function checkRateLimit(headers: Headers): Promise<RateLimitResult> {
+async function limited(key: (headers: Headers) => string, config: { limit: number; windowSeconds: number }, headers: Headers) {
   try {
     const redis = getRedis();
     if (!redis) throw new RateLimiterUnavailableError('redis not configured');
-    const perIp = await hit(redis, `contact:rl:ip:${clientIdentifier(headers)}`, RATE_LIMIT_PER_IP);
-    if (!perIp.allowed) return perIp;
-    return await hit(redis, 'contact:rl:global', RATE_LIMIT_GLOBAL);
+    return await hit(redis, key(headers), config);
   } catch (e) {
     if (e instanceof RateLimiterUnavailableError) throw e;
     throw new RateLimiterUnavailableError('rate limiter failed');
   }
+}
+
+/** Per-client limit, applied to every request. Fails closed: throws RateLimiterUnavailableError when Redis is missing or errors. */
+export function checkClientRateLimit(headers: Headers): Promise<RateLimitResult> {
+  return limited((h) => `contact:rl:ip:${clientIdentifier(h)}`, RATE_LIMIT_PER_IP, headers);
+}
+
+/** Global daily cap, counted only for valid non-spam sends. Fails closed like checkClientRateLimit. */
+export function checkGlobalRateLimit(): Promise<RateLimitResult> {
+  return limited(() => 'contact:rl:global', RATE_LIMIT_GLOBAL, new Headers());
 }
 
 export function composeEmail(

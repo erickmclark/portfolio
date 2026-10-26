@@ -5,7 +5,8 @@ vi.mock('@/lib/content', () => ({ getRedis: vi.fn() }));
 import { getRedis } from '@/lib/content';
 import { CONTACT_INTENT_IDS, type ContactSubmission } from './contact';
 import {
-  checkRateLimit,
+  checkClientRateLimit,
+  checkGlobalRateLimit,
   clientIdentifier,
   composeEmail,
   recipientForIntent,
@@ -55,24 +56,24 @@ describe('recipientForIntent', () => {
   });
 });
 
-describe('checkRateLimit', () => {
+describe('checkClientRateLimit', () => {
   beforeEach(() => vi.mocked(getRedis).mockReset());
 
   it('allows up to the limit then blocks with retryAfter', async () => {
     const r = fakeRedis();
     vi.mocked(getRedis).mockReturnValue(asRedis(r));
     const h = headers({ 'x-forwarded-for': '1.2.3.4, 5.6.7.8' });
-    for (let i = 0; i < 5; i++) expect(await checkRateLimit(h)).toEqual({ allowed: true });
-    expect(await checkRateLimit(h)).toEqual({ allowed: false, retryAfter: 300 });
+    for (let i = 0; i < 5; i++) expect(await checkClientRateLimit(h)).toEqual({ allowed: true });
+    expect(await checkClientRateLimit(h)).toEqual({ allowed: false, retryAfter: 300 });
   });
 
   it('sets EXPIRE only on the first hit of a key', async () => {
     const r = fakeRedis();
     vi.mocked(getRedis).mockReturnValue(asRedis(r));
-    await checkRateLimit(headers({ 'x-real-ip': '9.9.9.9' }));
-    expect(r.expire).toHaveBeenCalledTimes(2); // ip + global
-    await checkRateLimit(headers({ 'x-real-ip': '9.9.9.9' }));
-    expect(r.expire).toHaveBeenCalledTimes(2);
+    await checkClientRateLimit(headers({ 'x-real-ip': '9.9.9.9' }));
+    expect(r.expire).toHaveBeenCalledTimes(1);
+    await checkClientRateLimit(headers({ 'x-real-ip': '9.9.9.9' }));
+    expect(r.expire).toHaveBeenCalledTimes(1);
   });
 
   it('restores the window when a blocked key has lost its TTL', async () => {
@@ -80,35 +81,49 @@ describe('checkRateLimit', () => {
     r.ttl.mockResolvedValue(-1);
     vi.mocked(getRedis).mockReturnValue(asRedis(r));
     const h = headers({ 'x-real-ip': '8.8.8.8' });
-    for (let i = 0; i < 5; i++) await checkRateLimit(h);
+    for (let i = 0; i < 5; i++) await checkClientRateLimit(h);
     r.expire.mockClear();
-    expect(await checkRateLimit(h)).toEqual({ allowed: false, retryAfter: 600 });
+    expect(await checkClientRateLimit(h)).toEqual({ allowed: false, retryAfter: 600 });
     expect(r.expire).toHaveBeenCalledWith(expect.stringContaining('contact:rl:ip:'), 600);
   });
 
-  it('never stores the raw IP in keys', async () => {
+  it('never stores the raw IP in keys and never touches the global key', async () => {
     const r = fakeRedis();
     vi.mocked(getRedis).mockReturnValue(asRedis(r));
-    await checkRateLimit(headers({ 'x-forwarded-for': '203.0.113.7' }));
+    await checkClientRateLimit(headers({ 'x-forwarded-for': '203.0.113.7' }));
     for (const k of r.store.keys()) expect(k).not.toContain('203.0.113.7');
+    expect(r.store.has('contact:rl:global')).toBe(false);
     expect(clientIdentifier(headers({ 'x-forwarded-for': '203.0.113.7' }))).toMatch(/^[0-9a-f]{64}$/);
-  });
-
-  it('enforces the global cap across clients', async () => {
-    const r = fakeRedis();
-    vi.mocked(getRedis).mockReturnValue(asRedis(r));
-    for (let i = 0; i < 50; i++) expect(await checkRateLimit(headers({ 'x-forwarded-for': `10.0.0.${i}` }))).toEqual({ allowed: true });
-    const res = await checkRateLimit(headers({ 'x-forwarded-for': '10.0.1.1' }));
-    expect(res.allowed).toBe(false);
   });
 
   it('fails closed without Redis or on Redis error', async () => {
     vi.mocked(getRedis).mockReturnValue(null);
-    await expect(checkRateLimit(headers())).rejects.toBeInstanceOf(RateLimiterUnavailableError);
+    await expect(checkClientRateLimit(headers())).rejects.toBeInstanceOf(RateLimiterUnavailableError);
     const r = fakeRedis();
     r.incr.mockRejectedValue(new Error('boom'));
     vi.mocked(getRedis).mockReturnValue(asRedis(r));
-    await expect(checkRateLimit(headers())).rejects.toBeInstanceOf(RateLimiterUnavailableError);
+    await expect(checkClientRateLimit(headers())).rejects.toBeInstanceOf(RateLimiterUnavailableError);
+  });
+});
+
+describe('checkGlobalRateLimit', () => {
+  beforeEach(() => vi.mocked(getRedis).mockReset());
+
+  it('enforces the global cap and only uses the global key', async () => {
+    const r = fakeRedis();
+    vi.mocked(getRedis).mockReturnValue(asRedis(r));
+    for (let i = 0; i < 50; i++) expect(await checkGlobalRateLimit()).toEqual({ allowed: true });
+    expect(await checkGlobalRateLimit()).toEqual({ allowed: false, retryAfter: 300 });
+    expect([...r.store.keys()]).toEqual(['contact:rl:global']);
+  });
+
+  it('fails closed without Redis or on Redis error', async () => {
+    vi.mocked(getRedis).mockReturnValue(null);
+    await expect(checkGlobalRateLimit()).rejects.toBeInstanceOf(RateLimiterUnavailableError);
+    const r = fakeRedis();
+    r.incr.mockRejectedValue(new Error('boom'));
+    vi.mocked(getRedis).mockReturnValue(asRedis(r));
+    await expect(checkGlobalRateLimit()).rejects.toBeInstanceOf(RateLimiterUnavailableError);
   });
 });
 

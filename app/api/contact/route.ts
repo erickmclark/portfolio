@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isSpam, validateContactSubmission } from '@/lib/contact';
-import { checkRateLimit, sendContactEmail } from '@/lib/contact-delivery';
+import { checkClientRateLimit, checkGlobalRateLimit, sendContactEmail } from '@/lib/contact-delivery';
 
 const SERVER_ERROR =
   "Your message couldn't be sent. Please try again or use the direct email link.";
@@ -27,18 +27,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Request body must be a JSON object.' }, { status: 400 });
   }
 
-  let limit;
+  const rateLimited = (retryAfter: number) =>
+    NextResponse.json(
+      { error: 'Too many messages. Please try again later.', code: 'rate_limited' },
+      { status: 429, headers: { 'Retry-After': String(retryAfter) } },
+    );
+
+  let clientLimit;
   try {
-    limit = await checkRateLimit(request.headers);
+    clientLimit = await checkClientRateLimit(request.headers);
   } catch {
     return NextResponse.json({ error: SERVER_ERROR }, { status: 500 });
   }
-  if (!limit.allowed) {
-    return NextResponse.json(
-      { error: 'Too many messages. Please try again later.', code: 'rate_limited' },
-      { status: 429, headers: { 'Retry-After': String(limit.retryAfter) } },
-    );
-  }
+  if (!clientLimit.allowed) return rateLimited(clientLimit.retryAfter);
 
   if (isSpam(body)) return NextResponse.json({ ok: true });
 
@@ -49,6 +50,14 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
+
+  let globalLimit;
+  try {
+    globalLimit = await checkGlobalRateLimit();
+  } catch {
+    return NextResponse.json({ error: SERVER_ERROR }, { status: 500 });
+  }
+  if (!globalLimit.allowed) return rateLimited(globalLimit.retryAfter);
 
   try {
     await sendContactEmail(result.submission);
