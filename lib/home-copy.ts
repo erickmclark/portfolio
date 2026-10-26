@@ -24,8 +24,8 @@ type HeroCopy = {
   body: string;
   primary: Cta;
   secondary: Cta;
-  /** Third action, a text link. `resume` means the résumé link from content. */
-  tertiary: Cta | 'resume';
+  /** Optional third action, a text link. */
+  tertiary?: Cta;
   tertiaryExternal?: boolean;
 };
 
@@ -50,7 +50,6 @@ export const HERO: Record<View, HeroCopy> = {
     body: 'I design and develop AI-powered applications, business platforms, and automation systems. My work spans product strategy, architecture, databases, integrations, AI workflows, testing, and deployment. I use AI-assisted engineering with defined quality and security controls while retaining human judgment over important decisions.',
     primary: { label: "Explore What I've Built", href: '#work' },
     secondary: { label: 'Discuss a Build', href: CONTACT_HREFS.build },
-    tertiary: 'resume',
   },
 };
 
