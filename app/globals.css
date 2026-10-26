@@ -29,6 +29,8 @@
   --color-brand-yellow: #f2b705;
   --color-brand-cream: #fbe3a0;
   --color-brand-navy: #17345e;
+  /* LinkedIn brand blue, footer icon only: 3.2:1 on ink (non-text graphic, label alongside). */
+  --color-linkedin: #0a66c2;
   /* Admin error (Figma color/error): 5.2:1 on paper, 6.5:1 on white. */
   --color-error: #b3261e;
   --font-display: var(--font-funnel-display), system-ui, sans-serif;
