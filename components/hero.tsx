@@ -5,6 +5,7 @@ import { getSiteContent } from "@/lib/content";
 import { HERO, PROFILE_LINE, SELECTOR_LABEL, CAPABILITIES } from "@/lib/home-copy";
 import { VIEWS, VIEW_LABELS, homeHref, type View } from "@/lib/home-view";
 import Configuration from "./configuration";
+import { ConfigurationMotion, ViewFade } from "./hero-motion";
 import { Eyebrow } from "./section-head";
 
 const VIEW_TOWER: Record<View, string> = {
@@ -62,7 +63,7 @@ export default async function Hero({ view }: { view: View }) {
           </nav>
         </div>
 
-        <div className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
+        <ViewFade view={view} className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
           {/* The H1 is the page's only H1 and is server-rendered for every view. */}
           <h1
             id="hero-title"
@@ -101,10 +102,12 @@ export default async function Hero({ view }: { view: View }) {
               </a>
             )}
           </div>
-        </div>
+        </ViewFade>
 
         <div className="order-2 lg:order-none lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:pt-14">
-          <Configuration view={view} className="mx-auto max-w-[600px] lg:ml-auto" />
+          <ConfigurationMotion view={view}>
+            <Configuration view={view} className="mx-auto max-w-[600px] lg:ml-auto" />
+          </ConfigurationMotion>
           <p className="mx-auto mt-3 max-w-[600px] text-right font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-ink-muted lg:ml-auto">
             Configuration: {VIEW_TOWER[view]}
           </p>
