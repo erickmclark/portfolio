@@ -104,7 +104,7 @@ export default async function RootLayout({
         <HideOnAdmin>
           <SiteFooter />
         </HideOnAdmin>
-        <MobileBottomNav />
+        <MobileBottomNav photo={about.photo || undefined} />
         <Analytics />
         <SpeedInsights />
       </body>
