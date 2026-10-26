@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { getSiteContent } from "@/lib/content";
 import { splitAbout } from "@/lib/home-view";
+import AboutPortrait from "./about-portrait";
 import SectionHead, { Eyebrow } from "./section-head";
 
 export default async function About({ level = 2 }: { level?: 1 | 2 }) {
@@ -13,23 +13,12 @@ export default async function About({ level = 2 }: { level?: 1 | 2 }) {
       <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-10 sm:py-24">
         <SectionHead eyebrow={ABOUT.eyebrow} heading={ABOUT.heading} headingId="about-title" level={level} />
         <div className="mt-14 grid gap-12 lg:grid-cols-[420px_minmax(0,1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-[72px] lg:gap-y-0">
-          {about.photo && (
-            <figure className="flex flex-col items-center text-center lg:col-start-1 lg:row-start-1 lg:items-start lg:text-left">
-              <Image
-                src={about.photo}
-                alt={`Portrait of ${about.name}`}
-                width={160}
-                height={160}
-                sizes="160px"
-                className="h-40 w-40 rounded-full object-cover ring-[3px] ring-brand-blue ring-offset-4 ring-offset-paper"
-              />
-              {about.quote?.trim() && (
-                <blockquote className="mt-6 max-w-[34ch] text-[17px] italic leading-[1.5] text-ink-muted">
-                  “{about.quote}”
-                </blockquote>
-              )}
-            </figure>
-          )}
+          <AboutPortrait
+            photo={about.photo}
+            name={about.name}
+            quote={about.quote}
+            className="lg:col-start-1 lg:row-start-1"
+          />
 
           <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
             <div className="space-y-5 text-[17px] leading-[1.5]">
