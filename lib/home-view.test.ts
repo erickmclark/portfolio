@@ -11,6 +11,7 @@ import {
   parseCategory,
   parseView,
   splitAbout,
+  viewHref,
 } from './home-view';
 import type { Project } from './types';
 
@@ -148,5 +149,16 @@ describe('workHref', () => {
     expect(workHref('builder')).toBe('/work?view=builder');
     expect(workHref('it', 'AI & SaaS Products')).toBe('/work?category=AI+%26+SaaS+Products');
     expect(workHref('consultant', 'AI & SaaS Products')).toBe('/work?view=consultant&category=AI+%26+SaaS+Products');
+  });
+});
+
+describe('viewHref', () => {
+  it('adds no query for the default view', () => {
+    expect(viewHref('/work', 'it')).toBe('/work');
+    expect(viewHref('/', 'it')).toBe('/');
+  });
+  it('carries consultant and builder views', () => {
+    expect(viewHref('/about', 'consultant')).toBe('/about?view=consultant');
+    expect(viewHref('/', 'builder')).toBe('/?view=builder');
   });
 });

@@ -2,6 +2,8 @@ export const dynamic = 'force-dynamic';
 
 import type { Metadata } from "next";
 import SelectedWork from "@/components/selected-work";
+import ContactBanner from "@/components/contact-banner";
+import Reveal from "@/components/reveal";
 import { getSiteContent } from "@/lib/content";
 import { parseCategory, parseView } from "@/lib/home-view";
 
@@ -26,6 +28,7 @@ export default async function WorkPage({
   return (
     <main id="main-content" className="public-shell">
       <SelectedWork view={view} category={category} />
+      <Reveal><ContactBanner /></Reveal>
     </main>
   );
 }

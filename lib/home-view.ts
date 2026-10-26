@@ -44,6 +44,11 @@ export function workHref(view: View, category?: ProjectCategory | null): string 
   return `/work${s ? `?${s}` : ''}`;
 }
 
+/** Path with the audience view carried as `?view=`; the default view adds no query. */
+export function viewHref(path: string, view: View): string {
+  return view === DEFAULT_VIEW ? path : `${path}?view=${view}`;
+}
+
 /** Featured order per view (spec 16.2), by stable Project.id. */
 export const FEATURED_ORDER: Record<View, string[]> = {
   it: [
