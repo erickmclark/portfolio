@@ -13,6 +13,26 @@
 
   --font-sans: var(--font-geist-sans), system-ui, sans-serif;
 
+  /* R9 public-site tokens. New names only: the tokens above are used by /admin.
+     Contrast (WCAG, computed): ink on paper 14.5:1, ink-muted on paper 7.3:1, white on ink 18.4:1,
+     white on brand-blue 6.6:1, white on brand-green 6.3:1, white on brand-navy 12.4:1,
+     ink on brand-orange 5.9:1, ink on brand-yellow 10.1:1, ink on brand-pink 9.6:1,
+     ink on brand-sky 10.6:1, ink on brand-cream 14.6:1. White on orange is 3.1:1 and is never used. */
+  --color-paper: #e8e4dd;
+  --color-ink: #141414;
+  --color-ink-muted: #4a4741;
+  --color-brand-blue: #2b3bff;
+  --color-brand-orange: #ff5a1f;
+  --color-brand-green: #0a6e4b;
+  --color-brand-pink: #ff9ec7;
+  --color-brand-sky: #9cc8ff;
+  --color-brand-yellow: #f2b705;
+  --color-brand-cream: #fbe3a0;
+  --color-brand-navy: #17345e;
+  --font-display: var(--font-funnel-display), system-ui, sans-serif;
+  --font-body: var(--font-funnel-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
   --max-width-site: 1200px;
 }
 
@@ -93,3 +113,20 @@ section[id] {
   );
   pointer-events: none;
 }
+
+/* Public pages: the R9 paper surface. Applied on public wrappers so /admin keeps the dark body. */
+.public-shell {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+.public-shell :focus-visible {
+  outline: 3px solid var(--color-brand-blue);
+  outline-offset: 2px;
+  border-radius: 0;
+}
+.public-shell .on-dark:focus-visible {
+  outline-color: var(--color-brand-sky);
+}
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }

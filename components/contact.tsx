@@ -1,75 +1,43 @@
-import { Mail, GitBranch, Globe } from 'lucide-react';
-import { getSiteContent } from '@/lib/content';
-import AnimateIn from './animate-in';
+import { ArrowUpRight, Mail } from "lucide-react";
+import { getSiteContent } from "@/lib/content";
+import { CONTACT } from "@/lib/home-copy";
 
 export default async function Contact() {
   const { contact } = await getSiteContent();
-
+  const btn = "inline-flex min-h-11 items-center gap-2 px-5 text-[15px] font-semibold";
   return (
-    <section id="contact" className="py-24 px-6">
-      <div className="max-w-site mx-auto">
-        <AnimateIn direction="up">
-          <p className="text-accent text-xs font-semibold tracking-widest uppercase mb-3">
-            Contact
-          </p>
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tighter mb-4">
-            Let&apos;s Work Together
-          </h2>
-          <p className="text-muted text-lg max-w-lg mb-12 leading-relaxed">
-            Whether you have a project in mind, a role to fill, or just want to
-            connect — my inbox is open.
-          </p>
-        </AnimateIn>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <AnimateIn direction="up" delay={0}>
-            <a
-              href={`mailto:${contact.email}`}
-              className="group inline-flex items-center gap-3 px-6 py-4 bg-surface border border-border hover:border-accent/60 hover:bg-accent/5 rounded-2xl transition-all duration-200 hover:-translate-y-0.5"
-            >
-              <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent/20 transition-colors duration-200">
-                <Mail size={18} className="text-accent" />
-              </div>
-              <div>
-                <p className="text-xs text-muted mb-0.5">Email me at</p>
-                <p className="text-sm font-semibold text-foreground">{contact.email}</p>
-              </div>
+    <section id="contact" aria-labelledby="contact-title" className="public-shell border-t border-ink">
+      <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-10 sm:py-24">
+        <h2
+          id="contact-title"
+          className="max-w-[820px] font-display text-[40px] font-bold leading-[1.02] tracking-[-0.03em] sm:text-6xl lg:text-[80px]"
+        >
+          {CONTACT.heading}
+        </h2>
+        <p className="mt-6 max-w-[760px] text-xl font-medium leading-[1.3] sm:text-[26px]">{CONTACT.intro}</p>
+        <div className="mt-12 border-t border-ink pt-6">
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">Or write directly</p>
+          <a
+            href={`mailto:${contact.email}`}
+            className="mt-3 inline-block break-all font-display text-2xl font-bold tracking-[-0.02em] underline underline-offset-4 sm:text-[28px]"
+          >
+            {contact.email}
+          </a>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a href={`mailto:${contact.email}`} className={`on-dark ${btn} bg-ink text-white`}>
+              <Mail size={16} aria-hidden /> Email
             </a>
-          </AnimateIn>
-
-          <AnimateIn direction="up" delay={100}>
-            <a
-              href={contact.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-3 px-6 py-4 bg-surface border border-border hover:border-accent/60 hover:bg-accent/5 rounded-2xl transition-all duration-200 hover:-translate-y-0.5"
-            >
-              <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent/20 transition-colors duration-200">
-                <GitBranch size={18} className="text-accent" />
-              </div>
-              <div>
-                <p className="text-xs text-muted mb-0.5">Find me on</p>
-                <p className="text-sm font-semibold text-foreground">GitHub</p>
-              </div>
-            </a>
-          </AnimateIn>
-
-          <AnimateIn direction="up" delay={200}>
-            <a
-              href={contact.linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-3 px-6 py-4 bg-surface border border-border hover:border-accent/60 hover:bg-accent/5 rounded-2xl transition-all duration-200 hover:-translate-y-0.5"
-            >
-              <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent/20 transition-colors duration-200">
-                <Globe size={18} className="text-accent" />
-              </div>
-              <div>
-                <p className="text-xs text-muted mb-0.5">Connect on</p>
-                <p className="text-sm font-semibold text-foreground">LinkedIn</p>
-              </div>
-            </a>
-          </AnimateIn>
+            {contact.linkedinUrl && (
+              <a href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" className={`${btn} border-2 border-ink hover:bg-white`}>
+                LinkedIn <ArrowUpRight size={14} aria-hidden />
+              </a>
+            )}
+            {contact.githubUrl && (
+              <a href={contact.githubUrl} target="_blank" rel="noopener noreferrer" className={`${btn} border-2 border-ink hover:bg-white`}>
+                GitHub <ArrowUpRight size={14} aria-hidden />
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </section>

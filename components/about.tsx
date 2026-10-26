@@ -1,87 +1,85 @@
-import Image from 'next/image';
-import { getSiteContent } from '@/lib/content';
-import AnimateIn from './animate-in';
+import Image from "next/image";
+import { getSiteContent } from "@/lib/content";
+import { ABOUT, TOOLKIT } from "@/lib/home-copy";
+import { splitAbout } from "@/lib/home-view";
+import SectionHead, { Eyebrow } from "./section-head";
 
 export default async function About() {
   const { about } = await getSiteContent();
-
-  const initials = about.name
-    .split(' ')
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+  const { paragraphs, credentials, closing } = splitAbout(about.bio);
 
   return (
-    <section id="about" className="py-24 px-6 bg-surface overflow-x-clip">
-      <div className="max-w-site mx-auto">
-        <AnimateIn direction="up">
-          <p className="text-accent text-xs font-semibold tracking-widest uppercase mb-3">
-            About
-          </p>
-        </AnimateIn>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+    <section id="about" aria-labelledby="about-title" className="public-shell border-t border-ink">
+      <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-10 sm:py-24">
+        <SectionHead eyebrow={ABOUT.eyebrow} heading={ABOUT.heading} headingId="about-title" />
+        <div className="mt-14 grid gap-12 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-[72px]">
           <div>
-            <AnimateIn direction="up" delay={60}>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tighter mb-8">
-                Who I Am
-              </h2>
-            </AnimateIn>
-
-            <AnimateIn direction="left" delay={160}>
-              <div className="space-y-4 text-muted leading-relaxed">
-                {about.bio.map((para, i) => (
-                  <p key={i}>{para}</p>
-                ))}
+            {about.photo && (
+              <Image
+                src={about.photo}
+                alt={`Portrait of ${about.name}`}
+                width={160}
+                height={160}
+                sizes="160px"
+                className="h-40 w-40 rounded-full object-cover"
+              />
+            )}
+            {closing && (
+              <div className="mt-8 border-t-[3px] border-ink pt-5">
+                <Eyebrow>{ABOUT.closingLabel}</Eyebrow>
+                <p className="mt-4 font-display text-[32px] font-bold leading-[1.1] tracking-[-0.03em]">{closing}</p>
               </div>
-            </AnimateIn>
-
-            <AnimateIn direction="up" delay={260}>
-              <div className="mt-10">
-                <h3 className="text-xs font-semibold tracking-widest uppercase text-muted mb-4">
-                  Technologies
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {about.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground hover:border-accent/60 hover:text-accent hover:bg-accent/5 transition-colors duration-200 cursor-default"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </AnimateIn>
+            )}
           </div>
 
-          <AnimateIn direction="right" delay={120} className="flex justify-center lg:justify-end">
-            <div className="relative">
-              <div className="absolute -inset-4 rounded-full bg-gradient-to-br from-accent/20 via-transparent to-transparent blur-xl" />
-              <div className="relative w-72 h-72 rounded-full border border-border overflow-hidden bg-gradient-to-br from-accent/20 via-surface to-border">
-                {about.photo ? (
-                  <Image
-                    src={about.photo}
-                    alt={about.name}
-                    fill
-                    className="object-cover scale-105"
-                    sizes="288px"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-5xl font-black text-accent/60 select-none">
-                      {initials}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="absolute -bottom-2 right-2 bg-background border border-border rounded-2xl px-4 py-3 shadow-xl">
-                <p className="text-2xl font-black text-foreground leading-none">15+</p>
-                <p className="text-xs text-muted mt-0.5">Years in tech</p>
-              </div>
+          <div>
+            <div className="space-y-5 text-[17px] leading-[1.5]">
+              {paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
             </div>
-          </AnimateIn>
+          </div>
+        </div>
+
+        <div className="mt-16 grid gap-12 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-[72px]">
+          {credentials.length > 0 && (
+            <div>
+              <Eyebrow>Credentials</Eyebrow>
+              <ul className="mt-3 border-b border-ink">
+                {credentials.map((c) => (
+                  <li key={c} className="border-t border-ink py-3 text-[15px]">
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* Disclosure: closed by default, content stays in the HTML for search engines and no-JS visitors. */}
+          <details className="group self-start border-y border-ink lg:mt-[0px]">
+            <summary className="flex min-h-14 cursor-pointer items-center justify-between">
+              <Eyebrow>Technical toolkit</Eyebrow>
+              <span className="text-[15px] font-semibold">
+                <span className="group-open:hidden">Show toolkit ▾</span>
+                <span className="hidden group-open:inline">Hide toolkit ▴</span>
+              </span>
+            </summary>
+            <dl className="pb-4">
+              {TOOLKIT.map((g) => (
+                <div key={g.group} className="grid gap-2 border-t border-ink py-4 sm:grid-cols-[170px_1fr] sm:gap-6">
+                  <dt className="text-[15px] font-semibold">{g.group}</dt>
+                  <dd>
+                    <ul className="flex flex-wrap gap-2">
+                      {g.items.map((t) => (
+                        <li key={t} className="border border-ink px-2.5 py-1 text-sm">
+                          {t}
+                        </li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </details>
         </div>
       </div>
     </section>
