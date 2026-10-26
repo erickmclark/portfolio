@@ -8,7 +8,7 @@ import SiteFooter from "@/components/site-footer";
 import HideOnAdmin from "@/components/hide-on-admin";
 import MobileBottomNav from "@/components/mobile-bottom-nav";
 import { getSiteContent } from "@/lib/content";
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, absoluteImageUrl } from "@/lib/site";
 
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
@@ -84,7 +84,7 @@ export default async function RootLayout({
     description: site.seo.home.description,
     url: SITE_URL,
     email: `mailto:${contact.email}`,
-    ...(about.photo ? { image: `${SITE_URL}${about.photo}` } : {}),
+    ...(about.photo ? { image: absoluteImageUrl(about.photo) } : {}),
     sameAs: [contact.githubUrl, contact.linkedinUrl].filter(Boolean),
   };
 

@@ -11,7 +11,7 @@ const BLOB_HOST_SUFFIX = '.public.blob.vercel-storage.com';
 
 /** Blob folder for About assets; reserved so no project id can ever address it. */
 export const ABOUT_ASSET_FOLDER = '_about';
-export const MAX_RESUME_BYTES = 10 * 1024 * 1024;
+export const MAX_RESUME_BYTES = 4 * 1024 * 1024;
 
 export function isValidProjectId(id: string): boolean {
   return typeof id === 'string' && ID_PATTERN.test(id) && id !== ABOUT_ASSET_FOLDER;

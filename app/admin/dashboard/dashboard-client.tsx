@@ -163,28 +163,21 @@ export default function DashboardClient() {
             setNotice={setDeleteNotice}
           />
         )}
-        {/* Legacy tabs are still styled for a dark surface until their own redesign tasks land. */}
-        {tab !== 'home' && tab !== 'site' && tab !== 'projects' && (
-          <div className="rounded-2xl bg-background p-4 text-foreground md:p-6">
-            {tab === 'experience' && (
-              <ExperienceTab
-                experience={content.experience}
-                onChange={(experience) => update({ ...content, experience })}
-              />
-            )}
-            {tab === 'about' && (
-              <AboutTab
-                about={content.about}
-                onChange={(about) => update({ ...content, about })}
-                onAssetUploaded={(about) => updateFromLatest((latest) => ({ ...latest, about: { ...latest.about, photo: about.photo, resumeUrl: about.resumeUrl } }))}
-                onPendingChange={trackPending}
-              />
-            )}
-            {tab === 'contact' && (
-              <ContactTab contact={content.contact} onChange={(contact) => update({ ...content, contact })} />
-            )}
-          </div>
+        {tab === 'experience' && (
+          <ExperienceTab
+            experience={content.experience}
+            onChange={(experience) => update({ ...content, experience })}
+          />
         )}
+        {tab === 'about' && (
+          <AboutTab
+            about={content.about}
+            onChange={(about) => update({ ...content, about })}
+            onAssetUploaded={(about) => updateFromLatest((latest) => ({ ...latest, about: { ...latest.about, photo: about.photo, resumeUrl: about.resumeUrl } }))}
+            onPendingChange={trackPending}
+          />
+        )}
+        {tab === 'contact' && <ContactTab content={content} onChange={update} />}
       </div>
       )}
 
