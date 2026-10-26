@@ -1,15 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { resolvePhoto } from "./share-card";
+import { PHOTO_MAX_BYTES, resolvePhoto } from "./share-card";
 
-function stubFetch(type: string | null, ok = true) {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn().mockResolvedValue({
-      ok,
-      headers: new Headers(type ? { "content-type": type } : {}),
-      arrayBuffer: async () => new Uint8Array([1, 2, 3]).buffer,
-    }),
-  );
+function stubFetch(type: string | null, ok = true, body: Uint8Array<ArrayBuffer> = new Uint8Array([1, 2, 3]), length?: number) {
+  const headers: Record<string, string> = {};
+  if (type) headers["content-type"] = type;
+  if (length !== undefined) headers["content-length"] = String(length);
+  const fetch = vi.fn().mockResolvedValue(new Response(body, { status: ok ? 200 : 404, headers }));
+  vi.stubGlobal("fetch", fetch);
+  return fetch;
 }
 
 // Satori only decodes png, apng, gif, jpeg and webp; anything else throws and 500s the card.
@@ -46,5 +44,26 @@ describe("resolvePhoto", () => {
   it("returns null when fetch throws", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network")));
     expect(await resolvePhoto("/about.png")).toBeNull();
+  });
+
+  it("passes a timeout signal to fetch", async () => {
+    const fetch = stubFetch("image/png");
+    await resolvePhoto("/about.png");
+    expect(fetch).toHaveBeenCalledWith(expect.any(String), { signal: expect.any(AbortSignal) });
+  });
+
+  it("returns null when content-length is over the limit", async () => {
+    stubFetch("image/png", true, new Uint8Array([1, 2, 3]), PHOTO_MAX_BYTES + 1);
+    expect(await resolvePhoto("/about.png")).toBeNull();
+  });
+
+  it("returns null when the body runs over the limit without a content-length", async () => {
+    stubFetch("image/png", true, new Uint8Array(PHOTO_MAX_BYTES + 1));
+    expect(await resolvePhoto("/about.png")).toBeNull();
+  });
+
+  it("accepts a photo exactly at the limit", async () => {
+    stubFetch("image/png", true, new Uint8Array(PHOTO_MAX_BYTES));
+    expect((await resolvePhoto("/about.png"))?.startsWith("data:image/png;base64,")).toBe(true);
   });
 });

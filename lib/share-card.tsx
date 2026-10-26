@@ -21,18 +21,41 @@ export async function loadCardFonts() {
 }
 
 const SATORI_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
+// Matches the 4 MB admin upload limit; link-preview crawlers give up after a few seconds.
+export const PHOTO_MAX_BYTES = 4 * 1024 * 1024;
+const PHOTO_TIMEOUT_MS = 3000;
 
 export async function resolvePhoto(photo?: string): Promise<string | null> {
   if (!photo) return null;
   // Fetched over HTTP: public/ files are not bundled with the function, and a failed fetch should drop the photo, not the card.
   try {
-    const res = await fetch(absoluteImageUrl(photo));
+    const res = await fetch(absoluteImageUrl(photo), { signal: AbortSignal.timeout(PHOTO_TIMEOUT_MS) });
     const type = (res.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase();
     // Satori decodes only these; any other type (avif, svg) throws and fails the whole card.
     if (!res.ok || !SATORI_IMAGE_TYPES.has(type)) return null;
-    return `data:${type};base64,${Buffer.from(await res.arrayBuffer()).toString('base64')}`;
+    if (Number(res.headers.get('content-length')) > PHOTO_MAX_BYTES) return null;
+    const bytes = await readCapped(res, PHOTO_MAX_BYTES);
+    return bytes && `data:${type};base64,${bytes.toString('base64')}`;
   } catch {
     return null;
+  }
+}
+
+// content-length can be missing or wrong, so count the bytes as they arrive.
+async function readCapped(res: Response, max: number): Promise<Buffer | null> {
+  if (!res.body) return null;
+  const reader = res.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return Buffer.concat(chunks);
+    total += value.byteLength;
+    if (total > max) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
   }
 }
 
