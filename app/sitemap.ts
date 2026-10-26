@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
 
   const projectRoutes: MetadataRoute.Sitemap = publicProjects(projects).map((p) => ({
-    url: `${BASE}/projects/${p.slug}`,
+    url: `${BASE}/work/${p.slug}`,
     lastModified,
     changeFrequency: 'monthly',
     priority: 0.8,
@@ -19,5 +19,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: BASE, lastModified, changeFrequency: 'weekly', priority: 1 },
     ...projectRoutes,
+    { url: `${BASE}/contact`, lastModified, changeFrequency: 'yearly', priority: 0.5 },
   ];
 }

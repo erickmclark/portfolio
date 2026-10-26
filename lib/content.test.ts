@@ -53,3 +53,15 @@ describe("visibility helpers", () => {
     expect(publicProjects(projects).some((p) => p.slug.includes("deb"))).toBe(false);
   });
 });
+
+describe("publicProjectBySlug", () => {
+  it("finds only public projects by slug", async () => {
+    const { publicProjectBySlug } = await import("./content");
+    const mk = (slug: string, visibility?: Project["visibility"]) => ({ id: slug, slug, visibility }) as Project;
+    const list = [mk("a"), mk("b", "hidden"), mk("c", "archived")];
+    expect(publicProjectBySlug(list, "a")?.slug).toBe("a");
+    expect(publicProjectBySlug(list, "b")).toBeUndefined();
+    expect(publicProjectBySlug(list, "c")).toBeUndefined();
+    expect(publicProjectBySlug(list, "zz")).toBeUndefined();
+  });
+});
