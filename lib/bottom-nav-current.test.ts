@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { currentBottomNavItem, resolveBottomNavItem, shouldSetPending, type PendingBottomNav } from './bottom-nav-current';
 
 describe('currentBottomNavItem', () => {
-  it('highlights nothing on the homepage', () => {
-    expect(currentBottomNavItem('/')).toBeNull();
+  it('highlights home on the homepage only', () => {
+    expect(currentBottomNavItem('/')).toBe('home');
   });
   it('maps work, its case studies, about and contact', () => {
     expect(currentBottomNavItem('/work')).toBe('work');
@@ -40,8 +40,8 @@ describe('resolveBottomNavItem', () => {
     expect(resolveBottomNavItem('/work', pending)).toBe('work');
     expect(resolveBottomNavItem('/about', pending)).toBe('about');
   });
-  it('tap, navigate, back: once pending is cleared the homepage highlights nothing', () => {
-    expect(resolveBottomNavItem('/', null)).toBeNull();
+  it('tap, navigate, back: once pending is cleared the homepage highlights home', () => {
+    expect(resolveBottomNavItem('/', null)).toBe('home');
   });
   it('falls back to the pathname with no pending tap', () => {
     expect(resolveBottomNavItem('/contact', null)).toBe('contact');

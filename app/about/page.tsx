@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Approach from "@/components/approach";
 import About from "@/components/about";
 import Experience from "@/components/experience";
+import HashScroll from "@/components/hash-scroll";
 import Reveal from "@/components/reveal";
 import { getSiteContent } from "@/lib/content";
 import { parseView } from "@/lib/home-view";
@@ -27,8 +28,9 @@ export default async function AboutPage({
 
   return (
     <main id="main-content" className="public-shell">
-      <Approach view={view} />
-      <Reveal><About /></Reveal>
+      <HashScroll />
+      <About level={1} />
+      <Reveal><Approach view={view} /></Reveal>
       <Reveal><Experience /></Reveal>
     </main>
   );

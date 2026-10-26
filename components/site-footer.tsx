@@ -11,7 +11,7 @@ export default async function SiteFooter() {
   const link =
     "on-dark inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold text-white hover:underline underline-offset-4";
   return (
-    <footer className="bg-ink pb-[calc(6.25rem+env(safe-area-inset-bottom))] text-white md:pb-0">
+    <footer className="bg-ink pb-[calc(5rem+env(safe-area-inset-bottom))] text-white md:pb-0">
       <div className="mx-auto max-w-[1440px] px-4 pb-8 pt-12 sm:px-10">
         <div className="grid gap-10 md:grid-cols-[1.2fr_1.2fr_0.6fr]">
           <div>
