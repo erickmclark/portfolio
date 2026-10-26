@@ -22,6 +22,7 @@ export default function ContactDialog({ sourcePage, email, linkedinUrl, resumeUr
   );
   const dialogRef = useRef<HTMLDialogElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
+  const downOutside = useRef(false);
   const open = intent !== null;
 
   useEffect(() => {
@@ -37,6 +38,13 @@ export default function ContactDialog({ sourcePage, email, linkedinUrl, resumeUr
 
   function close() {
     dialogRef.current?.close();
+  }
+
+  // The dialog itself is the target for backdrop clicks and for its own border/scrollbar, so test geometry too.
+  function isOutside(e: React.MouseEvent<HTMLDialogElement>) {
+    if (e.target !== e.currentTarget) return false;
+    const r = e.currentTarget.getBoundingClientRect();
+    return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
   }
 
   // Fires for Escape, the close button and backdrop clicks alike.
@@ -82,7 +90,14 @@ export default function ContactDialog({ sourcePage, email, linkedinUrl, resumeUr
         ref={dialogRef}
         aria-labelledby={`${uid}-title`}
         onClose={onClosed}
-        className="public-shell m-auto mb-0 max-h-[92dvh] w-full max-w-none overflow-y-auto overscroll-contain rounded-t-3xl border-2 border-ink bg-paper p-0 text-ink backdrop:bg-ink/55 sm:mb-auto sm:max-h-[calc(100dvh-48px)] sm:w-[min(760px,calc(100vw-32px))] sm:rounded-3xl"
+        onPointerDown={(e) => {
+          downOutside.current = isOutside(e);
+        }}
+        onClick={(e) => {
+          if (downOutside.current && isOutside(e)) close();
+          downOutside.current = false;
+        }}
+        className="contact-dialog public-shell m-auto mb-0 max-h-[92dvh] w-full max-w-none overflow-y-auto overscroll-contain rounded-t-3xl border-2 border-ink bg-paper p-0 text-ink backdrop:bg-ink/55 sm:mb-auto sm:max-h-[calc(100dvh-48px)] sm:w-[min(760px,calc(100vw-32px))] sm:rounded-3xl"
       >
         {intent && copy && (
           <>
