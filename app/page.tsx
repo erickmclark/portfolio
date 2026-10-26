@@ -3,7 +3,6 @@ export const dynamic = 'force-dynamic';
 import Hero from "@/components/hero";
 import Capabilities from "@/components/capabilities";
 import Approach from "@/components/approach";
-import Perspectives from "@/components/perspectives";
 import SelectedWork from "@/components/selected-work";
 import PointOfView from "@/components/point-of-view";
 import About from "@/components/about";
@@ -26,7 +25,6 @@ export default async function Home({
       <Hero view={view} />
       <Reveal><Capabilities view={view} /></Reveal>
       <Approach view={view} />
-      <Reveal><Perspectives /></Reveal>
       <Reveal><SelectedWork view={view} category={category} /></Reveal>
       <Reveal><PointOfView /></Reveal>
       <Reveal><About /></Reveal>
