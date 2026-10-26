@@ -68,7 +68,7 @@ export default function SiteHeader({ name, resumeUrl }: Props) {
           )}
           <details ref={menu} className="group">
             <summary
-              className="on-dark inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-ink bg-paper text-ink group-open:bg-ink group-open:text-white"
+              className="on-dark inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-paper text-ink group-open:bg-ink group-open:text-white"
               aria-label="Menu"
             >
               <Menu size={20} aria-hidden className="group-open:hidden" />
