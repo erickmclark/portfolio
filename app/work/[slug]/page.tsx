@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
-  const { projects } = await getSiteContent();
+  const { projects, home } = await getSiteContent();
   const project = publicProjectBySlug(projects, slug);
   if (!project) notFound();
 
@@ -106,7 +106,7 @@ export default async function CaseStudyPage({ params }: Props) {
           </div>
           {configView && (
             <div className="hidden lg:block">
-              <Configuration view={configView} />
+              <Configuration view={configView} capabilities={home.capabilities[configView]} />
             </div>
           )}
         </div>

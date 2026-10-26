@@ -2,8 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Download } from "lucide-react";
 import { getSiteContent } from "@/lib/content";
-import { HERO, PROFILE_LINE, SELECTOR_LABEL, CAPABILITIES } from "@/lib/home-copy";
-import { VIEWS, VIEW_LABELS, homeHref, type View } from "@/lib/home-view";
+import { VIEWS, homeHref, type View } from "@/lib/home-view";
 import Configuration from "./configuration";
 import { ConfigurationMotion, ViewFade } from "./hero-motion";
 import { Eyebrow } from "./section-head";
@@ -15,8 +14,8 @@ const VIEW_TOWER: Record<View, string> = {
 };
 
 export default async function Hero({ view }: { view: View }) {
-  const { about } = await getSiteContent();
-  const copy = HERO[view];
+  const { about, home } = await getSiteContent();
+  const copy = home.hero[view];
   const btn =
     "inline-flex min-h-11 items-center justify-center px-5 text-[15px] font-semibold";
 
@@ -41,11 +40,11 @@ export default async function Hero({ view }: { view: View }) {
             )}
             <div>
               <p className="font-display text-lg font-bold tracking-[-0.02em]">{about.name}</p>
-              <p className="text-sm text-ink-muted">{PROFILE_LINE}</p>
+              <p className="text-sm text-ink-muted">{home.profileLine}</p>
             </div>
           </div>
 
-          <Eyebrow className="mt-8">{SELECTOR_LABEL}</Eyebrow>
+          <Eyebrow className="mt-8">{home.selectorLabel}</Eyebrow>
           <nav aria-label="Audience view" className="mt-2.5 inline-flex border-2 border-ink">
             {VIEWS.map((v, i) => (
               <Link
@@ -57,7 +56,7 @@ export default async function Hero({ view }: { view: View }) {
                   i > 0 ? "border-l-2 border-ink" : ""
                 } ${v === view ? "bg-ink text-white" : "bg-paper text-ink hover:bg-white"}`}
               >
-                {VIEW_LABELS[v]}
+                {home.viewLabels[v]}
               </Link>
             ))}
           </nav>
@@ -106,13 +105,13 @@ export default async function Hero({ view }: { view: View }) {
 
         <div className="order-2 lg:order-none lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:pt-14">
           <ConfigurationMotion view={view}>
-            <Configuration view={view} className="mx-auto max-w-[600px] lg:ml-auto" />
+            <Configuration view={view} capabilities={home.capabilities[view]} className="mx-auto max-w-[600px] lg:ml-auto" />
           </ConfigurationMotion>
           <p className="mx-auto mt-3 max-w-[600px] text-right font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-ink-muted lg:ml-auto">
             Configuration: {VIEW_TOWER[view]}
           </p>
           <span className="sr-only">
-            Seven capabilities in priority order: {CAPABILITIES[view].map((c) => c.title).join(", ")}.
+            Seven capabilities in priority order: {home.capabilities[view].map((c) => c.title).join(", ")}.
           </span>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { join } from "path";
 import { describe, expect, it } from "vitest";
 import { validateSiteContent } from "./validate";
 import type { SiteContent } from "./types";
+import { DEFAULT_CONTACT_PAGE, DEFAULT_HOME, DEFAULT_SITE, withContentDefaults } from "./home-copy";
 
 function validContent(): SiteContent {
   return {
@@ -253,5 +254,102 @@ describe("validateSiteContent", () => {
     const data = JSON.parse(readFileSync(join(process.cwd(), "content", "data.json"), "utf-8"));
     const result = validateSiteContent(data);
     expect(result.ok).toBe(true);
+  });
+
+  describe("home, site and contactPage groups", () => {
+    const full = () => {
+      const c = validContent();
+      c.home = structuredClone(DEFAULT_HOME);
+      c.site = structuredClone(DEFAULT_SITE);
+      c.contactPage = structuredClone(DEFAULT_CONTACT_PAGE);
+      return c;
+    };
+    const errorsOf = (c: unknown) => {
+      const r = validateSiteContent(c);
+      return r.ok ? "" : r.errors.join(" | ");
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mutate = (fn: (c: any) => void) => {
+      const c = full();
+      fn(c);
+      return errorsOf(c);
+    };
+
+    it("accepts legacy content without the new groups", () => {
+      expect(validateSiteContent(validContent()).ok).toBe(true);
+    });
+
+    it("accepts the complete defaults", () => {
+      expect(validateSiteContent(full()).ok).toBe(true);
+    });
+
+    it("accepts withContentDefaults(data.json)", () => {
+      const data = JSON.parse(readFileSync(join(process.cwd(), "content", "data.json"), "utf-8"));
+      expect(validateSiteContent(withContentDefaults(data)).ok).toBe(true);
+    });
+
+    it("rejects a partial group", () => {
+      expect(mutate((c) => delete c.home.about)).toMatch(/home\.about/);
+      expect(mutate((c) => delete c.site.seo)).toMatch(/site\.seo/);
+      expect(mutate((c) => delete c.contactPage.intro)).toMatch(/contactPage\.intro/);
+    });
+
+    it("rejects empty or untrimmed display strings but allows a missing tertiary", () => {
+      expect(mutate((c) => (c.home.profileLine = " "))).toMatch(/home\.profileLine/);
+      expect(mutate((c) => (c.site.footer.name = " Erick"))).toMatch(/site\.footer\.name/);
+      expect(mutate((c) => delete c.home.hero.builder.tertiary)).toBe("");
+      expect(mutate((c) => delete c.home.hero.it.tertiaryExternal)).toBe("");
+    });
+
+    it("requires exactly the three view keys and the six contact topics", () => {
+      expect(mutate((c) => delete c.home.hero.builder)).toMatch(/home\.hero/);
+      expect(mutate((c) => (c.home.viewLabels.extra = "x"))).toMatch(/home\.viewLabels/);
+      expect(mutate((c) => delete c.contactPage.topics.speaking)).toMatch(/contactPage\.topics/);
+      expect(mutate((c) => (c.contactPage.topics.other = "x"))).toMatch(/contactPage\.topics/);
+    });
+
+    it("enforces capability shape: 7 items, one band, known icon, unique titles", () => {
+      expect(mutate((c) => c.home.capabilities.it.pop())).toMatch(/exactly 7/);
+      expect(mutate((c) => delete c.home.capabilities.it[5].band)).toMatch(/exactly one capability with band/);
+      expect(mutate((c) => (c.home.capabilities.it[0].band = true))).toMatch(/exactly one capability with band/);
+      expect(mutate((c) => (c.home.capabilities.it[0].icon = "nope"))).toMatch(/\.icon must be one of/);
+      expect(mutate((c) => (c.home.capabilities.it[1].title = c.home.capabilities.it[0].title))).toMatch(/duplicated/);
+    });
+
+    it("enforces principles, steps, toolkit, workOrder and privacy section rules", () => {
+      expect(mutate((c) => c.home.pointOfView.principles.pop())).toMatch(/exactly 3/);
+      expect(mutate((c) => (c.home.pointOfView.principles[1].title = c.home.pointOfView.principles[0].title))).toMatch(/duplicated/);
+      expect(mutate((c) => (c.home.approach.steps = []))).toMatch(/at least 1/);
+      expect(mutate((c) => (c.home.toolkit[1].group = c.home.toolkit[0].group))).toMatch(/group names must be unique/);
+      expect(mutate((c) => (c.home.toolkit[0].items = [1]))).toMatch(/items must be an array of strings/);
+      expect(mutate((c) => (c.home.workOrder.it = ["a", "a"]))).toMatch(/duplicated/);
+      expect(mutate((c) => (c.home.workOrder.it = [""]))).toMatch(/home\.workOrder\.it\[0\]/);
+      expect(mutate((c) => (c.site.privacy.sections[0].id = "Bad Id"))).toMatch(/sections\[0\]\.id/);
+      expect(mutate((c) => (c.site.privacy.sections[1].id = c.site.privacy.sections[0].id))).toMatch(/duplicated/);
+    });
+
+    it("rejects unsafe or malformed hrefs", () => {
+      for (const bad of ["javascript:alert(1)", "data:text/html,x", "http://example.com", "//evil.com", "mailto:a@b.c"]) {
+        expect(mutate((c) => (c.home.hero.it.primary.href = bad))).toMatch(/primary\.href/);
+      }
+      expect(mutate((c) => (c.home.hero.it.tertiary.href = "resume"))).toMatch(/tertiary\.href/);
+      for (const ok of ["#work", "/contact?type=advisory", "https://example.com/x", "resume"]) {
+        expect(mutate((c) => (c.home.hero.it.primary.href = ok))).toBe("");
+      }
+    });
+
+    it("validates project card buttons", () => {
+      const withCard = (card: unknown, second?: unknown) => {
+        const c = validContent();
+        Object.assign(c.projects[0], { cardCta: card, cardSecondaryCta: second });
+        return errorsOf(c);
+      };
+      expect(withCard({ label: "Go" })).toBe("");
+      expect(withCard({ label: "Go", href: "/contact?type=product" }, { label: "More", href: "https://example.com" })).toBe("");
+      expect(withCard({ label: "" })).toMatch(/cardCta\.label/);
+      expect(withCard({ label: "Go", href: "javascript:x" })).toMatch(/cardCta\.href/);
+      expect(withCard({ label: "Go" }, { label: "More", href: "resume" })).toMatch(/cardSecondaryCta\.href/);
+      expect(withCard({ label: "Go" }, { label: "More" })).toMatch(/cardSecondaryCta\.href/);
+    });
   });
 });

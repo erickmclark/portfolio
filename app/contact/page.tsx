@@ -4,20 +4,22 @@ import type { Metadata } from "next";
 import ContactDialog from "@/components/contact-dialog";
 import { getSiteContent } from "@/lib/content";
 import { resolveContactOpen } from "@/lib/contact";
-import { CONTACT } from "@/lib/home-copy";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description: CONTACT.intro,
-  alternates: { canonical: "/contact" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { site } = await getSiteContent();
+  return {
+    title: site.seo.contact.title,
+    description: site.seo.contact.description,
+    alternates: { canonical: "/contact" },
+  };
+}
 
 export default async function ContactPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const [{ contact, about }, sp] = await Promise.all([
+  const [{ contact, about, contactPage }, sp] = await Promise.all([
     getSiteContent(),
     searchParams,
   ]);
@@ -27,14 +29,15 @@ export default async function ContactPage({
       <div className="bg-white">
         <div className="mx-auto max-w-[960px] px-4 py-12 sm:px-10 sm:py-20">
           <h1 className="font-display text-4xl font-bold leading-[1.02] tracking-[-0.03em] sm:text-[56px]">
-            {CONTACT.heading}
+            {contactPage.heading}
           </h1>
           <p className="mt-5 max-w-[760px] text-lg font-medium leading-[1.35] sm:text-xl">
-            {CONTACT.intro}
+            {contactPage.intro}
           </p>
           <div className="mt-10">
           <ContactDialog
             sourcePage="/contact"
+            topicLabels={contactPage.topics}
             initialIntent={intent}
             initialValues={values}
             email={contact.email}

@@ -1,5 +1,4 @@
-import { CAPABILITIES } from "@/lib/home-copy";
-import type { View } from "@/lib/home-view";
+import type { Capability, View } from "@/lib/types";
 import CapabilityIcon from "./capability-icon";
 
 /**
@@ -17,8 +16,7 @@ const SLOTS = [
   { area: "17 / 9 / 21 / 21", tone: "bg-brand-navy text-white", sky: true },
 ] as const;
 
-export default function Configuration({ view, className = "", labels = true }: { view: View; className?: string; labels?: boolean }) {
-  const caps = CAPABILITIES[view];
+export default function Configuration({ view, capabilities: caps, className = "", labels = true }: { view: View; capabilities: Capability[]; className?: string; labels?: boolean }) {
   const band = caps.find((c) => c.band)!;
   const rest = caps.filter((c) => !c.band);
   // Figma 99:359 / 126:2276: in the Consultant view the pink and ink parts swap roles.

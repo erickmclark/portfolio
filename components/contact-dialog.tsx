@@ -12,9 +12,11 @@ type Props = {
   resumeUrl?: string;
   initialIntent?: ContactIntent | null;
   initialValues?: Record<string, string>;
+  /** Option labels by intent id; defaults to the built-in labels. */
+  topicLabels?: Record<ContactIntent, string>;
 };
 
-export default function ContactDialog({ sourcePage, email, linkedinUrl, resumeUrl, initialIntent = null, initialValues = {} }: Props) {
+export default function ContactDialog({ sourcePage, email, linkedinUrl, resumeUrl, initialIntent = null, initialValues = {}, topicLabels }: Props) {
   const uid = useId();
   const [intent, setIntent] = useState<ContactIntent | null>(initialIntent);
   const [drafts, setDrafts] = useState<Partial<Record<ContactIntent, Record<string, string>>>>(
@@ -67,7 +69,7 @@ export default function ContactDialog({ sourcePage, email, linkedinUrl, resumeUr
           <option value="">Choose a topic…</option>
           {CONTACT_INTENTS.map((i) => (
             <option key={i.id} value={i.id}>
-              {i.label}
+              {topicLabels?.[i.id] ?? i.label}
             </option>
           ))}
         </select>

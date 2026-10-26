@@ -129,3 +129,14 @@ describe('hasFactoryFeature', () => {
     expect(hasFactoryFeature('consultant')).toBe(false);
   });
 });
+
+describe('custom featured order', () => {
+  it('orderProjects and hasFactoryFeature honour an order argument', () => {
+    const projects = [p('a', 0), p('b', 1), p('prj-ai-engineering-factory', 2)];
+    const order = { it: ['b', 'a'], consultant: [], builder: ['prj-ai-engineering-factory'] };
+    expect(orderProjects(projects, 'it', order).map((x) => x.id)).toEqual(['b', 'a', 'prj-ai-engineering-factory']);
+    expect(orderProjects(projects, 'builder', order)[0].id).toBe('prj-ai-engineering-factory');
+    expect(hasFactoryFeature('it', order)).toBe(false);
+    expect(hasFactoryFeature('builder', order)).toBe(true);
+  });
+});

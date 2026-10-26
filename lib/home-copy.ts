@@ -1,4 +1,20 @@
-import type { View } from './home-view';
+import { CONTACT_INTENTS } from './contact';
+import { FEATURED_ORDER, VIEW_LABELS } from './home-view';
+import { VIEWS } from './types';
+import type {
+  Capability,
+  ContactPageContent,
+  HeroCopy,
+  HomeContent,
+  IconKey,
+  Project,
+  SiteContent,
+  SiteCopy,
+  View,
+} from './types';
+
+export { VIEWS };
+export type { Capability, IconKey, View };
 
 /**
  * In-code homepage copy (content spec v1.1, section 16.5). Verbatim from the spec.
@@ -17,17 +33,6 @@ export const CLARK_STRATEGICS_URL = 'https://clarkstrategics.com';
 export const PROFILE_LINE =
   'Former JPMorgan Chase Vice President & Chief of Staff · Founder · AI Product Builder';
 export const SELECTOR_LABEL = 'Explore my work as a';
-
-type Cta = { label: string; href: string };
-type HeroCopy = {
-  h1: string;
-  body: string;
-  primary: Cta;
-  secondary: Cta;
-  /** Optional third action, a text link. */
-  tertiary?: Cta;
-  tertiaryExternal?: boolean;
-};
 
 export const HERO: Record<View, HeroCopy> = {
   it: {
@@ -57,19 +62,6 @@ export const CAPABILITIES_HEAD = {
   eyebrow: 'Capabilities',
   heading: 'Different roles. A connected set of capabilities.',
   lede: 'My experience spans the decisions that shape technology, the operating systems that deliver it, and the products that make it tangible.',
-};
-
-export type IconKey =
-  | 'compass' | 'shapes' | 'network' | 'gantt' | 'bars' | 'shield' | 'presentation'
-  | 'search' | 'workflow' | 'sparkles' | 'route' | 'wrench' | 'users'
-  | 'target' | 'layout' | 'code' | 'database' | 'cpu' | 'lock' | 'rocket';
-
-export type Capability = {
-  title: string;
-  body: string;
-  icon: IconKey;
-  /** Governance or security: runs as the full-height band. Applies throughout. */
-  band?: boolean;
 };
 
 export const CAPABILITIES: Record<View, Capability[]> = {
@@ -188,3 +180,130 @@ export const HOME_SEO = {
   description:
     'Former JPMorgan Chase VP and Chief of Staff specializing in technology strategy, enterprise transformation, AI strategy, governance, and AI product development.',
 };
+
+export const PRIVACY = {
+  eyebrow: 'Draft',
+  title: 'Privacy Policy',
+  intro: 'How the contact form and analytics on this site handle your information.',
+  sections: [
+    { id: 'operator', title: 'Who operates this site', paragraphs: ['This site is operated by Erick Clark.'] },
+    {
+      id: 'collected',
+      title: 'What the contact form collects',
+      paragraphs: [
+        "Your name and email address, the type of inquiry you choose, and your answers to that inquiry type's questions. Depending on the type, these can include your organization, role or project details, links you add, budget, timeframe and similar business details you choose to enter.",
+        'Each message also includes the inquiry type, the page you sent it from, the audience view you were reading, the time it was received, and the version of the privacy acknowledgment you accepted.',
+        "The site does not store submissions in a database. Each one is sent as an email, and the message then exists in the recipient's mailbox and with the email provider.",
+      ],
+    },
+    {
+      id: 'use',
+      title: 'How your information is used and where it goes',
+      paragraphs: [
+        'To understand your request and reply to it, using the email address you provide.',
+        'Leadership opportunity, product or partnership, and general inquiries go to Erick directly. Strategic advisory, build-a-product, and speaking or training inquiries go to his Clark Strategics business inbox. Commercial inquiries of these kinds may be handled through Clark Strategic Systems LLC.',
+      ],
+    },
+    {
+      id: 'providers',
+      title: 'Service providers',
+      paragraphs: [
+        'Contact form messages are delivered by email through Resend.',
+        'To limit abuse, the form keeps short-lived counters in a Redis database. Counters are keyed to a one-way hash of your IP address, not the address itself. The form also uses a hidden field and a minimum-time check to filter automated submissions.',
+        'The site is hosted on Vercel.',
+      ],
+    },
+    {
+      id: 'cookies',
+      title: 'Cookies and analytics',
+      paragraphs: [
+        'The site includes Vercel Web Analytics and Vercel Speed Insights to measure aggregate traffic and page performance. Vercel documents that Web Analytics uses no third-party cookies and identifies visitors by a hash created from the incoming request, and that Speed Insights data is not tied to an individual visitor or IP address. Data points include page URL, referrer, approximate location, browser, operating system and device type.',
+        "The site itself does not set cookies for visitors. A sign-in cookie exists only for the site owner's administrative area.",
+      ],
+    },
+    {
+      id: 'sensitive',
+      title: 'Health and sensitive information',
+      paragraphs: [
+        'The contact form does not ask for health information. Please do not include protected health information, passwords, government IDs or confidential business documents in a message.',
+      ],
+    },
+    {
+      id: 'contact',
+      title: 'Privacy requests',
+      paragraphs: [
+        'For questions about this policy or about information you have sent through the site, email {email}.',
+      ],
+    },
+  ],
+};
+
+export const NOT_FOUND = {
+  eyebrow: '404',
+  heading: 'Page not found',
+  body: "The page you're looking for doesn't exist or may have moved.",
+  cta: 'Back home',
+};
+
+export const CONTACT_SEO = { title: 'Contact', description: CONTACT.intro };
+export const PRIVACY_SEO = { title: 'Privacy Policy', description: PRIVACY.intro };
+
+export const DEFAULT_HOME: HomeContent = {
+  profileLine: PROFILE_LINE,
+  selectorLabel: SELECTOR_LABEL,
+  viewLabels: VIEW_LABELS,
+  hero: HERO,
+  capabilitiesHead: CAPABILITIES_HEAD,
+  capabilities: CAPABILITIES,
+  approach: {
+    eyebrow: APPROACH.eyebrow,
+    heading: APPROACH.heading,
+    intro: APPROACH.intro,
+    steps: APPROACH.steps.map(({ title, body }) => ({ title, body })),
+    cta: APPROACH.cta,
+  },
+  work: WORK,
+  workOrder: FEATURED_ORDER,
+  pointOfView: POV,
+  about: ABOUT,
+  toolkit: TOOLKIT,
+  experience: EXPERIENCE,
+};
+
+export const DEFAULT_SITE: SiteCopy = {
+  footer: FOOTER,
+  privacy: PRIVACY,
+  notFound: NOT_FOUND,
+  seo: { home: HOME_SEO, contact: CONTACT_SEO, privacy: PRIVACY_SEO },
+};
+
+export const DEFAULT_CONTACT_PAGE: ContactPageContent = {
+  heading: CONTACT.heading,
+  intro: CONTACT.intro,
+  topics: Object.fromEntries(CONTACT_INTENTS.map((i) => [i.id, i.label])) as ContactPageContent['topics'],
+};
+
+/** Card buttons a project gets when it has no stored `cardCta` (spec section 6, D23). */
+export function defaultCardCtas(id: string): Pick<Project, 'cardCta' | 'cardSecondaryCta'> {
+  const contact = WORK_CTA_CONTACT[id];
+  const out: Pick<Project, 'cardCta' | 'cardSecondaryCta'> = {
+    cardCta: contact ? { ...contact } : { label: WORK_CTA[id] ?? WORK_CTA_DEFAULT },
+  };
+  if (id === 'prj-ai-engineering-factory') out.cardSecondaryCta = { ...FACTORY_SECOND_CTA };
+  return out;
+}
+
+/**
+ * Fills what stored content lacks: a missing group gets a deep clone of its
+ * default, a project without `cardCta` gets its defaults. Present values are
+ * never overwritten and the input is not mutated. Pure and client-safe.
+ */
+export function withContentDefaults(content: SiteContent) {
+  return {
+    ...content,
+    home: content.home ?? structuredClone(DEFAULT_HOME),
+    site: content.site ?? structuredClone(DEFAULT_SITE),
+    contactPage: content.contactPage ?? structuredClone(DEFAULT_CONTACT_PAGE),
+    projects: content.projects.map((p) => (p.cardCta ? p : { ...p, ...defaultCardCtas(p.id) })),
+  };
+}

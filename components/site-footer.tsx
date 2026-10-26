@@ -2,10 +2,11 @@ import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { GitHubIcon, LinkedInIcon } from "@/components/brand-icons";
 import { getSiteContent } from "@/lib/content";
-import { CLARK_STRATEGICS_URL, FOOTER } from "@/lib/home-copy";
+import { CLARK_STRATEGICS_URL } from "@/lib/home-copy";
 
 export default async function SiteFooter() {
-  const { contact, about } = await getSiteContent();
+  const { contact, about, site } = await getSiteContent();
+  const FOOTER = site.footer;
   const link =
     "on-dark inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold text-white hover:underline underline-offset-4";
   return (

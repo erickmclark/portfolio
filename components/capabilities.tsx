@@ -1,4 +1,4 @@
-import { CAPABILITIES, CAPABILITIES_HEAD } from "@/lib/home-copy";
+import { getSiteContent } from "@/lib/content";
 import type { View } from "@/lib/home-view";
 import CapabilityIcon from "./capability-icon";
 import SectionHead from "./section-head";
@@ -14,8 +14,9 @@ const TONES = [
 ];
 const TILE = ["h-24 w-24", "h-16 w-36", "h-24 w-24 rounded-tl-[100%]", "h-28 w-14", "h-20 w-32", "h-14 w-32", "h-24 w-24"];
 
-export default function Capabilities({ view }: { view: View }) {
-  const caps = CAPABILITIES[view];
+export default async function Capabilities({ view }: { view: View }) {
+  const { home } = await getSiteContent();
+  const caps = home.capabilities[view];
   // Governance/security is the band: it takes the black tile; the rest follow priority order.
   const order = caps.map((c, i) => ({ c, i }));
   let tone = 0;
@@ -28,9 +29,9 @@ export default function Capabilities({ view }: { view: View }) {
     <section id="capabilities" aria-labelledby="cap-title" className="public-shell border-t border-ink">
       <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-10 sm:py-24">
         <SectionHead
-          eyebrow={CAPABILITIES_HEAD.eyebrow}
-          heading={CAPABILITIES_HEAD.heading}
-          lede={CAPABILITIES_HEAD.lede}
+          eyebrow={home.capabilitiesHead.eyebrow}
+          heading={home.capabilitiesHead.heading}
+          lede={home.capabilitiesHead.lede}
           headingId="cap-title"
         />
         <ol className="mt-12 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">

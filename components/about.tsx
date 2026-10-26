@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { getSiteContent } from "@/lib/content";
-import { ABOUT, TOOLKIT } from "@/lib/home-copy";
 import { splitAbout } from "@/lib/home-view";
 import SectionHead, { Eyebrow } from "./section-head";
 
 export default async function About() {
-  const { about } = await getSiteContent();
+  const { about, home } = await getSiteContent();
+  const ABOUT = home.about;
   const { paragraphs, credentials, closing } = splitAbout(about.bio);
 
   return (
@@ -64,7 +64,7 @@ export default async function About() {
               </span>
             </summary>
             <dl className="pb-4">
-              {TOOLKIT.map((g) => (
+              {home.toolkit.map((g) => (
                 <div key={g.group} className="grid gap-2 border-t border-ink py-4 sm:grid-cols-[170px_1fr] sm:gap-6">
                   <dt className="text-[15px] font-semibold">{g.group}</dt>
                   <dd>
