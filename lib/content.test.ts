@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getSiteContent, publicExperience, publicProjects } from "./content";
+import { DEFAULT_CONTACT_PAGE, DEFAULT_HOME, DEFAULT_SITE } from "./home-copy";
 import type { ExperienceItem, Project } from "./types";
 
 // The KV store is unavailable in the test environment, so getSiteContent()
@@ -23,6 +24,16 @@ describe("getSiteContent (file fallback)", () => {
       expect(p.image).toBeTypeOf("string");
       expect(Array.isArray(p.tech)).toBe(true);
     }
+  });
+});
+
+describe("getSiteContent defaults", () => {
+  it("fills the home, site and contactPage groups and every project cardCta from the defaults", async () => {
+    const content = await getSiteContent();
+    expect(content.home).toEqual(DEFAULT_HOME);
+    expect(content.site).toEqual(DEFAULT_SITE);
+    expect(content.contactPage).toEqual(DEFAULT_CONTACT_PAGE);
+    expect(content.projects.every((p) => p.cardCta?.label)).toBe(true);
   });
 });
 

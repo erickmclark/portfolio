@@ -1,13 +1,10 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Project } from "@/lib/types";
-import { CONTACT_HREFS, FACTORY_SECOND_CTA } from "@/lib/home-copy";
+import { CONTACT_HREFS } from "@/lib/home-copy";
 
 export default function CaseStudyFooter({ project, next }: { project: Project; next?: Project }) {
-  const cta =
-    project.id === "prj-ai-engineering-factory"
-      ? FACTORY_SECOND_CTA
-      : { label: "Get in touch", href: CONTACT_HREFS.general };
+  const cta = project.cardSecondaryCta ?? { label: "Get in touch", href: CONTACT_HREFS.general };
   return (
     <section aria-label="Next steps" className="border-t border-ink py-10 sm:py-14">
       <div className="mx-auto grid max-w-[1440px] gap-8 px-4 sm:px-10 lg:grid-cols-2">

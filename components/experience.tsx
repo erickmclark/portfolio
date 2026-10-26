@@ -1,13 +1,13 @@
 import { Download } from "lucide-react";
 import { getSiteContent, publicExperience } from "@/lib/content";
-import { EXPERIENCE } from "@/lib/home-copy";
 import { experienceDates } from "@/lib/home-view";
 import SectionHead from "./section-head";
 
 const MARKS = ["bg-brand-blue", "bg-brand-orange", "bg-brand-yellow", "bg-brand-green", "bg-brand-pink", "bg-ink", "bg-brand-sky"];
 
 export default async function Experience() {
-  const { experience, about } = await getSiteContent();
+  const { experience, about, home } = await getSiteContent();
+  const EXPERIENCE = home.experience;
   const items = [...publicExperience(experience)].sort((a, b) => a.order - b.order);
   if (items.length === 0) return null;
 

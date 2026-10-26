@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Project } from "@/lib/types";
 import { displayStatus, externalHref } from "@/lib/home-view";
-import { FACTORY_SECOND_CTA, WORK_CTA, WORK_CTA_CONTACT, WORK_CTA_DEFAULT } from "@/lib/home-copy";
+import { defaultCardCtas } from "@/lib/home-copy";
 
 const TILE_TONE: Record<string, string> = {
   "Enterprise Leadership": "bg-brand-blue text-white",
@@ -25,8 +25,9 @@ export default function WorkCard({ project, feature = false, priority = false }:
   const status = displayStatus(project);
   const ext = externalHref(project);
   const dates = project.caseStudy?.dates;
-  const contactCta = WORK_CTA_CONTACT[project.id];
-  const cta = WORK_CTA[project.id] ?? WORK_CTA_DEFAULT;
+  const card = project.cardCta ?? defaultCardCtas(project.id).cardCta!;
+  const contactCta = card.href ? { label: card.label, href: card.href } : undefined;
+  const cta = card.label;
   const meta = [project.category, project.relationship, dates].filter(Boolean);
 
   return (
@@ -96,9 +97,9 @@ export default function WorkCard({ project, feature = false, priority = false }:
               <span className="sr-only">: {project.title}</span> <ArrowRight size={14} aria-hidden />
             </Link>
           )}
-          {project.id === "prj-ai-engineering-factory" && (
-            <a href={FACTORY_SECOND_CTA.href} className="inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4">
-              {FACTORY_SECOND_CTA.label} <ArrowRight size={14} aria-hidden />
+          {project.cardSecondaryCta && (
+            <a href={project.cardSecondaryCta.href} className="inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4">
+              {project.cardSecondaryCta.label} <ArrowRight size={14} aria-hidden />
             </a>
           )}
           {ext && (

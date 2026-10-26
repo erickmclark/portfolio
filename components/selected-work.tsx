@@ -1,15 +1,15 @@
 import { getSiteContent, publicProjects } from "@/lib/content";
-import { WORK } from "@/lib/home-copy";
-import { VIEW_LABELS, FACTORY_ID, filterByCategory, hasFactoryFeature, orderProjects, type View } from "@/lib/home-view";
+import { FACTORY_ID, filterByCategory, hasFactoryFeature, orderProjects, type View } from "@/lib/home-view";
 import type { ProjectCategory } from "@/lib/types";
 import SectionHead from "./section-head";
 import WorkCard from "./work-card";
 import WorkCategorySelect from "./work-category-select";
 
 export default async function SelectedWork({ view, category }: { view: View; category: ProjectCategory | null }) {
-  const { projects } = await getSiteContent();
-  const list = filterByCategory(orderProjects(publicProjects(projects), view), category);
-  const fi = hasFactoryFeature(view) ? list.findIndex((p) => p.id === FACTORY_ID) : -1;
+  const { projects, home } = await getSiteContent();
+  const WORK = home.work;
+  const list = filterByCategory(orderProjects(publicProjects(projects), view, home.workOrder), category);
+  const fi = hasFactoryFeature(view, home.workOrder) ? list.findIndex((p) => p.id === FACTORY_ID) : -1;
   const feature = fi === -1 ? null : list[fi];
   const before = fi === -1 ? list : list.slice(0, fi);
   const after = fi === -1 ? [] : list.slice(fi + 1);
@@ -30,7 +30,7 @@ export default async function SelectedWork({ view, category }: { view: View; cat
 
         <WorkCategorySelect view={view} category={category} />
         <p className="mt-4 border-b border-ink pb-4 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink-muted">
-          {category ?? "All work"} · ordered for the {VIEW_LABELS[view]} view
+          {category ?? "All work"} · ordered for the {home.viewLabels[view]} view
         </p>
 
         {list.length === 0 && <p className="mt-10 text-ink-muted">No public work in this category yet.</p>}
