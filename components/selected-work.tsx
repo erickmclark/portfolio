@@ -25,7 +25,7 @@ export default async function SelectedWork({ view, category }: { view: View; cat
   );
 
   const chip = (active: boolean) =>
-    `on-dark inline-flex min-h-11 items-center border-2 border-ink px-4 text-[13px] font-semibold ${
+    `on-dark inline-flex min-h-11 items-center rounded-full border-2 border-ink px-4 text-[13px] font-semibold ${
       active ? "bg-ink text-white" : "bg-paper text-ink hover:bg-white"
     }`;
 
