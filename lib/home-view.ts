@@ -123,6 +123,37 @@ export function filterByCategory(projects: Project[], category: ProjectCategory 
   return category ? projects.filter((p) => p.category === category) : projects;
 }
 
+export const OTHER_WORK_LABEL = 'Other work';
+
+export type CategoryGroup = { id: string; label: string; projects: Project[] };
+
+/** URL-safe anchor id for a category name, e.g. "AI & SaaS Products" -> "ai-saas-products". */
+export function categoryAnchorId(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Groups already-ordered projects by category. Groups follow the order of each category's first
+ * project and projects keep their order; projects with no category go in a final "Other work" group.
+ */
+export function groupByCategory(projects: Project[]): CategoryGroup[] {
+  const groups = new Map<string, CategoryGroup>();
+  const other: Project[] = [];
+  for (const p of projects) {
+    const name = p.category?.trim();
+    if (!name) {
+      other.push(p);
+      continue;
+    }
+    const g = groups.get(name);
+    if (g) g.projects.push(p);
+    else groups.set(name, { id: categoryAnchorId(name), label: name, projects: [p] });
+  }
+  const out = [...groups.values()];
+  if (other.length) out.push({ id: categoryAnchorId(OTHER_WORK_LABEL), label: OTHER_WORK_LABEL, projects: other });
+  return out;
+}
+
 /**
  * Status label to show, or null. Placeholder statuses ("... to confirm") and
  * any status on client work are never rendered.

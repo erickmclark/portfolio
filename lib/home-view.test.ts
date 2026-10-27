@@ -8,6 +8,8 @@ import {
   previewProjects,
   FACTORY_ID,
   filterByCategory,
+  categoryAnchorId,
+  groupByCategory,
   homeHref,
   workHref,
   orderProjects,
@@ -200,5 +202,39 @@ describe('previewProjects', () => {
   });
   it('shows no feature when a category filter removed the Factory', () => {
     expect(ids(previewProjects(mk('a', 'b', 'c', 'd'), 3, true))).toEqual(['a', 'b', 'c']);
+  });
+});
+
+describe('categoryAnchorId', () => {
+  it('makes URL-safe ids from category names', () => {
+    expect(categoryAnchorId('AI & SaaS Products')).toBe('ai-saas-products');
+    expect(categoryAnchorId('Web & App Development')).toBe('web-app-development');
+  });
+});
+
+describe('groupByCategory', () => {
+  const list = [
+    p('a', 1, { category: 'AI & SaaS Products' }),
+    p('b', 2, { category: 'Enterprise Leadership' }),
+    p('c', 3),
+    p('d', 4, { category: 'AI & SaaS Products' }),
+  ];
+
+  it('orders groups by first appearance and keeps project order', () => {
+    const g = groupByCategory(list);
+    expect(g.map((x) => x.label)).toEqual(['AI & SaaS Products', 'Enterprise Leadership', 'Other work']);
+    expect(g[0].projects.map((x) => x.id)).toEqual(['a', 'd']);
+    expect(g[0].id).toBe('ai-saas-products');
+  });
+
+  it('puts uncategorized projects in a final Other work group and loses none', () => {
+    const g = groupByCategory(list);
+    expect(g[g.length - 1].projects.map((x) => x.id)).toEqual(['c']);
+    expect(g.flatMap((x) => x.projects)).toHaveLength(list.length);
+  });
+
+  it('renders no group for an empty category and no Other group when all are categorized', () => {
+    expect(groupByCategory([])).toEqual([]);
+    expect(groupByCategory([p('a', 1, { category: 'Enterprise Leadership' })]).map((x) => x.label)).toEqual(['Enterprise Leadership']);
   });
 });

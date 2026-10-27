@@ -20,7 +20,7 @@ function media(project: Project) {
   return null;
 }
 
-export default function WorkCard({ project, feature = false, priority = false }: { project: Project; feature?: boolean; priority?: boolean }) {
+export default function WorkCard({ project, wide = false, featuredLabel = false, priority = false }: { project: Project; wide?: boolean; featuredLabel?: boolean; priority?: boolean }) {
   const m = media(project);
   const status = displayStatus(project);
   const ext = externalHref(project);
@@ -31,10 +31,10 @@ export default function WorkCard({ project, feature = false, priority = false }:
   const meta = [project.category, project.relationship, dates].filter(Boolean);
 
   return (
-    <article className={feature ? "grid gap-8 lg:grid-cols-[1fr_1.1fr]" : ""}>
-      <div className={feature ? "lg:col-span-2" : ""}>
+    <article className={wide ? "grid gap-8 lg:grid-cols-[1fr_1.1fr]" : ""}>
+      <div className={wide ? "lg:col-span-2" : ""}>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[11px] font-medium uppercase tracking-[0.1em]">
-          {feature && <span>Featured</span>}
+          {featuredLabel && <span>Featured</span>}
           {meta.map((x) => (
             <span key={x}>{x}</span>
           ))}
@@ -42,14 +42,14 @@ export default function WorkCard({ project, feature = false, priority = false }:
         </div>
       </div>
 
-      <div className={feature ? "" : "mt-4"}>
+      <div className={wide ? "" : "mt-4"}>
         <div className="relative aspect-[16/10] w-full overflow-hidden border border-ink bg-white">
           {m ? (
             <Image
               src={m.src}
               alt={m.alt}
               fill
-              sizes={feature ? "(min-width:1024px) 55vw, 100vw" : "(min-width:1024px) 664px, 100vw"}
+              sizes={wide ? "(min-width:1024px) 55vw, 100vw" : "(min-width:1024px) 664px, 100vw"}
               priority={priority}
               className="object-cover object-top"
             />
@@ -66,10 +66,10 @@ export default function WorkCard({ project, feature = false, priority = false }:
         </div>
       </div>
 
-      <div className={feature ? "" : "mt-5"}>
+      <div className={wide ? "" : "mt-5"}>
         <h3
           className={`font-display font-bold leading-none tracking-[-0.045em] ${
-            feature ? "text-[40px] sm:text-5xl" : "text-[28px] sm:text-[32px]"
+            wide ? "text-[40px] sm:text-5xl" : "text-[28px] sm:text-[32px]"
           }`}
         >
           {project.title}
