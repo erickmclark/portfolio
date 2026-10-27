@@ -48,7 +48,7 @@ export default async function SelectedWork({
                     <p className="font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink-muted">
                       {g.projects.length} {g.projects.length === 1 ? "project" : "projects"}
                     </p>
-                    <h2 id={`${g.id}-title`} className="mt-2 font-display text-2xl font-bold leading-tight tracking-[-0.03em]">
+                    <h2 id={`${g.id}-title`} className="mt-2 font-display text-[30px] font-bold leading-tight tracking-[-0.04em] sm:text-4xl">
                       {g.label}
                     </h2>
                   </header>
