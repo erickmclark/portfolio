@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import { GitHubIcon, LinkedInIcon } from "@/components/brand-icons";
 import PrivacyLink from "@/components/privacy-link";
 import { getSiteContent } from "@/lib/content";
-import { CLARK_STRATEGICS_URL } from "@/lib/home-copy";
 import { VIEWS, VIEW_LABELS } from "@/lib/home-view";
 import { resumeDownloadHref } from "@/lib/resume";
 
@@ -68,9 +67,6 @@ export default async function SiteFooter() {
                   Résumé <ArrowDown size={14} aria-hidden />
                 </a>
               )}
-              <a className={link} href={CLARK_STRATEGICS_URL} target="_blank" rel="noopener noreferrer">
-                Clark Strategics <ArrowUpRight size={14} aria-hidden />
-              </a>
             </div>
             <div className="flex flex-col items-start">
               <p className={heading}>Legal</p>

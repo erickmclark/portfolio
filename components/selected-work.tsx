@@ -1,7 +1,7 @@
 import { getSiteContent, publicProjects } from "@/lib/content";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { FACTORY_ID, filterByCategory, groupByCategory, hasFactoryFeature, orderProjects, workHref, type View } from "@/lib/home-view";
+import { FACTORY_ID, filterByCategory, groupByCategory, hasFactoryFeature, orderProjects, previewProjects, workHref, type View } from "@/lib/home-view";
 import type { ProjectCategory } from "@/lib/types";
 import SectionHead from "./section-head";
 import WorkCard from "./work-card";
@@ -68,8 +68,9 @@ export default async function SelectedWork({
     );
   }
   const ordered = filterByCategory(orderProjects(publicProjects(projects), view, home.workOrder), category);
-  const list = preview ? ordered.slice(0, PREVIEW_COUNT) : ordered;
-  const fi = hasFactoryFeature(view, home.workOrder) ? list.findIndex((p) => p.id === FACTORY_ID) : -1;
+  const factoryFeatured = hasFactoryFeature(view, home.workOrder);
+  const list = preview ? previewProjects(ordered, PREVIEW_COUNT, factoryFeatured) : ordered;
+  const fi = factoryFeatured ? list.findIndex((p) => p.id === FACTORY_ID) : -1;
   const feature = fi === -1 ? null : list[fi];
   const before = fi === -1 ? list : list.slice(0, fi);
   const after = fi === -1 ? [] : list.slice(fi + 1);

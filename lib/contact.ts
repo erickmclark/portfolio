@@ -14,9 +14,9 @@ export const CONTACT_INTENT_IDS = [
 export type ContactIntent = (typeof CONTACT_INTENT_IDS)[number];
 
 export const CONTACT_INTENTS: readonly { id: ContactIntent; label: string }[] = [
-  { id: 'leadership', label: 'Leadership Opportunity' },
+  { id: 'leadership', label: 'Employment Opportunity' },
   { id: 'advisory', label: 'Strategic Advisory' },
-  { id: 'build', label: 'Build a Product' },
+  { id: 'build', label: 'Build a Product / Website' },
   { id: 'product', label: 'Product or Partnership' },
   { id: 'speaking', label: 'Speaking or Training' },
   { id: 'general', label: 'General Inquiry' },
@@ -52,18 +52,23 @@ export const COMMON_FIELDS: readonly ContactField[] = [
   f('email', 'Email', 'email', true),
 ];
 
+// The one required free-text field, shared by every intent so the first step stays short.
+const MESSAGE = f('message', 'Message', 'textarea', true);
+
 export const CONTACT_FIELDS: Record<ContactIntent, readonly ContactField[]> = {
   leadership: [
-    f('organization', 'Organization', 'text', true),
-    f('roleTitle', 'Role title', 'text', true),
+    MESSAGE,
+    f('organization', 'Organization', 'text', false),
+    f('roleTitle', 'Role title', 'text', false),
     f('jobPostingUrl', 'Job posting URL', 'url', false),
     f('workArrangement', 'Location/work arrangement', 'select', false, ['Remote', 'Hybrid', 'On-site', 'Other']),
     f('employmentType', 'Employment type', 'select', false, ['Permanent', 'Contract', 'Contract-to-hire']),
     f('roleDetails', 'Role details or questions', 'textarea', false),
   ],
   advisory: [
-    f('organization', 'Organization', 'text', true),
-    f('areaOfSupport', 'Area of support', 'select', true, [
+    MESSAGE,
+    f('organization', 'Organization', 'text', false),
+    f('areaOfSupport', 'Area of support', 'select', false, [
       'AI Strategy',
       'Technology Strategy',
       'Enterprise Transformation',
@@ -73,8 +78,8 @@ export const CONTACT_FIELDS: Record<ContactIntent, readonly ContactField[]> = {
       'Portfolio or PMO',
       'Other',
     ]),
-    f('biggestChallenge', 'Biggest challenge today', 'textarea', true),
-    f('desiredOutcome', 'Desired outcome', 'textarea', true),
+    f('biggestChallenge', 'Biggest challenge today', 'textarea', false),
+    f('desiredOutcome', 'Desired outcome', 'textarea', false),
     f('timeframe', 'Target timeframe', 'select', false, ['Immediately', '1–3 months', '3–6 months', 'Exploring']),
     f('budgetRange', 'Budget range', 'select', false, ['Still defining', 'Under $10K', '$10K–$25K', '$25K–$50K', '$50K+']),
     f('preferredNextStep', 'Preferred next step', 'select', false, [
@@ -84,8 +89,9 @@ export const CONTACT_FIELDS: Record<ContactIntent, readonly ContactField[]> = {
     ]),
   ],
   build: [
+    MESSAGE,
     f('projectName', 'Organization or project name', 'text', false),
-    f('projectType', 'Type of project', 'select', true, [
+    f('projectType', 'Type of project', 'select', false, [
       'AI Application',
       'Business Web App',
       'Website',
@@ -94,19 +100,20 @@ export const CONTACT_FIELDS: Record<ContactIntent, readonly ContactField[]> = {
       'Improve Existing Product',
       'Other',
     ]),
-    f('problem', 'Problem the product should solve', 'textarea', true),
-    f('users', 'Who will use it', 'select', true, ['Customers', 'Employees', 'Partners', 'Internal Team', 'Other']),
-    f('keyWorkflows', 'Three most important workflows/features', 'textarea', true),
+    f('problem', 'Problem the product should solve', 'textarea', false),
+    f('users', 'Who will use it', 'select', false, ['Customers', 'Employees', 'Partners', 'Internal Team', 'Other']),
+    f('keyWorkflows', 'Three most important workflows/features', 'textarea', false),
     f('existingSystem', 'Existing application/system', 'select', false, ['Yes', 'No']),
     f('integrations', 'Integrations required', 'select', false, ['Yes', 'No', 'Not sure']),
     f('sensitiveData', 'Sensitive or regulated data', 'select', false, ['Yes', 'No', 'Not sure']),
-    f('currentStage', 'Current stage', 'select', true, ['Idea', 'Requirements', 'Prototype', 'Existing Product']),
+    f('currentStage', 'Current stage', 'select', false, ['Idea', 'Requirements', 'Prototype', 'Existing Product']),
     f('launchTimeframe', 'Target launch timeframe', 'select', false, ['Immediately', '1–3 months', '3–6 months', 'Exploring']),
     f('budget', 'Estimated budget', 'select', false, ['Not decided', 'Under $10K', '$10K–$25K', '$25K–$50K', '$50K–$100K', '$100K+']),
     f('requirementsUrl', 'Supporting requirements/design link', 'url', false),
   ],
   product: [
-    f('product', 'Product', 'select', true, [
+    MESSAGE,
+    f('product', 'Product', 'select', false, [
       'AuthMatch AI',
       'Prepera',
       'SanctionsWatch',
@@ -116,7 +123,7 @@ export const CONTACT_FIELDS: Record<ContactIntent, readonly ContactField[]> = {
       'AI Strategy & Governance Platform',
       'Other',
     ]),
-    f('inquiryType', 'Inquiry', 'select', true, [
+    f('inquiryType', 'Inquiry', 'select', false, [
       'Demo',
       'Partnership',
       'Integration',
@@ -125,13 +132,14 @@ export const CONTACT_FIELDS: Record<ContactIntent, readonly ContactField[]> = {
       'Other',
     ]),
     f('organizationRole', 'Organization and role', 'text', false),
-    f('useCase', 'Intended use case', 'textarea', true),
+    f('useCase', 'Intended use case', 'textarea', false),
     f('nextStep', 'Desired next step', 'textarea', false),
     f('followDevelopment', 'Follow development of this product', 'boolean', false),
   ],
   speaking: [
-    f('organization', 'Organization', 'text', true),
-    f('topic', 'Topic', 'select', true, [
+    MESSAGE,
+    f('organization', 'Organization', 'text', false),
+    f('topic', 'Topic', 'select', false, [
       'AI Strategy',
       'AI Governance',
       'AI-Assisted Engineering',
@@ -139,7 +147,7 @@ export const CONTACT_FIELDS: Record<ContactIntent, readonly ContactField[]> = {
       'Technology Leadership',
       'Other',
     ]),
-    f('format', 'Format', 'select', true, [
+    f('format', 'Format', 'select', false, [
       'Keynote',
       'Workshop',
       'Executive Briefing',
@@ -149,15 +157,27 @@ export const CONTACT_FIELDS: Record<ContactIntent, readonly ContactField[]> = {
     f('proposedDate', 'Proposed date', 'date', false),
     f('audienceSize', 'Audience size', 'text', false),
     f('audienceBackground', 'Audience background', 'textarea', false),
-    f('learningObjective', 'Learning objective', 'textarea', true),
+    f('learningObjective', 'Learning objective', 'textarea', false),
     f('location', 'Location / virtual', 'text', false),
     f('otherDetails', 'Other details', 'textarea', false),
   ],
-  general: [
-    f('subject', 'Subject', 'text', true),
-    f('message', 'Message', 'textarea', true),
-  ],
+  general: [MESSAGE, f('subject', 'Subject', 'text', false)],
 };
+
+/** Fields shown inside the optional disclosure: everything except the shared message and the follow opt-in. */
+export function optionalFieldNames(intent: ContactIntent): string[] {
+  return CONTACT_FIELDS[intent].filter((x) => x.name !== MESSAGE.name && x.kind !== 'boolean').map((x) => x.name);
+}
+
+/** The disclosure starts open only when an optional field is prefilled. */
+export function initialDetailsOpen(values: Record<string, string>, optionalNames: readonly string[]): boolean {
+  return optionalNames.some((n) => !!values[n]);
+}
+
+/** A validation error on an optional field must reveal it. */
+export function shouldOpenForErrors(errors: Record<string, string>, optionalNames: readonly string[]): boolean {
+  return optionalNames.some((n) => !!errors[n]);
+}
 
 export const PRIVACY_FIELD_LABEL = 'Privacy Policy acknowledged';
 

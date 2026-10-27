@@ -4,6 +4,9 @@ import {
   experienceDates,
   externalHref,
   hasFactoryFeature,
+  legacySlugRedirect,
+  previewProjects,
+  FACTORY_ID,
   filterByCategory,
   categoryAnchorId,
   groupByCategory,
@@ -57,15 +60,27 @@ describe('orderProjects', () => {
     p('prj-dupars-bbq', 2),
     p('prj-ai-engineering-factory', 3),
     p('prj-other', 0),
-    p('prj-jpmc-legal-tech', 4),
+    p('prj-jpmc-ai-strategy', 4),
+    p('prj-jpmc-operating-model', 5),
+    p('prj-jpmc-strategy-operations', 6),
+    p('prj-angie-cares', 7),
+    p('prj-authmatch', 8),
   ];
-  it('puts the view featured ids first and keeps every project', () => {
+  it('leads each view with its audience: executive case studies, AI strategy, then working software', () => {
     const it = orderProjects(list, 'it').map((x) => x.id);
-    expect(it.slice(0, 3)).toEqual(['prj-jpmc-legal-tech', 'prj-ai-engineering-factory', 'prj-prepera']);
+    expect(it.slice(0, 4)).toEqual([
+      'prj-jpmc-operating-model',
+      'prj-jpmc-strategy-operations',
+      'prj-jpmc-ai-strategy',
+      'prj-ai-engineering-factory',
+    ]);
     expect(it).toHaveLength(list.length);
     const c = orderProjects(list, 'consultant').map((x) => x.id);
-    expect(c.slice(0, 2)).toEqual(['prj-dupars-bbq', 'prj-jpmc-legal-tech']);
+    expect(c.slice(0, 2)).toEqual(['prj-jpmc-ai-strategy', 'prj-jpmc-operating-model']);
     expect(c).toHaveLength(list.length);
+    const b = orderProjects(list, 'builder').map((x) => x.id);
+    expect(b.slice(0, 4)).toEqual(['prj-dupars-bbq', 'prj-angie-cares', 'prj-authmatch', 'prj-prepera']);
+    expect(b).toHaveLength(list.length);
   });
   it('does not mutate the input', () => {
     const copy = [...list];
@@ -162,6 +177,31 @@ describe('viewHref', () => {
   it('carries consultant and builder views', () => {
     expect(viewHref('/about', 'consultant')).toBe('/about?view=consultant');
     expect(viewHref('/', 'builder')).toBe('/?view=builder');
+  });
+});
+
+describe('legacySlugRedirect', () => {
+  it('maps the retired JPMorgan slug and ignores others', () => {
+    expect(legacySlugRedirect('jpmorgan-legal-technology')).toBe('jpmorgan-strategy-portfolio-governance');
+    expect(legacySlugRedirect('unknown')).toBeUndefined();
+    expect(legacySlugRedirect('constructor')).toBeUndefined();
+  });
+});
+
+describe('previewProjects', () => {
+  const ids = (l: Project[]) => l.map((x) => x.id);
+  const mk = (...i: string[]) => i.map((id, n) => p(id, n));
+  it('keeps 3 projects then the Factory when it is 4th', () => {
+    expect(ids(previewProjects(mk('a', 'b', 'c', FACTORY_ID, 'd'), 3, true))).toEqual(['a', 'b', 'c', FACTORY_ID]);
+  });
+  it('keeps 3 projects then the Factory when it is 5th', () => {
+    expect(ids(previewProjects(mk('a', 'b', 'c', 'd', FACTORY_ID), 3, true))).toEqual(['a', 'b', 'c', FACTORY_ID]);
+  });
+  it('slices to 3 with no feature when the Factory is not featured', () => {
+    expect(ids(previewProjects(mk('a', 'b', 'c', 'd'), 3, false))).toEqual(['a', 'b', 'c']);
+  });
+  it('shows no feature when a category filter removed the Factory', () => {
+    expect(ids(previewProjects(mk('a', 'b', 'c', 'd'), 3, true))).toEqual(['a', 'b', 'c']);
   });
 });
 

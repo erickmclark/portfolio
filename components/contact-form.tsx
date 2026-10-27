@@ -12,6 +12,9 @@ import {
   CONTACT_INTENT_COPY,
   CONTACT_MIN_ELAPSED_MS,
   GOVERNANCE_PLATFORM_PRODUCT,
+  initialDetailsOpen,
+  optionalFieldNames,
+  shouldOpenForErrors,
   validateContactSubmission,
   type ContactField,
   type ContactIntent,
@@ -35,7 +38,7 @@ const SENSITIVE = "Please don't submit passwords, protected health information, 
 const PRODUCT_WARNING = 'Do not include patient information, credentials, or confidential records.';
 const PRIVACY_BEFORE = 'I have read the ';
 const PRIVACY_AFTER = ' and agree that my details are used to respond to this inquiry.';
-const CSS_NOTE = 'This request may be handled through Clark Strategic Systems LLC (Clark Strategics), my consulting and engineering firm.';
+const CSS_NOTE = 'Commercial engagements may be contracted through Clark Strategic Systems LLC.';
 const FOLLOW_LABEL = `Optional: send me occasional development updates about the ${GOVERNANCE_PLATFORM_PRODUCT}. Separate from this inquiry; unsubscribe from any update.`;
 const SERVER_ERROR = "Your message couldn't be sent. Please try again or use the direct email link.";
 
@@ -63,7 +66,7 @@ const ROWS: Record<ContactIntent, string[][]> = {
     ['learningObjective'],
     ['otherDetails'],
   ],
-  general: [['subject'], ['message']],
+  general: [['subject']],
 };
 
 const control =
@@ -79,6 +82,8 @@ export default function ContactForm({ intent, initialValues, sourcePage, onValue
   const [privacy, setPrivacy] = useState(false);
   const [follow, setFollow] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const optionalNames = optionalFieldNames(intent);
+  const [detailsOpen, setDetailsOpen] = useState(() => initialDetailsOpen(initialValues, optionalNames));
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState('');
   const started = useRef(0);
@@ -93,10 +98,13 @@ export default function ContactForm({ intent, initialValues, sourcePage, onValue
   // Boolean fields (the follow-development opt-in) render as their own checkbox below.
   const fields = [...COMMON_FIELDS, ...CONTACT_FIELDS[intent]].filter((f) => f.kind !== 'boolean');
   const byName = new Map(fields.map((f) => [f.name, f]));
-  const laid = [['name', 'email'], ...ROWS[intent]].map((r) => r.map((n) => byName.get(n)).filter((f): f is ContactField => !!f));
-  const placed = new Set(laid.flat().map((f) => f.name));
+  const toRows = (names: string[][]) => names.map((r) => r.map((n) => byName.get(n)).filter((f): f is ContactField => !!f));
+  // Required first step: name, email and message. Everything else is optional and disclosed on request.
+  const requiredRows = toRows([['name', 'email'], ['message']]);
+  const laid = toRows(ROWS[intent]);
+  const placed = new Set([...requiredRows, ...laid].flat().map((f) => f.name));
   // Any field without a layout row still renders, full width.
-  const rows = [...laid, ...fields.filter((f) => !placed.has(f.name)).map((f) => [f])].filter((r) => r.length > 0);
+  const optionalRows = [...laid, ...fields.filter((f) => !placed.has(f.name)).map((f) => [f])].filter((r) => r.length > 0);
   const copy = CONTACT_INTENT_COPY[intent];
   const showFollow = intent === 'product' && values.product === GOVERNANCE_PLATFORM_PRODUCT;
   const fid = (name: string) => `${uid}-${name}`;
@@ -108,6 +116,7 @@ export default function ContactForm({ intent, initialValues, sourcePage, onValue
   }
 
   function focusFirstError(errs: Record<string, string>) {
+    if (shouldOpenForErrors(errs, optionalNames)) setDetailsOpen(true);
     const first = Object.keys(errs)[0];
     const id = first === 'privacyAcknowledged' ? fid('privacy') : fid(first);
     requestAnimationFrame(() => {
@@ -259,12 +268,27 @@ export default function ContactForm({ intent, initialValues, sourcePage, onValue
           <>
             <form ref={formRef} onSubmit={onSubmit} noValidate>
               <div className="grid gap-y-5">
-                {rows.map((row) => (
+                {requiredRows.map((row) => (
                   <div key={row[0].name} className={`grid gap-x-6 gap-y-5 ${row.length > 1 ? 'sm:grid-cols-2' : ''}`}>
                     {row.map(renderField)}
                   </div>
                 ))}
               </div>
+
+              {optionalRows.length > 0 && (
+                <details open={detailsOpen} onToggle={(e) => setDetailsOpen(e.currentTarget.open)} className="mt-5">
+                  <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2">
+                    Add more details (optional)
+                  </summary>
+                  <div className="mt-3 grid gap-y-5">
+                    {optionalRows.map((row) => (
+                      <div key={row[0].name} className={`grid gap-x-6 gap-y-5 ${row.length > 1 ? 'sm:grid-cols-2' : ''}`}>
+                        {row.map(renderField)}
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              )}
 
               <div aria-hidden className="sr-only">
                 <label>

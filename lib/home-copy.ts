@@ -28,11 +28,9 @@ export const CONTACT_HREFS = {
   general: '/contact?type=general',
 } as const;
 
-export const CLARK_STRATEGICS_URL = 'https://clarkstrategics.com';
-
 export const PROFILE_LINE =
-  'Former JPMorgan Chase Vice President & Chief of Staff · Founder · AI Product Builder';
-export const SELECTOR_LABEL = 'Explore my work as a';
+  'AI Strategy & Transformation | AI Governance | Technology Chief of Staff | Strategy & Execution | Enterprise Technology | U.S. Army Veteran';
+export const SELECTOR_LABEL = 'Explore my experience';
 
 export const HERO: Record<View, HeroCopy> = {
   it: {
@@ -47,8 +45,6 @@ export const HERO: Record<View, HeroCopy> = {
     body: "I work across business strategy, operations, AI, and technology to understand what's slowing an organization down, identify opportunities, and define a realistic path forward. My approach combines executive-level planning with hands-on delivery experience, so recommendations account for what it actually takes to implement them.",
     primary: { label: 'Discuss Your Business Challenge', href: CONTACT_HREFS.advisory },
     secondary: { label: 'See Consulting Work', href: '#work' },
-    tertiary: { label: 'Explore Clark Strategics', href: CLARK_STRATEGICS_URL },
-    tertiaryExternal: true,
   },
   builder: {
     h1: 'I turn ideas into working software that solves real problems.',
@@ -167,7 +163,7 @@ export const CONTACT = {
 };
 
 export const FOOTER = {
-  name: 'Erick Clark',
+  name: 'Erick Clark, MBA, MS, PMP, PSM I',
   descriptor: 'Technology Strategy & AI Transformation Professional',
   line: 'Enterprise leadership. Practical consulting. Working AI products.',
   location: 'Houston, Texas',
@@ -182,11 +178,17 @@ export const HOME_SEO = {
 };
 
 export const PRIVACY = {
-  eyebrow: 'Draft',
+  eyebrow: 'Privacy',
   title: 'Privacy Policy',
-  intro: 'How the contact form and analytics on this site handle your information.',
+  intro: 'How the contact form and analytics on this site handle your information. Last updated October 26, 2026.',
   sections: [
-    { id: 'operator', title: 'Who operates this site', paragraphs: ['This site is operated by Erick Clark.'] },
+    {
+      id: 'operator',
+      title: 'Who operates this site',
+      paragraphs: [
+        'This site is operated by Erick Clark.',
+      ],
+    },
     {
       id: 'collected',
       title: 'What the contact form collects',
@@ -201,7 +203,7 @@ export const PRIVACY = {
       title: 'How your information is used and where it goes',
       paragraphs: [
         'To understand your request and reply to it, using the email address you provide.',
-        'Leadership opportunity, product or partnership, and general inquiries go to Erick directly. Strategic advisory, build-a-product, and speaking or training inquiries go to his Clark Strategics business inbox. Commercial inquiries of these kinds may be handled through Clark Strategic Systems LLC.',
+        'Leadership opportunity, product or partnership, and general inquiries go to Erick directly. Strategic advisory, build-a-product, and speaking or training inquiries go to a business inbox for Clark Strategic Systems LLC. Commercial inquiries of these kinds may be handled through Clark Strategic Systems LLC.',
       ],
     },
     {
@@ -229,10 +231,47 @@ export const PRIVACY = {
       ],
     },
     {
-      id: 'contact',
-      title: 'Privacy requests',
+      id: 'retention',
+      title: 'How long information is kept',
       paragraphs: [
-        'For questions about this policy or about information you have sent through the site, email {email}.',
+        'Messages are kept while we are in conversation and deleted within 90 days after it ends, unless they lead to a working relationship.',
+        "The form's abuse-prevention counters expire on their own within 10 minutes (per visitor) and 24 hours (site-wide). Analytics data is kept under Vercel's retention policy.",
+      ],
+    },
+    {
+      id: 'outside-us',
+      title: 'Visitors outside the United States',
+      paragraphs: [
+        'Your message is used because you asked for a reply, which is a legitimate interest in answering it. The service providers named above may process it in the United States.',
+      ],
+    },
+    {
+      id: 'security',
+      title: 'Security',
+      paragraphs: [
+        'Reasonable technical measures protect the site and its messages. No method of transmission or storage is completely secure.',
+      ],
+    },
+    {
+      id: 'children',
+      title: 'Children',
+      paragraphs: [
+        'This site is for professional inquiries and is not directed to children under 13.',
+      ],
+    },
+    {
+      id: 'contact',
+      title: 'Your choices and requests',
+      paragraphs: [
+        'You can ask what you have sent through this site, ask for a correction, or ask for deletion by emailing {email}. Requests are answered within 30 days.',
+        'Your information is never sold or shared for advertising.',
+      ],
+    },
+    {
+      id: 'changes',
+      title: 'Changes to this policy',
+      paragraphs: [
+        'Updates are posted on this page with a new date.',
       ],
     },
   ],
@@ -246,7 +285,10 @@ export const NOT_FOUND = {
 };
 
 export const CONTACT_SEO = { title: 'Contact', description: CONTACT.intro };
-export const PRIVACY_SEO = { title: 'Privacy Policy', description: PRIVACY.intro };
+export const PRIVACY_SEO = {
+  title: 'Privacy Policy',
+  description: 'How the contact form and analytics on this site handle your information.',
+};
 
 export const DEFAULT_HOME: HomeContent = {
   profileLine: PROFILE_LINE,

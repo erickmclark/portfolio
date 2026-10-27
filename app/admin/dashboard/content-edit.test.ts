@@ -43,7 +43,7 @@ describe('setBand', () => {
 });
 
 describe('hero tertiary', () => {
-  const hero: HeroCopy = { ...DEFAULT_HOME.hero.consultant };
+  const hero: HeroCopy = { ...DEFAULT_HOME.hero.it };
   it('clearing drops the tertiary and external flag', () => {
     const out = withTertiary(hero, undefined);
     expect('tertiary' in out).toBe(false);

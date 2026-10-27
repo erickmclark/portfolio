@@ -3,7 +3,10 @@ import {
   CONTACT_CONSENT_VERSION,
   CONTACT_ERRORS,
   CONTACT_INTENT_IDS,
+  initialDetailsOpen,
   isHoneypotTripped,
+  optionalFieldNames,
+  shouldOpenForErrors,
   isSpam,
   isTooFast,
   validateContactSubmission,
@@ -13,11 +16,11 @@ import {
 const base = { name: 'Ada Lovelace', email: 'ada@example.com', privacyAcknowledged: true };
 
 const valid: Record<ContactIntent, Record<string, unknown>> = {
-  leadership: { organization: 'Acme', roleTitle: 'VP Strategy', workArrangement: 'Hybrid', employmentType: 'Permanent', jobPostingUrl: 'https://acme.com/job' },
-  advisory: { organization: 'Acme', areaOfSupport: 'AI-Assisted Engineering', biggestChallenge: 'x', desiredOutcome: 'y', timeframe: '1–3 months', budgetRange: '$25K–$50K' },
-  build: { projectType: 'Website', problem: 'p', users: 'Customers', keyWorkflows: 'w', currentStage: 'Idea', integrations: 'Not sure' },
-  product: { product: 'Prepera', inquiryType: 'Demo', useCase: 'u', followDevelopment: true },
-  speaking: { organization: 'Acme', topic: 'AI Strategy', format: 'Keynote', learningObjective: 'l', proposedDate: '2027-02-28' },
+  leadership: { message: 'm', organization: 'Acme', roleTitle: 'VP Strategy', workArrangement: 'Hybrid', employmentType: 'Permanent', jobPostingUrl: 'https://acme.com/job' },
+  advisory: { message: 'm', organization: 'Acme', areaOfSupport: 'AI-Assisted Engineering', biggestChallenge: 'x', desiredOutcome: 'y', timeframe: '1–3 months', budgetRange: '$25K–$50K' },
+  build: { message: 'm', projectType: 'Website', problem: 'p', users: 'Customers', keyWorkflows: 'w', currentStage: 'Idea', integrations: 'Not sure' },
+  product: { message: 'm', product: 'Prepera', inquiryType: 'Demo', useCase: 'u', followDevelopment: true },
+  speaking: { message: 'm', organization: 'Acme', topic: 'AI Strategy', format: 'Keynote', learningObjective: 'l', proposedDate: '2027-02-28' },
   general: { subject: 's', message: 'm' },
 };
 
@@ -70,9 +73,8 @@ describe('validateContactSubmission', () => {
     const e = errors({ intent: 'general', privacyAcknowledged: true });
     expect(e.name).toBe('Please complete this field.');
     expect(e.email).toBe('Please complete this field.');
-    expect(e.subject).toBe('Please complete this field.');
     expect(e.message).toBe('Please complete this field.');
-    expect(errors(payload('general', { subject: '   ' })).subject).toBe('Please complete this field.');
+    expect(errors(payload('general', { message: '   ' })).message).toBe('Please complete this field.');
   });
 
   it('rejects bad email', () => {
@@ -185,5 +187,39 @@ describe('spam checks', () => {
     expect(isSpam({ elapsedMs: 5000 })).toBe(false);
     expect(isSpam({ elapsedMs: 5000, website: 'x' })).toBe(true);
     expect(isSpam({ website: '' })).toBe(true);
+  });
+});
+
+describe('minimal first-step submission', () => {
+  it.each(CONTACT_INTENT_IDS)('accepts only intent, name, email, message and privacy for %s', (intent) => {
+    const r = validateContactSubmission({ intent, ...base, message: 'Hello' });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.submission.fields).toEqual({ message: 'Hello' });
+  });
+  it.each(CONTACT_INTENT_IDS)('requires message for %s', (intent) => {
+    expect(errors({ intent, ...base }).message).toBe(CONTACT_ERRORS.required);
+  });
+  it('still validates optional field types when present', () => {
+    expect(errors({ intent: 'leadership', ...base, message: 'm', jobPostingUrl: 'nope' }).jobPostingUrl).toBe(CONTACT_ERRORS.url);
+    expect(errors({ intent: 'build', ...base, message: 'm', currentStage: 'Nope' }).currentStage).toBe(CONTACT_ERRORS.option);
+    expect(validateContactSubmission({ intent: 'build', ...base, message: 'm', currentStage: 'Prototype' }).ok).toBe(true);
+  });
+});
+
+describe('optional disclosure state helpers', () => {
+  const names = optionalFieldNames('leadership');
+  it('lists optional fields without message or booleans', () => {
+    expect(names).toContain('organization');
+    expect(names).not.toContain('message');
+    expect(optionalFieldNames('product')).not.toContain('followDevelopment');
+  });
+  it('starts open only with a prefilled optional value', () => {
+    expect(initialDetailsOpen({}, names)).toBe(false);
+    expect(initialDetailsOpen({ message: 'x' }, names)).toBe(false);
+    expect(initialDetailsOpen({ areaOfSupport: 'AI Strategy' }, optionalFieldNames('advisory'))).toBe(true);
+  });
+  it('opens for errors on optional fields only', () => {
+    expect(shouldOpenForErrors({ message: 'e' }, names)).toBe(false);
+    expect(shouldOpenForErrors({ jobPostingUrl: 'e' }, names)).toBe(true);
   });
 });
