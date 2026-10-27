@@ -14,7 +14,7 @@ export default async function ContactBanner({ id }: { id?: string }) {
           <Link href="/contact" className="on-dark inline-flex min-h-11 items-center rounded-full bg-ink px-5 text-[15px] font-semibold text-white">
             Start a conversation
           </Link>
-          <a href={`mailto:${contact.email}`} className="inline-flex min-h-11 items-center break-all text-[15px] font-semibold underline underline-offset-4">
+          <a href={`mailto:${contact.email}`} className="inline-flex min-h-11 items-center break-all rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white">
             {contact.email}
           </a>
         </div>

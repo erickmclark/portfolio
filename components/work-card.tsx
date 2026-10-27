@@ -86,19 +86,19 @@ export default function WorkCard({ project, feature = false, priority = false }:
           </ul>
         )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-x-5">
+        <div className="mt-4 flex flex-wrap items-center gap-3">
           {contactCta ? (
-            <a href={contactCta.href} className="inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4">
+            <a href={contactCta.href} className="inline-flex min-h-11 items-center gap-1 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white">
               {contactCta.label} <ArrowRight size={14} aria-hidden />
             </a>
           ) : (
-            <Link href={`/work/${project.slug}`} className="inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4">
+            <Link href={`/work/${project.slug}`} className="inline-flex min-h-11 items-center gap-1 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white">
               {cta}
               <span className="sr-only">: {project.title}</span> <ArrowRight size={14} aria-hidden />
             </Link>
           )}
           {project.cardSecondaryCta && (
-            <a href={project.cardSecondaryCta.href} className="inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4">
+            <a href={project.cardSecondaryCta.href} className="inline-flex min-h-11 items-center gap-1 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white">
               {project.cardSecondaryCta.label} <ArrowRight size={14} aria-hidden />
             </a>
           )}
@@ -107,7 +107,7 @@ export default function WorkCard({ project, feature = false, priority = false }:
               href={ext}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4"
+              className="inline-flex min-h-11 items-center gap-1 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white"
             >
               Visit site<span className="sr-only"> for {project.title} (opens in a new tab)</span> <ArrowUpRight size={14} aria-hidden />
             </a>

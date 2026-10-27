@@ -43,7 +43,7 @@ export default async function AboutPreview() {
             )}
             <Link
               href="/about"
-              className="mt-6 inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4"
+              className="mt-6 inline-flex min-h-11 items-center gap-1 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white"
             >
               More about me <ArrowRight size={14} aria-hidden />
             </Link>

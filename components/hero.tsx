@@ -85,7 +85,7 @@ export default async function Hero({ view }: { view: View }) {
             {copy.tertiary && (
               <a
                 href={copy.tertiary.href}
-                className={`${btn} gap-1 px-1 underline underline-offset-4`}
+                className={`${btn} gap-1 rounded-full border-2 border-ink text-ink hover:bg-white`}
                 {...(copy.tertiaryExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               >
                 {copy.tertiary.label}
