@@ -40,10 +40,18 @@
         "intro": "Operating-system design for AI-assisted engineering; agent orchestration; quality governance; engineering metrics; traceability; and iterative improvement.",
         "challenge": "As a solo founder building multiple products, I needed more structured development capacity without losing control over code quality, security, ownership, or the release process.",
         "delivered": "I designed a governed workflow in which work is planned, assigned to specialized AI agents, isolated for implementation, checked through automated tests, reviewed independently, and presented for a human decision before release. A companion dashboard examines tasks, review outcomes, failures, timing, cost-related records where available, and evidence quality to make engineering performance more visible.",
-        "riskAndControls": "Scoped task ownership, isolated work environments, security restrictions, testing and review requirements, bounded repair attempts, stop conditions, and recorded execution evidence."
+        "riskAndControls": "Scoped task ownership, isolated work environments, security restrictions, testing and review requirements, bounded repair attempts, stop conditions, and recorded execution evidence.",
+        "howItWorks": "Every change moves through five phases.\n\n**Govern and intake.** Requests from me, Jira or GitHub issues are reconciled into a ranked queue and revalidated before use. A task is picked only if it is unblocked, unclaimed and within the run budget, with up to three running in parallel.\n\n**Triage and plan.** Work that is ready to build has an approved plan, clear acceptance criteria and bounded scope. Unclear or higher-risk work goes to planner agents, and a person reviews the plan. Missing information or conflicting requests are held for a person, never guessed.\n\n**Build and validate.** One owner claims each task in its own isolated worktree. Specialist agents join only when needed. The implementer works inside the authorized scope and adds regression tests, then the project's quality gates run. Tests are never weakened to get a pass.\n\n**Review and assure.** Independent reviewers run in parallel, chosen by what changed: code, security, AI behavior, UI and accessibility. Blocking findings get at most two repair cycles; then the system stops and asks.\n\n**Approve and learn.** A passing change comes to me for approval before it merges into the protected main branch. Every run is recorded (hashes, not content) and feeds Factory Analytics (lead time, repair rate, review catch rate), which I use to tune the rules and agents.\n\nGovernance runs throughout: rules are enforced by hooks, high-risk work needs a person, secrets are scanned, and no agent approves its own work."
       },
-      "images": [],
-      "image": ""
+      "images": [
+        {
+          "url": "https://qdghepacnxxksvfb.public.blob.vercel-storage.com/projects/prj-ai-engineering-factory/image-oNE5usSVsjt4ymgXbxikUOSwgdHit7.png",
+          "alt": "Workflow diagram of the AI Engineering Factory: five phases from governed intake to triage, isolated build and validation, parallel independent review, and owner-approved merge, with governance controls and supporting pillars.",
+          "kind": "screenshot",
+          "caption": "How work moves through the Factory, from request to a reviewed, human-approved change."
+        }
+      ],
+      "image": "https://qdghepacnxxksvfb.public.blob.vercel-storage.com/projects/prj-ai-engineering-factory/image-oNE5usSVsjt4ymgXbxikUOSwgdHit7.png"
     },
     {
       "id": "prj-ai-governance-platform",
