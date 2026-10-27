@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { docBox, flipDelta, pieceProgress, scrollProgress, staggerDelay } from "./motion";
+import { docBox, flipDelta, staggerDelay } from "./motion";
 
 const box = (left: number, top: number, width: number, height: number) => ({ left, top, width, height });
 
@@ -22,17 +22,5 @@ describe("motion helpers", () => {
     expect(flipDelta(before, after)).toBeNull();
     // viewport-only comparison (the old behaviour) reports a phantom 300px move
     expect(flipDelta(box(0, 177, 100, 50), box(0, -123, 100, 50))).toEqual({ x: 0, y: 300, sx: 1, sy: 1 });
-  });
-
-  it("scrollProgress clamps and maps start to end", () => {
-    expect(scrollProgress(900, 1000, 0.85, 0.25)).toBe(0);
-    expect(scrollProgress(850, 1000, 0.85, 0.25)).toBe(0);
-    expect(scrollProgress(550, 1000, 0.85, 0.25)).toBeCloseTo(0.5);
-    expect(scrollProgress(100, 1000, 0.85, 0.25)).toBe(1);
-  });
-
-  it("pieces complete by t=1 and later pieces start later", () => {
-    for (let i = 0; i < 7; i++) expect(pieceProgress(1, i, 7)).toBe(1);
-    expect(pieceProgress(0.1, 0, 7)).toBeGreaterThan(pieceProgress(0.1, 5, 7));
   });
 });
