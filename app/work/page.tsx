@@ -5,8 +5,9 @@ import SelectedWork from "@/components/selected-work";
 import ContactBanner from "@/components/contact-banner";
 import Reveal from "@/components/reveal";
 import ScrollReset from "@/components/scroll-reset";
+import CategoryScroll from "@/components/category-scroll";
 import { getSiteContent } from "@/lib/content";
-import { parseCategory, parseView } from "@/lib/home-view";
+import { categoryAnchorId, parseCategory, parseView } from "@/lib/home-view";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { home } = await getSiteContent();
@@ -28,7 +29,7 @@ export default async function WorkPage({
 
   return (
     <main id="main-content" className="public-shell">
-      <ScrollReset />
+      {category ? <CategoryScroll targetId={categoryAnchorId(category)} /> : <ScrollReset />}
       <SelectedWork view={view} category={category} />
       <Reveal><ContactBanner /></Reveal>
     </main>
