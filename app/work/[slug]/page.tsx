@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { getSiteContent, publicProjectBySlug, publicProjects } from "@/lib/content";
-import { FACTORY_ID, displayStatus, externalHref, type View } from "@/lib/home-view";
+import { FACTORY_ID, displayStatus, externalHref, legacySlugRedirect, type View } from "@/lib/home-view";
 import type { CaseStudySection, ProjectImage } from "@/lib/types";
 import CaseStudyGallery from "@/components/case-study-gallery";
 import CaseStudySectionBlock from "@/components/case-study-section";
@@ -51,7 +51,11 @@ export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
   const { projects, home } = await getSiteContent();
   const project = publicProjectBySlug(projects, slug);
-  if (!project) notFound();
+  if (!project) {
+    const to = legacySlugRedirect(slug);
+    if (to) permanentRedirect(`/work/${to}`);
+    notFound();
+  }
 
   const pub = publicProjects(projects);
   const idx = pub.findIndex((p) => p.id === project.id);

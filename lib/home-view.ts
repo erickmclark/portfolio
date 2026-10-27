@@ -49,30 +49,42 @@ export function viewHref(path: string, view: View): string {
   return view === DEFAULT_VIEW ? path : `${path}?view=${view}`;
 }
 
-/** Featured order per view (spec 16.2), by stable Project.id. */
+/** Retired project slugs and the slug they permanently redirect to. */
+export const LEGACY_SLUG_REDIRECTS: Record<string, string> = {
+  'jpmorgan-legal-technology': 'jpmorgan-strategy-portfolio-governance',
+};
+export function legacySlugRedirect(slug: string): string | undefined {
+  return Object.hasOwn(LEGACY_SLUG_REDIRECTS, slug) ? LEGACY_SLUG_REDIRECTS[slug] : undefined;
+}
+
+/** Featured order per view (owner, 2026-10-26), by stable Project.id. */
 export const FEATURED_ORDER: Record<View, string[]> = {
   it: [
-    'prj-jpmc-legal-tech',
+    'prj-jpmc-operating-model',
+    'prj-jpmc-strategy-operations',
+    'prj-jpmc-ai-strategy',
     'prj-ai-engineering-factory',
-    'prj-ai-governance-platform',
     'prj-authmatch',
     'prj-prepera',
+    'prj-ai-governance-platform',
   ],
   consultant: [
+    'prj-jpmc-ai-strategy',
+    'prj-jpmc-operating-model',
+    'prj-ai-governance-platform',
     'prj-dupars-bbq',
     'prj-angie-cares',
-    'prj-jpmc-legal-tech',
-    'prj-ai-governance-platform',
+    'prj-jpmc-strategy-operations',
   ],
   builder: [
-    'prj-ai-engineering-factory',
     'prj-dupars-bbq',
     'prj-angie-cares',
     'prj-authmatch',
     'prj-prepera',
+    'prj-ai-engineering-factory',
+    'prj-gen4me',
     'prj-sanctionswatch',
     'prj-regulatory-intelligence',
-    'prj-gen4me',
     'prj-g2-complaint-miner',
   ],
 };
@@ -81,6 +93,14 @@ export const FEATURED_ORDER: Record<View, string[]> = {
 export const FACTORY_ID = 'prj-ai-engineering-factory';
 export function hasFactoryFeature(view: View, order: Record<View, string[]> = FEATURED_ORDER): boolean {
   return order[view].includes(FACTORY_ID);
+}
+
+/** Homepage preview: the first `count` non-Factory projects, then the Factory feature last when it is featured and present. */
+export function previewProjects(ordered: Project[], count: number, factoryFeatured: boolean): Project[] {
+  if (!factoryFeatured) return ordered.slice(0, count);
+  const factory = ordered.find((p) => p.id === FACTORY_ID);
+  const rest = ordered.filter((p) => p.id !== FACTORY_ID).slice(0, count);
+  return factory ? [...rest, factory] : rest;
 }
 
 /** The view's featured projects first, in order; every other project follows in content order. */

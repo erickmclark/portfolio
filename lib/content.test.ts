@@ -53,14 +53,15 @@ describe("visibility helpers", () => {
     expect(out.map((x) => x.id)).toEqual(["a", "d"]);
   });
 
-  it("migrated data.json defaults visibility and archives NightPivot out of public experience", async () => {
+  it("migrated data.json defaults visibility and holds no NightPivot record", async () => {
     const { projects, experience } = await getSiteContent();
     expect(projects.every((p) => p.visibility)).toBe(true);
-    expect(experience.find((x) => x.company === "NightPivot")?.visibility).toBe("archived");
+    // Owner, 2026-10-25: no NightPivot on public surfaces or admin-facing records.
+    expect(experience.some((x) => x.company === "NightPivot")).toBe(false);
     expect(publicExperience(experience).some((x) => x.company === "NightPivot")).toBe(false);
     const jpm = publicExperience(experience).find((x) => x.company === "JPMorgan Chase");
-    expect(jpm?.start).toBe("July 2019");
-    expect(jpm?.end).toBe("August 2026");
+    expect(jpm?.start).toBe("2019");
+    expect(jpm?.end).toBe("2026");
     expect(publicProjects(projects).some((p) => p.slug.includes("deb"))).toBe(false);
   });
 });

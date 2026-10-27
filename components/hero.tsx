@@ -9,12 +9,6 @@ import { ConfigurationMotion, ViewFade } from "./hero-motion";
 import { Eyebrow } from "./section-head";
 import ViewToggle from "./view-toggle";
 
-const VIEW_TOWER: Record<View, string> = {
-  it: "IT Professional (tower)",
-  consultant: "Consultant (tower)",
-  builder: "Builder (tower)",
-};
-
 export default async function Hero({ view }: { view: View }) {
   const { about, home } = await getSiteContent();
   const credentials = formatCredentials(about.credentials);
@@ -28,7 +22,7 @@ export default async function Hero({ view }: { view: View }) {
 
   return (
     <section id="top" aria-labelledby="hero-title" className="public-shell">
-      <div className="mx-auto grid max-w-[1440px] gap-x-24 gap-y-8 px-4 pb-14 pt-8 sm:px-10 sm:pt-14 lg:grid-cols-[minmax(0,652px)_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
+      <div className="mx-auto grid max-w-[1440px] gap-x-12 gap-y-8 px-4 pb-14 pt-8 sm:px-10 sm:pt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:gap-x-24 xl:grid-cols-[minmax(0,652px)_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
         <div className="lg:col-start-1 lg:row-start-1">
           <div className="flex items-center gap-4">
             {about.photo && (
@@ -99,9 +93,6 @@ export default async function Hero({ view }: { view: View }) {
           <ConfigurationMotion view={view}>
             <Configuration view={view} capabilities={home.capabilities[view]} className="mx-auto max-w-[600px] lg:ml-auto" />
           </ConfigurationMotion>
-          <p className="mx-auto mt-3 max-w-[600px] text-right font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-ink-muted lg:ml-auto">
-            Configuration: {VIEW_TOWER[view]}
-          </p>
           <span className="sr-only">
             Seven capabilities in priority order: {home.capabilities[view].map((c) => c.title).join(", ")}.
           </span>

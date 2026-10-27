@@ -36,11 +36,12 @@ describe('defaults', () => {
     expect(DEFAULT_CONTACT_PAGE.topics).toEqual(Object.fromEntries(CONTACT_INTENTS.map((i) => [i.id, i.label])));
     expect(DEFAULT_SITE.seo.contact).toEqual({ title: 'Contact', description: CONTACT.intro });
     expect(DEFAULT_SITE.privacy.sections.map((s) => s.id)).toEqual([
-      'operator', 'collected', 'use', 'providers', 'cookies', 'sensitive', 'contact',
+      'operator', 'collected', 'use', 'providers', 'cookies', 'sensitive', 'retention', 'outside-us', 'security',
+      'children', 'contact', 'changes',
     ]);
     expect(DEFAULT_SITE.privacy.sections[1].paragraphs[0]).toContain("inquiry type's questions");
-    expect(DEFAULT_SITE.privacy.sections[6].paragraphs[0]).toBe(
-      'For questions about this policy or about information you have sent through the site, email {email}.',
+    expect(DEFAULT_SITE.privacy.sections.find((x) => x.id === 'contact')?.paragraphs[0]).toBe(
+      'You can ask what you have sent through this site, ask for a correction, or ask for deletion by emailing {email}. Requests are answered within 30 days.',
     );
     expect(DEFAULT_SITE.notFound).toEqual({
       eyebrow: '404',
@@ -94,7 +95,7 @@ describe('withContentDefaults', () => {
     expect(second.home.hero.it.h1).toBe(DEFAULT_HOME.hero.it.h1);
     expect(second.home.hero.it.h1).not.toBe('mutated');
     expect(second.home.capabilities.it).toHaveLength(7);
-    expect(second.site.footer.name).toBe('Erick Clark');
+    expect(second.site.footer.name).toBe('Erick Clark, MBA, MS, PMP, PSM I');
     expect(second.contactPage.topics.general).toBe('General Inquiry');
   });
 
