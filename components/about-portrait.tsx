@@ -13,7 +13,7 @@ export default function AboutPortrait({
 }) {
   if (!photo) return null;
   return (
-    <figure className={`flex flex-col items-center text-center lg:items-start lg:text-left ${className}`.trim()}>
+    <figure className={`flex flex-col items-center text-center lg:w-fit lg:text-left ${className}`.trim()}>
       <Image
         src={photo}
         alt={`Portrait of ${name}`}
