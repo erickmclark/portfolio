@@ -129,7 +129,7 @@ export default async function CaseStudyPage({ params }: Props) {
             href={ext}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4"
+            className="mt-6 inline-flex min-h-11 items-center gap-1 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white"
           >
             Visit site<span className="sr-only"> for {project.title} (opens in a new tab)</span>{" "}
             <ArrowUpRight size={14} aria-hidden />

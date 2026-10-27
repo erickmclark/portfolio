@@ -23,7 +23,7 @@ export default async function Approach({ view }: { view: View }) {
               </li>
             ))}
           </ol>
-          <Link href={workHref(view)} className="inline-flex min-h-11 items-center gap-1 text-[15px] font-semibold underline underline-offset-4">
+          <Link href={workHref(view)} className="inline-flex min-h-11 items-center gap-1 rounded-full border-2 border-ink px-5 text-[15px] font-semibold hover:bg-white">
             {APPROACH.cta} <ArrowRight size={14} aria-hidden />
           </Link>
         </div>
