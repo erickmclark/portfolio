@@ -17,8 +17,6 @@ export function docBox(r: Box, scrollX: number, scrollY: number): Box {
   return { left: r.left + scrollX, top: r.top + scrollY, width: r.width, height: r.height };
 }
 
-export const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n);
-
 /** Stagger delay for piece `i`. Seven pieces at 60ms plus 600ms stays under the 1200ms sequence cap. */
 export const staggerDelay = (i: number) => i * STAGGER_MS;
 
@@ -31,19 +29,4 @@ export function flipDelta(prev: Box, next: Box): { x: number; y: number; sx: num
   const sy = prev.height / next.height;
   if (Math.abs(x) < 0.5 && Math.abs(y) < 0.5 && Math.abs(sx - 1) < 0.002 && Math.abs(sy - 1) < 0.002) return null;
   return { x, y, sx, sy };
-}
-
-/** 0 when the element's top is at `startFrac` of the viewport height, 1 at `endFrac`. */
-export function scrollProgress(top: number, vh: number, startFrac: number, endFrac: number): number {
-  const start = vh * startFrac;
-  const end = vh * endFrac;
-  return clamp01((start - top) / (start - end));
-}
-
-const SPREAD = 0.08;
-
-/** Per-piece progress for overall progress `t`: piece `i` of `n` starts a little later than the one before. */
-export function pieceProgress(t: number, i: number, n: number): number {
-  const delay = i * SPREAD;
-  return clamp01((t - delay) / (1 - SPREAD * (n - 1)));
 }
