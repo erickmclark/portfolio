@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Project } from "@/lib/types";
 import { displayStatus, externalHref } from "@/lib/home-view";
 import { defaultCardCtas } from "@/lib/home-copy";
+import WorkCardMedia from "@/components/work-card-media";
 
 const TILE_TONE: Record<string, string> = {
   "Enterprise Leadership": "bg-brand-blue text-white",
@@ -43,27 +43,23 @@ export default function WorkCard({ project, wide = false, featuredLabel = false,
       </div>
 
       <div className={wide ? "" : "mt-4"}>
-        <div className="relative aspect-[16/10] w-full overflow-hidden border border-ink bg-white">
-          {m ? (
-            <Image
-              src={m.src}
-              alt={m.alt}
-              fill
-              sizes={wide ? "(min-width:1024px) 55vw, 100vw" : "(min-width:1024px) 664px, 100vw"}
-              priority={priority}
-              className="object-cover object-top"
-            />
-          ) : (
+        {m ? (
+          <WorkCardMedia
+            images={project.images?.length ? project.images : [{ url: m.src, alt: m.alt, kind: "screenshot" }]}
+            title={project.title}
+            src={m.src}
+            alt={m.alt}
+            conceptual={m.conceptual}
+            sizes={wide ? "(min-width:1024px) 55vw, 100vw" : "(min-width:1024px) 664px, 100vw"}
+            priority={priority}
+          />
+        ) : (
+          <div className="relative aspect-[16/10] w-full overflow-hidden border border-ink bg-white">
             <div className={`flex h-full w-full items-end p-5 ${TILE_TONE[project.category ?? ""] ?? "bg-ink text-white"}`} aria-hidden>
               <span className="font-mono text-xs font-bold uppercase tracking-[0.1em]">{project.category}</span>
             </div>
-          )}
-          {m?.conceptual && (
-            <span className="absolute left-2 top-2 bg-brand-cream px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-ink">
-              Conceptual illustration
-            </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className={wide ? "" : "mt-5"}>
