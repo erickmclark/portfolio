@@ -52,6 +52,7 @@ const CASE_STUDY_LABELS: Record<CaseStudySection, string> = {
   howItWorks: 'How it works',
   riskAndControls: 'Risk and controls',
   outcome: 'Outcome and evidence',
+  evidence: 'Evidence',
   learned: 'What I learned / would improve',
 };
 

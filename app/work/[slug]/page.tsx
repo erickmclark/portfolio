@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { getSiteContent, publicProjectBySlug, publicProjects } from "@/lib/content";
 import { FACTORY_ID, displayStatus, externalHref, legacySlugRedirect, type View } from "@/lib/home-view";
+import { caseStudyDateLabel, caseStudySectionTitle } from "@/lib/case-study-titles";
 import type { CaseStudySection, ProjectImage } from "@/lib/types";
 import CaseStudyGallery from "@/components/case-study-gallery";
 import CaseStudySectionBlock from "@/components/case-study-section";
@@ -20,16 +21,17 @@ type Props = {
 // Only the Factory has a designed configuration (Figma 128:2, Builder). Others get none.
 const CONFIGURATION_VIEW: Record<string, View> = { [FACTORY_ID]: "builder" };
 
-const SECTIONS: { key: CaseStudySection; title: string; numbered: boolean }[] = [
-  { key: "intro", title: "Overview", numbered: false },
-  { key: "challenge", title: "The challenge", numbered: true },
-  { key: "responsibility", title: "My responsibility", numbered: true },
-  { key: "keyDecisions", title: "Key decisions", numbered: true },
-  { key: "delivered", title: "What I delivered", numbered: true },
-  { key: "howItWorks", title: "How it works", numbered: true },
-  { key: "riskAndControls", title: "Risk and controls", numbered: true },
-  { key: "outcome", title: "Outcome and evidence", numbered: true },
-  { key: "learned", title: "What I learned / would improve", numbered: true },
+const SECTIONS: { key: CaseStudySection; numbered: boolean }[] = [
+  { key: "intro", numbered: false },
+  { key: "challenge", numbered: true },
+  { key: "responsibility", numbered: true },
+  { key: "keyDecisions", numbered: true },
+  { key: "delivered", numbered: true },
+  { key: "howItWorks", numbered: true },
+  { key: "riskAndControls", numbered: true },
+  { key: "outcome", numbered: true },
+  { key: "evidence", numbered: true },
+  { key: "learned", numbered: true },
 ];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -85,7 +87,7 @@ export default async function CaseStudyPage({ params }: Props) {
         </span>
       ),
     ],
-    ["Date", cs.dates?.trim()],
+    [caseStudyDateLabel(project), cs.dates?.trim()],
   ];
 
   const shown = SECTIONS.filter((s) => cs[s.key]?.trim());
@@ -149,7 +151,7 @@ export default async function CaseStudyPage({ params }: Props) {
           <CaseStudySectionBlock
             key={s.key}
             id={`cs-${s.key}`}
-            title={s.title}
+            title={caseStudySectionTitle(project, s.key)}
             number={s.numbered ? String(++n).padStart(2, "0") : undefined}
             body={cs[s.key] as string}
           />

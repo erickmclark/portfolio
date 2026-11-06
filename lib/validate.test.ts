@@ -212,6 +212,12 @@ describe("validateSiteContent", () => {
     expect(validateSiteContent(c).ok).toBe(true);
   });
 
+  it("accepts the evidence case-study section", () => {
+    const c = validContent();
+    Object.assign(c.projects[0], { caseStudy: { outcome: "A", evidence: "- B" } });
+    expect(validateSiteContent(c).ok).toBe(true);
+  });
+
   const badProject: Array<[string, Record<string, unknown>, RegExp]> = [
     ["bad category", { category: "Other" }, /category/],
     ["bad relationship", { relationship: "Freelance" }, /relationship/],
