@@ -247,7 +247,13 @@
         "keyDecisions": "**From applications to products.** I recommended rationalizing the portfolio into a smaller set of clearly defined products, so each had a coherent scope and an accountable owner.\n\n**A common structure.** I defined a product taxonomy that gave portfolio planning and reviews a consistent structure to work from.\n\n**Decision rights.** I recommended which decisions should sit with product owners and which required portfolio governance or senior leadership.\n\n**Accountability.** I defined the governance responsibilities that held product owners accountable within the new model.\n\n**The central tradeoff.** Moving from an application-centered model to a product-based structure meant balancing consolidation and simplification against keeping product responsibilities, user workflows and decision rights clearly defined. Simplifying the portfolio could not come at the cost of clear ownership, accountability or business alignment.",
         "delivered": "I worked across product, engineering, architecture, UX, site reliability, agility, finance, risk and Legal teams to align roadmaps with the new product structure and to resolve dependencies that crossed product boundaries.",
         "outcome": "Legal Technology moved from managing disconnected applications toward a structured product operating model. Products had defined scopes and owners, decisions had a defined home, and portfolio planning and reviews worked from the same structure.",
-        "evidence": "- A rationalized product portfolio with documented product definitions, ownership boundaries, decision rights and governance responsibilities.\n- The resulting model provided a consistent basis for portfolio planning and reviews."
+        "evidence": "- A rationalized product portfolio with documented product definitions, ownership boundaries, decision rights and governance responsibilities.\n- The resulting model provided a consistent basis for portfolio planning and reviews.",
+        "footprint": "Teams in the US, UK and India",
+        "scale": "9 partner functions aligned",
+        "relevantTo": [
+          "Enterprise Transformation",
+          "Technology Strategy"
+        ]
       },
       "images": [],
       "cardCta": {
@@ -276,7 +282,13 @@
         "keyDecisions": "**Priorities into commitments.** I translated enterprise Legal, Technology and business priorities into portfolio objectives, product roadmaps, investment decisions, workforce plans and measurable execution commitments.\n\n**One planning view.** I brought competing priorities, investment constraints, workforce capacity and delivery commitments into a single planning view, so leaders could weigh them against each other.\n\n**Alternatives within constraints.** I evaluated investment alternatives against financial constraints and organizational priorities, and set out the tradeoffs for senior leadership.\n\n**Measures that carried through.** I designed OKRs that linked strategic priorities to quarterly outcomes, portfolio commitments and executive performance reviews.",
         "delivered": "Each year I ran the cycle from priority-setting through to commitments: coordinating forecasts, challenging assumptions before they became commitments, aligning roadmaps across teams and resolving the dependencies between them.",
         "outcome": "Roadmaps, investment choices, workforce plans and commitments were set from one agreed set of priorities and measures. The planning outputs informed leadership's investment discussions and, through OKRs and portfolio commitments, became the reference point for overseeing execution during the year.",
-        "evidence": "- An established annual strategy and multi-year planning process connecting executive priorities to product roadmaps, workforce and investment plans, OKRs and portfolio commitments.\n- The annual OKR framework, used in quarterly and executive performance reviews."
+        "evidence": "- An established annual strategy and multi-year planning process connecting executive priorities to product roadmaps, workforce and investment plans, OKRs and portfolio commitments.\n- The annual OKR framework, used in quarterly and executive performance reviews.",
+        "footprint": "Teams in the US, UK and India",
+        "scale": "Annual cycle · multi-year roadmap",
+        "relevantTo": [
+          "Technology Strategy",
+          "Technology Business Operations"
+        ]
       },
       "images": [],
       "cardCta": {
@@ -289,7 +301,7 @@
       "slug": "jpmorgan-ai-strategy-governance",
       "title": "Enterprise AI Strategy & Governance",
       "tagline": "Built Legal Technology's AI book of work and the evaluation, governance and measures used to decide which AI opportunities should advance.",
-      "description": "## Business challenge\n\nInterest in AI spanned LLM assistants, knowledge and analytics platforms, document automation and AI-enabled legal workflows. The question was not whether to use AI, but which opportunities deserved investment and on what basis. In a legal function, those choices also carried security, privacy, regulatory and AI risk that had to be understood before an initiative advanced.\n\n## Leadership responsibility\n\nI developed and operationalized Legal Technology's AI strategy and directed annual risk, control and privacy readiness for AI/ML-related business cases, including clarifying who was accountable for each.\n\n## Strategic decisions\n\n**Start with the problem.** We evaluated each opportunity from the business problem and the intended outcome, not from the technology.\n\n**Consistent evaluation.** We compared opportunities against a consistent set of considerations: strategic alignment; expected business value and process improvement; technical feasibility and complexity; the availability, reliability and appropriateness of data; security, privacy, regulatory and AI risk; cost and resource requirements; user adoption and operational readiness; and whether the intended value could be measured.\n\n**One book of work.** I managed AI opportunities as one book of work, so they were prioritized against each other and against the rest of the portfolio.\n\n**Value after launch.** I defined adoption and ROI measures, so initiatives were assessed on whether the intended value was realized.\n\n## Actions and execution\n\nI worked with risk, privacy, Legal, product and engineering partners to take AI/ML business cases through governance, re-attestation, assessment and remediation, and reported AI progress to senior leadership as part of executive reporting. The evaluation informed use-case prioritization, roadmap planning, governance and investment discussions.\n\n## Organizational impact\n\nLegal Technology gained a structured way to evaluate AI opportunities and assess their readiness before advancing them, with prioritization, accountability and value measures built into portfolio and executive reviews.\n\n## Evidence\n\n- An AI book of work with defined evaluation considerations, prioritization, governance responsibilities, and adoption and value measures.\n- Those measures incorporated into portfolio and executive review processes.\n- Governance, re-attestation, assessment and remediation activities for AI/ML-related business cases.",
+      "description": "## Business challenge\n\nInterest in AI spanned LLM assistants, knowledge and analytics platforms, document automation and AI-enabled legal workflows. The question was not whether to use AI, but which opportunities deserved investment and on what basis. In a legal function, those choices also carried security, privacy, regulatory and AI risk that had to be understood before an initiative advanced.\n\n## Leadership responsibility\n\nI developed and operationalized Legal Technology's AI strategy and directed annual risk, control and privacy readiness for AI/ML-related business cases, including clarifying who was accountable for each.\n\n## Strategic decisions\n\n**Start with the problem.** I evaluated each opportunity from the business problem and the intended outcome, not from the technology.\n\n**Consistent evaluation.** I compared opportunities against a consistent set of considerations: strategic alignment; expected business value and process improvement; technical feasibility and complexity; the availability, reliability and appropriateness of data; security, privacy, regulatory and AI risk; cost and resource requirements; user adoption and operational readiness; and whether the intended value could be measured.\n\n**One book of work.** I managed AI opportunities as one book of work, so they were prioritized against each other and against the rest of the portfolio.\n\n**Value after launch.** I defined adoption and ROI measures, so initiatives were assessed on whether the intended value was realized.\n\n## Actions and execution\n\nI worked with risk, privacy, Legal, product and engineering partners to take AI/ML business cases through governance, re-attestation, assessment and remediation, and reported AI progress to senior leadership as part of executive reporting. The evaluation informed use-case prioritization, roadmap planning, governance and investment discussions.\n\n## Organizational impact\n\nLegal Technology gained a structured way to evaluate AI opportunities and assess their readiness before advancing them, with prioritization, accountability and value measures built into portfolio and executive reviews.\n\n## Evidence\n\n- An AI book of work with defined evaluation considerations, prioritization, governance responsibilities, and adoption and value measures.\n- Those measures incorporated into portfolio and executive review processes.\n- Governance, re-attestation, assessment and remediation activities for AI/ML-related business cases.",
       "tech": [],
       "featured": true,
       "order": 3,
@@ -302,10 +314,16 @@
         "dates": "July 2019–August 2026",
         "challenge": "Interest in AI spanned LLM assistants, knowledge and analytics platforms, document automation and AI-enabled legal workflows. The question was not whether to use AI, but which opportunities deserved investment and on what basis. In a legal function, those choices also carried security, privacy, regulatory and AI risk that had to be understood before an initiative advanced.",
         "responsibility": "I developed and operationalized Legal Technology's AI strategy and directed annual risk, control and privacy readiness for AI/ML-related business cases, including clarifying who was accountable for each.",
-        "keyDecisions": "**Start with the problem.** We evaluated each opportunity from the business problem and the intended outcome, not from the technology.\n\n**Consistent evaluation.** We compared opportunities against a consistent set of considerations: strategic alignment; expected business value and process improvement; technical feasibility and complexity; the availability, reliability and appropriateness of data; security, privacy, regulatory and AI risk; cost and resource requirements; user adoption and operational readiness; and whether the intended value could be measured.\n\n**One book of work.** I managed AI opportunities as one book of work, so they were prioritized against each other and against the rest of the portfolio.\n\n**Value after launch.** I defined adoption and ROI measures, so initiatives were assessed on whether the intended value was realized.",
+        "keyDecisions": "**Start with the problem.** I evaluated each opportunity from the business problem and the intended outcome, not from the technology.\n\n**Consistent evaluation.** I compared opportunities against a consistent set of considerations: strategic alignment; expected business value and process improvement; technical feasibility and complexity; the availability, reliability and appropriateness of data; security, privacy, regulatory and AI risk; cost and resource requirements; user adoption and operational readiness; and whether the intended value could be measured.\n\n**One book of work.** I managed AI opportunities as one book of work, so they were prioritized against each other and against the rest of the portfolio.\n\n**Value after launch.** I defined adoption and ROI measures, so initiatives were assessed on whether the intended value was realized.",
         "delivered": "I worked with risk, privacy, Legal, product and engineering partners to take AI/ML business cases through governance, re-attestation, assessment and remediation, and reported AI progress to senior leadership as part of executive reporting. The evaluation informed use-case prioritization, roadmap planning, governance and investment discussions.",
         "outcome": "Legal Technology gained a structured way to evaluate AI opportunities and assess their readiness before advancing them, with prioritization, accountability and value measures built into portfolio and executive reviews.",
-        "evidence": "- An AI book of work with defined evaluation considerations, prioritization, governance responsibilities, and adoption and value measures.\n- Those measures incorporated into portfolio and executive review processes.\n- Governance, re-attestation, assessment and remediation activities for AI/ML-related business cases."
+        "evidence": "- An AI book of work with defined evaluation considerations, prioritization, governance responsibilities, and adoption and value measures.\n- Those measures incorporated into portfolio and executive review processes.\n- Governance, re-attestation, assessment and remediation activities for AI/ML-related business cases.",
+        "footprint": "Teams in the US, UK and India",
+        "scale": "8 evaluation considerations · 4-step governance lifecycle",
+        "relevantTo": [
+          "AI Strategy",
+          "Technology Strategy"
+        ]
       },
       "images": [],
       "cardCta": {
@@ -334,7 +352,13 @@
         "keyDecisions": "**What leaders needed to see.** I structured strategy presentations, quarterly business reviews, monthly operating reviews and portfolio dashboards around commitments, performance, financial and workforce position, risks and open decisions.\n\n**From information to decisions.** I organized each review around the decisions that required leadership intervention, the tradeoffs involved and the issues to escalate.\n\n**Challenge before escalation.** I challenged assumptions and clarified issues with teams before material went to senior leadership.",
         "delivered": "I connected information across product, engineering, finance and workforce teams, reported performance against OKRs, supported escalation and corrective-action discussions in monthly operating reviews, and wrote the financial analyses and executive narratives that framed each decision.",
         "outcome": "Portfolio progress, resource considerations, risks and decisions came into one leadership review process. Leaders reviewed priorities, commitments and required actions in a consistent structure, and the reviews supported prioritization and corrective decisions.",
-        "evidence": "- A recurring executive operating rhythm: strategy presentations, quarterly business reviews, monthly operating reviews, portfolio dashboards and performance reporting.\n- Decision-support materials for senior Legal and Technology leadership, including materials used in General Counsel briefings."
+        "evidence": "- A recurring executive operating rhythm: strategy presentations, quarterly business reviews, monthly operating reviews, portfolio dashboards and performance reporting.\n- Decision-support materials for senior Legal and Technology leadership, including materials used in General Counsel briefings.",
+        "footprint": "Teams in the US, UK and India",
+        "scale": "Annual · quarterly · monthly reviews",
+        "relevantTo": [
+          "Technology Business Operations",
+          "Technology Strategy"
+        ]
       },
       "images": [],
       "cardCta": {
@@ -363,7 +387,13 @@
         "keyDecisions": "**Demand against capacity.** I aligned workforce requirements with product priorities and evaluated capacity before demand became a commitment.\n\n**Scenarios, not a single answer.** I developed staffing, location and investment scenarios, including constrained-budget scenarios, focused on prioritization, capacity and where resources should be reallocated.\n\n**Assumptions tested.** I challenged forecast assumptions before they shaped the plan.\n\n**Guardrails.** I developed and recommended workforce planning guardrails for leadership consideration.",
         "delivered": "I coordinated hiring and attrition forecasts and connected the workforce plan to the financial plan and the roadmap. I also supported early-career software engineering recruitment, engineering onboarding and mentoring, and the development of emerging technical talent.",
         "outcome": "One annual process connected product demand, staffing forecasts, capacity, hiring plans, location considerations and investment constraints. It gave senior leadership a structured basis for workforce decisions.",
-        "evidence": "- An annual workforce planning process connecting product demand, staffing forecasts, capacity, hiring plans, location considerations and investment constraints.\n- Involvement in early-career technical recruitment, onboarding and talent development."
+        "evidence": "- An annual workforce planning process connecting product demand, staffing forecasts, capacity, hiring plans, location considerations and investment constraints.\n- Involvement in early-career technical recruitment, onboarding and talent development.",
+        "footprint": "Teams in the US, UK and India",
+        "scale": "Annual plan · 4 scenario types",
+        "relevantTo": [
+          "Technology Business Operations",
+          "Technology Strategy"
+        ]
       },
       "images": [],
       "cardCta": {
@@ -392,7 +422,13 @@
         "keyDecisions": "**Consistent standards.** I coordinated planning and delivery standards across initiatives, so commitments, status and risks were reported on the same basis.\n\n**Escalation.** I supported escalation practices that brought delivery risks to the leaders who needed to act on them.\n\n**Reporting for decisions.** I improved management reporting so commitments, dependencies and emerging risks were visible together.",
         "delivered": "I directed the team's work, worked with product and engineering stakeholders to manage commitments, tracked dependencies across teams and coordinated corrective actions.",
         "outcome": "Leaders had clearer delivery oversight, more consistent governance across initiatives and better visibility into execution risks and dependencies. They used it to assess commitments, identify delivery issues and coordinate corrective action.",
-        "evidence": "- A PMO governance approach with consistent planning standards, portfolio reporting, delivery oversight, dependency tracking, escalation practices and executive decision support.\n- Annual risk, control and privacy readiness, and corrective-action oversight."
+        "evidence": "- A PMO governance approach with consistent planning standards, portfolio reporting, delivery oversight, dependency tracking, escalation practices and executive decision support.\n- Annual risk, control and privacy readiness, and corrective-action oversight.",
+        "footprint": "Teams in the US, UK and India",
+        "scale": "Led PMs, Scrum Masters and BAs",
+        "relevantTo": [
+          "Technology Business Operations",
+          "Enterprise Transformation"
+        ]
       },
       "images": [],
       "cardCta": {

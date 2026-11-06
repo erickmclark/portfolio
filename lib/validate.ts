@@ -3,6 +3,7 @@ import type { SiteContent } from './types';
 import { isAbsoluteHttpsUrl, isAllowedImageUrl } from './image-url';
 import { CONTACT_INTENT_IDS } from './contact';
 import {
+  CASE_STUDY_FACT_LIMITS,
   CASE_STUDY_SECTIONS,
   ICON_KEYS,
   IMAGE_KINDS,
@@ -401,7 +402,18 @@ export function validateSiteContent(input: unknown): ValidationResult {
           errors.push(`${where}.caseStudy must be an object when present.`);
         } else {
           for (const [key, value] of Object.entries(p.caseStudy)) {
-            if (!(CASE_STUDY_SECTIONS as readonly string[]).includes(key)) {
+            if (key === 'footprint' || key === 'scale') {
+              const max = CASE_STUDY_FACT_LIMITS[key];
+              if (typeof value !== 'string') errors.push(`${where}.caseStudy.${key} must be a string.`);
+              else if (value.length > max) errors.push(`${where}.caseStudy.${key} must be at most ${max} characters.`);
+            } else if (key === 'relevantTo') {
+              const { relevantToItems: maxItems, relevantToItem: maxLen } = CASE_STUDY_FACT_LIMITS;
+              if (!Array.isArray(value)) errors.push(`${where}.caseStudy.relevantTo must be an array of strings.`);
+              else if (value.length > maxItems) errors.push(`${where}.caseStudy.relevantTo must have at most ${maxItems} items.`);
+              else if (!value.every((t) => isText(t) && t.length <= maxLen)) {
+                errors.push(`${where}.caseStudy.relevantTo items must be non-empty trimmed strings of at most ${maxLen} characters.`);
+              }
+            } else if (!(CASE_STUDY_SECTIONS as readonly string[]).includes(key)) {
               errors.push(`${where}.caseStudy.${key} is not a known section.`);
             } else if (typeof value !== 'string') {
               errors.push(`${where}.caseStudy.${key} must be a string.`);

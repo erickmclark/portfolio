@@ -75,9 +75,15 @@ export default async function CaseStudyPage({ params }: Props) {
 
   const configView = CONFIGURATION_VIEW[project.id];
   const eyebrow = [project.category, project.relationship].filter(Boolean).join(" · ");
+  const isEmployment = project.relationship === "Employment";
+  const relevantTo = isEmployment ? (cs.relevantTo ?? []).filter((t) => t.trim()) : [];
   const meta: [string, React.ReactNode][] = [
-    ["Category", project.category],
-    ["Relationship", project.relationship],
+    ...(isEmployment
+      ? []
+      : ([
+          ["Category", project.category],
+          ["Relationship", project.relationship],
+        ] as [string, React.ReactNode][])),
     ["Role", cs.role?.trim()],
     [
       "Status",
@@ -88,6 +94,12 @@ export default async function CaseStudyPage({ params }: Props) {
       ),
     ],
     [caseStudyDateLabel(project), cs.dates?.trim()],
+    ...(isEmployment
+      ? ([
+          ["Footprint", cs.footprint?.trim()],
+          ["Scale", cs.scale?.trim()],
+        ] as [string, React.ReactNode][])
+      : []),
   ];
 
   const shown = SECTIONS.filter((s) => cs[s.key]?.trim());
@@ -129,6 +141,21 @@ export default async function CaseStudyPage({ params }: Props) {
               </div>
             ))}
         </dl>
+
+        {relevantTo.length > 0 && (
+          <div className="mb-10 mt-8">
+            <p id="relevant-to-label" className="font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink-muted">
+              Relevant to
+            </p>
+            <ul aria-labelledby="relevant-to-label" className="mt-3 flex flex-wrap gap-3">
+              {relevantTo.map((t) => (
+                <li key={t} className="rounded-[4px] border border-brand-navy px-3.5 py-2 text-base font-medium text-brand-navy">
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {ext && (
           <a

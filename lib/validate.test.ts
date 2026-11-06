@@ -212,6 +212,18 @@ describe("validateSiteContent", () => {
     expect(validateSiteContent(c).ok).toBe(true);
   });
 
+  it("accepts footprint, scale and relevantTo, and their absence", () => {
+    const c = validContent();
+    Object.assign(c.projects[0], {
+      caseStudy: { footprint: "Teams in the US", scale: "9 functions", relevantTo: ["AI Strategy", "Technology Strategy"] },
+    });
+    expect(validateSiteContent(c).ok).toBe(true);
+    Object.assign(c.projects[0], { caseStudy: { role: "Lead" } });
+    expect(validateSiteContent(c).ok).toBe(true);
+    Object.assign(c.projects[0], { caseStudy: { relevantTo: [] } });
+    expect(validateSiteContent(c).ok).toBe(true);
+  });
+
   it("accepts the evidence case-study section", () => {
     const c = validContent();
     Object.assign(c.projects[0], { caseStudy: { outcome: "A", evidence: "- B" } });
@@ -230,6 +242,15 @@ describe("validateSiteContent", () => {
     ["non-object caseStudy", { caseStudy: "text" }, /caseStudy/],
     ["non-string section", { caseStudy: { challenge: 1 } }, /caseStudy\.challenge/],
     ["unknown section", { caseStudy: { bogus: "x" } }, /caseStudy\.bogus/],
+    ["non-string footprint", { caseStudy: { footprint: 1 } }, /caseStudy\.footprint must be a string/],
+    ["too-long footprint", { caseStudy: { footprint: "x".repeat(121) } }, /caseStudy\.footprint must be at most 120/],
+    ["non-string scale", { caseStudy: { scale: ["a"] } }, /caseStudy\.scale must be a string/],
+    ["too-long scale", { caseStudy: { scale: "x".repeat(161) } }, /caseStudy\.scale must be at most 160/],
+    ["non-array relevantTo", { caseStudy: { relevantTo: "AI" } }, /caseStudy\.relevantTo must be an array/],
+    ["non-string relevantTo item", { caseStudy: { relevantTo: [1] } }, /caseStudy\.relevantTo items/],
+    ["blank relevantTo item", { caseStudy: { relevantTo: ["AI", " "] } }, /caseStudy\.relevantTo items/],
+    ["too-long relevantTo item", { caseStudy: { relevantTo: ["x".repeat(61)] } }, /caseStudy\.relevantTo items/],
+    ["too many relevantTo items", { caseStudy: { relevantTo: ["1", "2", "3", "4", "5", "6", "7"] } }, /at most 6 items/],
     ["non-array images", { images: "x.png" }, /images/],
     ["image missing url", { images: [{ alt: "a", kind: "screenshot" }] }, /url/],
     ["image missing alt", { images: [{ url: "/a.png", kind: "screenshot" }] }, /alt/],
