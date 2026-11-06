@@ -1,0 +1,21 @@
+{
+  "consultant": [
+    "prj-jpmc-ai-strategy",
+    "prj-jpmc-operating-model",
+    "prj-ai-governance-platform",
+    "prj-dupars-bbq",
+    "prj-angie-cares",
+    "prj-jpmc-strategy-operations"
+  ],
+  "builder": [
+    "prj-dupars-bbq",
+    "prj-angie-cares",
+    "prj-authmatch",
+    "prj-prepera",
+    "prj-ai-engineering-factory",
+    "prj-gen4me",
+    "prj-sanctionswatch",
+    "prj-regulatory-intelligence",
+    "prj-g2-complaint-miner"
+  ]
+}

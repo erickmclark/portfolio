@@ -42,6 +42,7 @@ export const CASE_STUDY_SECTIONS = [
   'howItWorks',
   'riskAndControls',
   'outcome',
+  'evidence',
   'learned',
 ] as const;
 export type CaseStudySection = (typeof CASE_STUDY_SECTIONS)[number];
