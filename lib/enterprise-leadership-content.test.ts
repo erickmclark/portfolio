@@ -151,3 +151,31 @@ describe('exp-jpmc', () => {
     );
   });
 });
+
+describe('quick facts on the six records', () => {
+  const FP = 'Teams in the US, UK and India';
+  const FACTS: Record<string, [string, string[]]> = {
+    'prj-jpmc-operating-model': ['9 partner functions aligned', ['Enterprise Transformation', 'Technology Strategy']],
+    'prj-jpmc-strategy-operations': ['Annual cycle \u00b7 multi-year roadmap', ['Technology Strategy', 'Technology Business Operations']],
+    'prj-jpmc-ai-strategy': ['8 evaluation considerations \u00b7 4-step governance lifecycle', ['AI Strategy', 'Technology Strategy']],
+    'prj-jpmc-decision-support': ['Annual \u00b7 quarterly \u00b7 monthly reviews', ['Technology Business Operations', 'Technology Strategy']],
+    'prj-jpmc-workforce-talent': ['Annual plan \u00b7 4 scenario types', ['Technology Business Operations', 'Technology Strategy']],
+    'prj-jpmc-delivery-governance': ['Led PMs, Scrum Masters and BAs', ['Technology Business Operations', 'Enterprise Transformation']],
+  };
+  it.each(Object.entries(FACTS))('%s carries footprint, scale and relevantTo', (id, [scale, relevantTo]) => {
+    const cs = byId(id).caseStudy!;
+    expect(cs.footprint).toBe(FP);
+    expect(cs.scale).toBe(scale);
+    expect(cs.relevantTo).toEqual(relevantTo);
+  });
+
+  it('AI strategy record uses first person in keyDecisions and description', () => {
+    const p = byId('prj-jpmc-ai-strategy');
+    for (const text of [p.caseStudy!.keyDecisions!, p.description]) {
+      expect(text).toContain('I evaluated each opportunity');
+      expect(text).toContain('I compared opportunities');
+      expect(text).not.toContain('We evaluated');
+      expect(text).not.toContain('We compared');
+    }
+  });
+});

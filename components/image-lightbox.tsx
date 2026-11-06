@@ -53,11 +53,6 @@ export default function ImageLightbox({ images, title }: { images: ProjectImage[
                     <span className="hidden pointer-coarse:inline">Tap to zoom</span>
                   </span>
                 </button>
-                {img.kind === "conceptual" && (
-                  <span className="pointer-events-none absolute left-2 top-2 bg-brand-cream px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-ink">
-                    Conceptual illustration
-                  </span>
-                )}
               </div>
               {img.caption && (
                 <figcaption className="mt-2 font-mono text-[11px] leading-snug text-ink-muted">{img.caption}</figcaption>

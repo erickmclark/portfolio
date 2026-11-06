@@ -150,11 +150,6 @@ export default function ImageViewer({
             )}
           </div>
           <div className="flex flex-col items-center gap-1 px-4 py-3 text-center font-mono text-[11px] leading-snug">
-            {current.kind === "conceptual" && (
-              <span className="bg-brand-cream px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-ink">
-                Conceptual illustration
-              </span>
-            )}
             {current.caption && <p>{current.caption}</p>}
             <p className="opacity-70">
               <span className="pointer-coarse:hidden">{zoomed ? "Click image to fit screen" : "Click image to magnify"}</span>

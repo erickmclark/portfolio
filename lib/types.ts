@@ -46,7 +46,13 @@ export const CASE_STUDY_SECTIONS = [
   'learned',
 ] as const;
 export type CaseStudySection = (typeof CASE_STUDY_SECTIONS)[number];
-export type CaseStudy = Partial<Record<CaseStudySection, string>>;
+/** Quick-fact fields for Employment case studies; shown in the facts strip and tags, never as prose sections. */
+export const CASE_STUDY_FACT_LIMITS = { footprint: 120, scale: 160, relevantToItems: 6, relevantToItem: 60 } as const;
+export type CaseStudy = Partial<Record<CaseStudySection, string>> & {
+  footprint?: string;
+  scale?: string;
+  relevantTo?: string[];
+};
 
 export const VIEWS = ['it', 'consultant', 'builder'] as const;
 export type View = (typeof VIEWS)[number];

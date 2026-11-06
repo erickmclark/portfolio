@@ -34,10 +34,11 @@ import {
 import GalleryManager from './gallery-manager';
 import { deleteOutcome, nextNoticeAfterRetry, type DeleteNotice } from './project-updates';
 import { galleryImages } from './gallery-utils';
-import { applyCardCtas, effectiveCardCtas, readable } from './content-edit';
+import { applyCardCtas, effectiveCardCtas, parseLines, readable } from './content-edit';
 import { useDrillIn } from '../ui/use-drill-in';
 import { validateSiteContent } from '@/lib/validate';
 import { caseStudyFilledCount, projectStamps, selectionAfterDelete } from './project-list';
+import { ListTextField } from '../ui/edit';
 import { Button, buttonClass, Eyebrow, Field, fieldClass, GroupHead, Select, Square, Stamp, Textarea } from '../ui';
 
 // Human titles for case-study sections (content spec 6, required project page template).
@@ -242,6 +243,13 @@ function ProjectEditor({
     const next = { ...project.caseStudy };
     if (value === '') delete next[key];
     else next[key] = value;
+    set('caseStudy', Object.keys(next).length ? next : undefined);
+  }
+
+  function setCaseStudyFact(key: 'footprint' | 'scale' | 'relevantTo', value: string | string[]) {
+    const next = { ...project.caseStudy };
+    if (value.length === 0) delete next[key];
+    else Object.assign(next, { [key]: value });
     set('caseStudy', Object.keys(next).length ? next : undefined);
   }
 
@@ -450,6 +458,9 @@ function ProjectEditor({
         </button>
         {caseStudyOpen && (
           <div id={`${uid}-cs`} className="mt-4 space-y-4">
+            <Field id={`${uid}-cs-footprint`} label="Footprint" value={project.caseStudy?.footprint ?? ''} onChange={(e) => setCaseStudyFact('footprint', e.target.value)} hint="Employment case studies only. Shown in the facts strip." />
+            <Field id={`${uid}-cs-scale`} label="Scale" value={project.caseStudy?.scale ?? ''} onChange={(e) => setCaseStudyFact('scale', e.target.value)} hint="Employment case studies only. Shown in the facts strip." />
+            <ListTextField label="Relevant to" items={project.caseStudy?.relevantTo ?? []} join={'\n'} parse={parseLines} rows={3} hint="One tag per line, up to 6." onChange={(items) => setCaseStudyFact('relevantTo', items)} />
             {CASE_STUDY_SECTIONS.map((key) => (
               <div key={key}>
                 <label htmlFor={`${uid}-cs-${key}`} className={labelClass}>{CASE_STUDY_LABELS[key]}</label>
