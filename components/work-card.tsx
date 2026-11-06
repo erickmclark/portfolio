@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Project } from "@/lib/types";
@@ -13,6 +14,10 @@ const TILE_TONE: Record<string, string> = {
   "AI Strategy & Governance": "bg-brand-navy text-white",
 };
 
+const EMPLOYER_LOGO: Record<string, { src: string; alt: string; width: number; height: number }> = {
+  "prj-jpmc-legal-tech": { src: "/logos/jpmorganchase.svg", alt: "JPMorganChase logo", width: 1000, height: 142 },
+};
+
 function media(project: Project) {
   const first = project.images?.[0];
   if (first?.url) return { src: first.url, alt: first.alt, conceptual: first.kind === "conceptual" };
@@ -22,6 +27,7 @@ function media(project: Project) {
 
 export default function WorkCard({ project, wide = false, featuredLabel = false, priority = false }: { project: Project; wide?: boolean; featuredLabel?: boolean; priority?: boolean }) {
   const m = media(project);
+  const logo = EMPLOYER_LOGO[project.id];
   const status = displayStatus(project);
   const ext = externalHref(project);
   const dates = project.caseStudy?.dates;
@@ -53,6 +59,13 @@ export default function WorkCard({ project, wide = false, featuredLabel = false,
             sizes={wide ? "(min-width:1024px) 55vw, 100vw" : "(min-width:1024px) 664px, 100vw"}
             priority={priority}
           />
+        ) : logo ? (
+          <div className="relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden border border-ink bg-white">
+            <Image src={logo.src} alt={logo.alt} width={logo.width} height={logo.height} className="h-auto w-3/5 max-w-[420px]" />
+            <span className="absolute bottom-5 left-5 font-mono text-xs font-bold uppercase tracking-[0.1em]" aria-hidden>
+              {project.category}
+            </span>
+          </div>
         ) : (
           <div className="relative aspect-[16/10] w-full overflow-hidden border border-ink bg-white">
             <div className={`flex h-full w-full items-end p-5 ${TILE_TONE[project.category ?? ""] ?? "bg-ink text-white"}`} aria-hidden>
