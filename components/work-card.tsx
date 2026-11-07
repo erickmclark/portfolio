@@ -20,8 +20,8 @@ const EMPLOYER_LOGO: Record<string, { src: string; alt: string; width: number; h
 
 function media(project: Project) {
   const first = project.images?.[0];
-  if (first?.url) return { src: first.url, alt: first.alt, conceptual: first.kind === "conceptual" };
-  if (project.image) return { src: project.image, alt: `${project.title} screenshot`, conceptual: false };
+  if (first?.url) return { src: first.url, alt: first.alt };
+  if (project.image) return { src: project.image, alt: `${project.title} screenshot` };
   return null;
 }
 
@@ -55,7 +55,6 @@ export default function WorkCard({ project, wide = false, featuredLabel = false,
             title={project.title}
             src={m.src}
             alt={m.alt}
-            conceptual={m.conceptual}
             sizes={wide ? "(min-width:1024px) 55vw, 100vw" : "(min-width:1024px) 664px, 100vw"}
             priority={priority}
           />

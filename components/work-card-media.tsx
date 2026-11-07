@@ -10,7 +10,6 @@ export default function WorkCardMedia({
   title,
   src,
   alt,
-  conceptual,
   sizes,
   priority,
 }: {
@@ -18,7 +17,6 @@ export default function WorkCardMedia({
   title: string;
   src: string;
   alt: string;
-  conceptual: boolean;
   sizes: string;
   priority: boolean;
 }) {
@@ -47,11 +45,6 @@ export default function WorkCardMedia({
           <span className="hidden pointer-coarse:inline">Tap to zoom</span>
         </span>
       </button>
-      {conceptual && (
-        <span className="pointer-events-none absolute left-2 top-2 bg-brand-cream px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-ink">
-          Conceptual illustration
-        </span>
-      )}
       <ImageViewer
         images={images}
         title={title}
