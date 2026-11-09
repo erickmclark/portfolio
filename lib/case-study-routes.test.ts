@@ -1,4 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { LEGACY_SLUG_REDIRECTS } from "@/lib/home-view";
 import type { Project, SiteContent } from "./types";
 
 const proj = (slug: string, visibility?: Project["visibility"]): Project =>
@@ -78,5 +81,34 @@ describe("sitemap", () => {
     expect(urls.some((u) => u.endsWith("/contact"))).toBe(true);
     expect(urls.some((u) => u.includes("/projects/"))).toBe(false);
     expect(urls.some((u) => u.includes("hid") || u.includes("arc"))).toBe(false);
+  });
+});
+
+describe("/work/[slug] layout", () => {
+  const run = async (slug: string) => {
+    const { default: Layout } = await import("@/app/work/[slug]/layout");
+    return Layout({ children: "kids", params: Promise.resolve({ slug }) });
+  };
+  it.each(["hid", "arc", "missing"])("404s for %s", async (slug) => {
+    await expect(run(slug)).rejects.toThrow("NOT_FOUND");
+    expect(redirectMock).not.toHaveBeenCalled();
+  });
+  it("permanently redirects legacy slugs", async () => {
+    const [legacy, to] = Object.entries(LEGACY_SLUG_REDIRECTS)[0];
+    await expect(run(legacy)).rejects.toThrow(`REDIRECT:/work/${to}`);
+  });
+  it("returns children for a public project", async () => {
+    await expect(run("pub")).resolves.toBe("kids");
+  });
+});
+
+describe("loading boundaries and /work/[slug] status", () => {
+  const root = join(__dirname, "..");
+  it("has no loading.tsx in a segment wrapping the [slug] layout", () => {
+    expect(existsSync(join(root, "app/loading.tsx"))).toBe(false);
+    expect(existsSync(join(root, "app/work/loading.tsx"))).toBe(false);
+  });
+  it("keeps the [slug] layout that resolves the slug before streaming", () => {
+    expect(existsSync(join(root, "app/work/[slug]/layout.tsx"))).toBe(true);
   });
 });
